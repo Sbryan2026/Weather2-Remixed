@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.configex.ConfigModEX;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.config.*;
@@ -24,10 +23,6 @@ import net.mrbt0907.weather2.server.command.CommandWeather2;
 import net.mrbt0907.weather2.server.event.ServerTickHandler;
 import net.mrbt0907.weather2.server.weather.WeatherManagerServer;
 import net.mrbt0907.weather2.util.ChunkUtils;
-import net.mrbt0907.weather2.util.WeatherUtil;
-
-import java.io.File;
-
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Weather2.MODID, name=Weather2.MOD, version=Weather2.VERSION, acceptedMinecraftVersions="[1.12.2]", dependencies="required-after:coroutil@[1.12.1-1.2.37,);required-after:configex@[1.0,);required-after:forge@[14.23.5.2860,);", guiFactory = "net.mrbt0907.configex.gui.AdvancedGuiFactory")
@@ -36,13 +31,12 @@ public class Weather2
 	public static final String MOD = "Weather 2 - Remastered";
 	public static final String MODID = "weather2remaster";
 	public static final String OLD_MODID = "weather2";
-	public static final String VERSION = "2.8.16";
+	public static final String VERSION = "2.9.0";
 	public static final FMLEventChannel event_channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(MODID);
 	public static final CreativeTabs TAB = new CreativeTabs(MODID) {@Override public ItemStack createIcon() {return new ItemStack(BlockRegistry.tornado_sensor);}};
 	@Mod.Instance( value = Weather2.MODID )
 	public static Weather2 instance;
 	public static Logger log;
-	public static boolean initProperNeededForWorld = true;
 	public static ChunkUtils clientChunkUtil;
 	public static ChunkUtils serverChunkUtil;
 	@SidedProxy(modId = Weather2.MODID, clientSide = "net.mrbt0907.weather2.ClientProxy", serverSide = "net.mrbt0907.weather2.CommonProxy")
@@ -121,7 +115,6 @@ public class Weather2
 	{
 		writeOutData(true);
 		ServerTickHandler.reset();
-		initProperNeededForWorld = true;
 		serverChunkUtil.clearCache();
 		serverChunkUtil = null;
 	}

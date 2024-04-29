@@ -5,6 +5,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.configex.manager.FieldInstance;
+import net.mrbt0907.weather2.util.StringUtils;
 
 @SideOnly(Side.CLIENT)
 public class GuiConfigEntry
@@ -26,7 +27,7 @@ public class GuiConfigEntry
 	
 	public GuiConfigEntry(FieldInstance field, boolean serverValue)
 	{
-		categoryName = ConfigManager.formatRegistryName(field.config.getName());
+		categoryName = StringUtils.parseID(field.config.getName());
 		name = field.displayName;
 		registryName = field.registryName;
 		comment = field.comment;

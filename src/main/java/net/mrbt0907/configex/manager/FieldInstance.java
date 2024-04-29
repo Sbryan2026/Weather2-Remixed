@@ -10,6 +10,7 @@ import net.mrbt0907.configex.ConfigModEX;
 import net.mrbt0907.configex.api.ConfigAnnotations.*;
 import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.weather2.util.Maths;
+import net.mrbt0907.weather2.util.StringUtils;
 
 public class FieldInstance
 {
@@ -47,7 +48,7 @@ public class FieldInstance
 		this.config = instance;
 		this.field = field;
 		name = field.getName();
-		registryName = ConfigManager.formatRegistryName(instance.getName() + ":" + name);
+		registryName = StringUtils.parseID(instance.getName() + ":" + name);
 		Name nameAnnotation = field.getAnnotation(Name.class);
 		displayName = nameAnnotation == null || nameAnnotation.value().trim().isEmpty() ? WordUtils.capitalize(name.replace('_', ' ')) : nameAnnotation.value().trim();
 		Comment commentAnnotation = field.getAnnotation(Comment.class);

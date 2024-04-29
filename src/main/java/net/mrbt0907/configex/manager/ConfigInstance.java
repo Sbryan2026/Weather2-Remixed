@@ -13,6 +13,7 @@ import net.mrbt0907.configex.ConfigModEX;
 import net.mrbt0907.configex.api.ConfigAnnotations.Ignore;
 import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.configex.api.IConfigEX.Phase;
+import net.mrbt0907.weather2.util.StringUtils;
 
 public class ConfigInstance
 {
@@ -30,7 +31,7 @@ public class ConfigInstance
 	{
 		this.config = config;
 		name = config.getName();
-		registryName = ConfigManager.formatRegistryName(name);
+		registryName = StringUtils.parseID(name);
 		description = config.getDescription();
 		saveLocation = config.getSaveLocation();
 		fileLocation = new File(ConfigModEX.getGameFolder() + "config/" + saveLocation + ".cfg");

@@ -24,7 +24,7 @@ import net.mrbt0907.weather2.weather.storm.WeatherObject;
 
 @SideOnly(Side.CLIENT)
 
-public abstract class AbstractWeatherRenderer extends AbstractDebugging
+public abstract class AbstractWeatherRenderer
 {
 	protected ParticleBehaviorFog particleBehaviorFog;
 	/**The storm that the renderer is attached to*/

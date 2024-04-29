@@ -2,6 +2,11 @@ package net.mrbt0907.weather2.util;
 
 public class StringUtils
 {
+	public static String parseID(String str)
+	{
+		return str.trim().toLowerCase().replaceAll("[ _\\-]+", "_").replaceAll("[^a-z0-9_:]", "");
+	}
+	
 	public static String toUpperCaseAlt(String str)
 	{
 		char[] newStr = new char[str.length()];

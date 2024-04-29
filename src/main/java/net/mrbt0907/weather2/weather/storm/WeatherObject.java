@@ -6,6 +6,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.mrbt0907.weather2.api.weather.AbstractManagerLogic;
+import net.mrbt0907.weather2.api.weather.AbstractWeatherLogic;
 import net.mrbt0907.weather2.api.weather.IWeatherDetectable;
 import net.mrbt0907.weather2.api.weather.WeatherEnum;
 import net.mrbt0907.weather2.config.ConfigStorm;
@@ -27,6 +29,8 @@ public abstract class WeatherObject implements IWeatherDetectable
 	public boolean isDead = false;
 	public long ticks = 0L;
 	public int size = ConfigStorm.min_storm_size;
+	
+	public AbstractWeatherLogic weatherLogic;
 	
 	protected World world;
 	

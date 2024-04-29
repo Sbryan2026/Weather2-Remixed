@@ -43,6 +43,8 @@ public class WeatherAPI
 	
 	private static Map<ResourceLocation, Class<?>> particleRenderers = new LinkedHashMap<ResourceLocation, Class<?>>();
 	private static ResourceLocation currentParticleRenderer;
+	private static ResourceLocation currentWeatherLogic;
+	private static ResourceLocation currentWeatherManager;
 	
 	/**Gets the weather manager used in the world provided. There is a weather manager for each dimension.*/
 	public static WeatherManager getManager(World world)
@@ -138,6 +140,18 @@ public class WeatherAPI
 	public static float getEFWindSpeed(int stage)
 	{
 		return 65.0F + 27.0F * stage;
+	}
+	
+	/**Gets the current weather logic id. Can return null*/
+	public static ResourceLocation getWeatherLogicId()
+	{
+		return currentWeatherLogic;
+	}
+	
+	/**Gets the current weather manager id. Can return null*/
+	public static ResourceLocation getWeatherManagerId()
+	{
+		return currentWeatherManager;
 	}
 	
 	@SideOnly(Side.CLIENT)

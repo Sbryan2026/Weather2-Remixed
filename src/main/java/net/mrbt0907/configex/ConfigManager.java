@@ -22,6 +22,7 @@ import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.configex.manager.ConfigInstance;
 import net.mrbt0907.configex.manager.FieldInstance;
 import net.mrbt0907.configex.network.NetworkHandler;
+import net.mrbt0907.weather2.util.StringUtils;
 
 public class ConfigManager
 {
@@ -80,8 +81,8 @@ public class ConfigManager
 	
 	public static FieldInstance getFieldInstance(String configName, String fieldName)
 	{
-		configName = formatRegistryName(configName);
-		fieldName = formatRegistryName(fieldName);
+		configName = StringUtils.parseID(configName);
+		fieldName = StringUtils.parseID(fieldName);
 		
 		ConfigInstance instance = configs.get(configName);
 		if (instance == null)
@@ -94,7 +95,7 @@ public class ConfigManager
 	
 	public static List<FieldInstance> getFieldInstances(String configName)
 	{
-		configName = formatRegistryName(configName);
+		configName = StringUtils.parseID(configName);
 		ConfigInstance instance = configs.get(configName);
 		
 		if (instance == null)
@@ -113,7 +114,7 @@ public class ConfigManager
 	
 	public static ConfigInstance getInstance(String configName)
 	{
-		return configs.get(formatRegistryName(configName));
+		return configs.get(StringUtils.parseID(configName));
 	}
 	
 	public static List<ConfigInstance> getInstances()
@@ -136,7 +137,7 @@ public class ConfigManager
 	/**Saves a specific variable in the config to disk*/
 	public static void save(String configID, String variableName)
 	{
-		configID = formatRegistryName(configID);
+		configID = StringUtils.parseID(configID);
 		ConfigModEX.debug("Requested save of configuration " + configID);
 		ConfigInstance instance = configs.get(configID);
 		
@@ -183,7 +184,7 @@ public class ConfigManager
 	/**Erases all config values and reloads config values from disk*/
 	public static void load(String configID)
 	{
-		configID = formatRegistryName(configID);
+		configID = StringUtils.parseID(configID);
 		ConfigModEX.debug("Requested load of configuration " + configID);
 		ConfigInstance instance = configs.get(configID);
 		
@@ -280,7 +281,7 @@ public class ConfigManager
 			ConfigModEX.fatal(new NullPointerException("Config instance has a null name"));
 		else if (config.getSaveLocation() == null)
 			ConfigModEX.fatal(new NullPointerException("Config instance has a null save location"));
-		else if (configs.containsKey(formatRegistryName(config.getName())))
+		else if (configs.containsKey(StringUtils.parseID(config.getName())))
 		{
 			ConfigModEX.error(new IllegalArgumentException("Config instance was already registered. Skipping..."));
 			return null;
@@ -354,11 +355,6 @@ public class ConfigManager
 		output = new String[ids.size()];
 		output = ids.toArray(output);
 		return output;
-	}
-	
-	public static String formatRegistryName(String name)
-	{
-		return name.trim().toLowerCase().replaceAll("[ _\\-]+", "_").replaceAll("[^a-zA-Z0-9_:]", "");
 	}
 	
 	public static String formatComment(String comment)
