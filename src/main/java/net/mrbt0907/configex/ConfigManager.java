@@ -158,7 +158,7 @@ public class ConfigManager
 				return;
 			}
 			
-			instance.updateField(field, true);
+			instance.updateField(field, false);
 		}
 		
 		instance.writeConfigFile(false);
