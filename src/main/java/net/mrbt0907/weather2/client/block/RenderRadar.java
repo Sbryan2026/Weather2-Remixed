@@ -182,7 +182,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 				}
 				
 			}
-			else if (so.type == 0 && ConfigFront.showFrontsOnRadar)
+			else if (so.type == 0 && ConfigFront.ShowFrontsOnRadar)
 			{
 				int type = so.name.toLowerCase().contains("stationary") ? 0 : so.name.toLowerCase().contains("warm") ? 2 : so.name.toLowerCase().contains("cold") ? 1 : 3;
 				renderIconNew(x, y + 1.12F, z, (int)(64 * radar.renderRange), (int)(64 * radar.renderRange), 90.0F, 0.0F, so.angle, radar.renderAlpha, type == 0 ? ParticleRegistry.radarIconStationaryFront : type == 1 ? ParticleRegistry.radarIconColdFront : type == 2 ? ParticleRegistry.radarIconWarmFront : ParticleRegistry.radarIconOccludedFront);
