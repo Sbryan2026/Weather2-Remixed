@@ -26,6 +26,7 @@ import net.mrbt0907.weather2.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2.config.ConfigFront;
 import net.mrbt0907.weather2.config.ConfigSimulation;
 import net.mrbt0907.weather2.config.ConfigStorm;
+import net.mrbt0907.weather2.server.weather.WeatherManagerServer;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.util.WeatherUtil;
@@ -246,7 +247,7 @@ public class FrontObject implements IWeatherDetectable
 			else
 				storm.pos = new Vec3(pos.posX + Maths.random(-size, size), storm.getLayerHeight(), pos.posZ + Maths.random(-size, size));
 			
-			if (layer == 0 && Maths.chance(ConfigStorm.storm_spawn_chance * 0.01D))
+			if (layer == 0 && Maths.chance(WeatherManagerServer.stormChanceToday * 0.01D))
 				storm.initRealStorm();
 			
 			addWeatherObject(storm);
