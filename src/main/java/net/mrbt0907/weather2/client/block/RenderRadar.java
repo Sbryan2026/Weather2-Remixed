@@ -122,7 +122,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 			if (radar.showRating)
 			{
 				FontRenderer font = Minecraft.getMinecraft().getRenderManager().getFontRenderer();
-				renderLivingLabel(so.type == 0 && !ConfigFront.showFrontsOnRadar ? "" : so.typeName, x, y + (so.type == 0 ? 1.54F : 1.5F), z, 1, font.getStringWidth(so.typeName), 5, playerViewY, radar.renderAlpha);
+				renderLivingLabel(so.type == 0 && !ConfigFront.ShowFrontsOnRadar ? "" : so.typeName, x, y + (so.type == 0 ? 1.54F : 1.5F), z, 1, font.getStringWidth(so.typeName), 5, playerViewY, radar.renderAlpha);
 			}
 			
 			if (so.type == 1 || so.type == 2)
