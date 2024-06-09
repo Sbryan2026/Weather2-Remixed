@@ -19,6 +19,7 @@ import net.mrbt0907.weather2.block.TileRadar;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
+import net.mrbt0907.weather2.config.ConfigFront;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.registry.ParticleRegistry;
@@ -121,7 +122,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 			if (radar.showRating)
 			{
 				FontRenderer font = Minecraft.getMinecraft().getRenderManager().getFontRenderer();
-				renderLivingLabel(so.typeName, x, y + (so.type == 0 ? 1.54F : 1.5F), z, 1, font.getStringWidth(so.typeName), 5, playerViewY, radar.renderAlpha);
+				renderLivingLabel(so.type == 0 && !ConfigFront.showFrontsOnRadar ? "" : so.typeName, x, y + (so.type == 0 ? 1.54F : 1.5F), z, 1, font.getStringWidth(so.typeName), 5, playerViewY, radar.renderAlpha);
 			}
 			
 			if (so.type == 1 || so.type == 2)
@@ -181,7 +182,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 				}
 				
 			}
-			else if (so.type == 0)
+			else if (so.type == 0 && ConfigFront.showFrontsOnRadar)
 			{
 				int type = so.name.toLowerCase().contains("stationary") ? 0 : so.name.toLowerCase().contains("warm") ? 2 : so.name.toLowerCase().contains("cold") ? 1 : 3;
 				renderIconNew(x, y + 1.12F, z, (int)(64 * radar.renderRange), (int)(64 * radar.renderRange), 90.0F, 0.0F, so.angle, radar.renderAlpha, type == 0 ? ParticleRegistry.radarIconStationaryFront : type == 1 ? ParticleRegistry.radarIconColdFront : type == 2 ? ParticleRegistry.radarIconWarmFront : ParticleRegistry.radarIconOccludedFront);
@@ -190,7 +191,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 				else
 					renderLivingLabel(TextFormatting.BOLD + "" + TextFormatting.DARK_RED + "|", x, y + 1.22F, z, 1, 5, 5, playerViewY, radar.renderAlpha);
 			}
-			else
+			else if (so.type > 0)
 			{
 				renderIconNew(x, y + 1.4F, z, 16, 16, 0.0F, playerViewY, 0.0F, radar.renderAlpha, ParticleRegistry.radarIconSandstorm);
 				if (!so.isDying)
