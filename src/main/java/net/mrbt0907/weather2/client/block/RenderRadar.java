@@ -77,8 +77,8 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 				renderLivingLabel("\u00A7" + " Server Weather: " + (wm.weatherID == 2 ? "Thunder" : wm.weatherID == 1 ? "Rain" : "Clear"), x, y + 2.1F, z, 1, 10, 10, playerViewY, 1.0F);
 				renderLivingLabel("\u00A7" + " Precipitation Strength: " + Math.round(precipStr * 100.0F) + "%", x, y + 2.2F, z, 1, 10, 10, playerViewY, 1.0F);
 				renderLivingLabel("\u00A7" + " Overcast Strength: " + overcast, x, y + 2.3F, z, 1, 10, 10, playerViewY, 1.0F);
-				renderLivingLabel("\u00A7" + " Today's Storm Probability: " + WeatherManagerServer.stormChanceToday + "%", x, y + 2.4F, z, 1, 10, 10, playerViewY, 1.0F);
-				renderLivingLabel("\u00A7" + " -------------------------", x, y + 2.5F, z, 1, 10, 10, playerViewY, 1.0F);
+				renderLivingLabel("\u00A7" + " Today's Storm Probability: " + WeatherManagerServer.stormChanceToday + "%", x, y+1.7F, z, 1, 10, 10, playerViewY, 1.0F);
+				renderLivingLabel("\u00A7" + " -------------------------", x, y + 2.4F, z, 1, 10, 10, playerViewY, 1.0F);
 				if (radar.system != null && radar.system instanceof StormObject)
 				{
 					StormObject system = (StormObject) radar.system;
