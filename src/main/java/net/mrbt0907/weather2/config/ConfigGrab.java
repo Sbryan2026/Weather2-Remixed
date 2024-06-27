@@ -88,7 +88,7 @@ public class ConfigGrab implements IConfigEX
 	@Comment("Experimental idea, places the WIP repairing block where a tornado\ndoes damage instead of removing the block, causes tornado damage to self repair, recommend setting Storm_Tornado_rarityOfBreakOnFall to 0 to avoid duplicated blocks")
 	public static boolean enable_repair_block_mode = false;
 	@Enforce
-	@IntegerRange(min=-1)
+	@IntegerRange(min=0)
 	@Comment("How many flying blocks can all tornados have at a time?")
 	public static int max_flying_blocks = 120;
 	@Enforce
