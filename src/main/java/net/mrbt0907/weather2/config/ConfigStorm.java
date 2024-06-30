@@ -104,7 +104,7 @@ public class ConfigStorm implements IConfigEX
 	public static int lightning_bolt_sets_fire_10_in_x = 20;
 	@Hidden
 	@Enforce
-	@IntegerRange(min=0)
+	@IntegerRange(min=0, max=15)
 	@Comment("How long in seconds fire can last")
 	public static int lightning_bolt_fire_lifetime = 3;
 	@Hidden
