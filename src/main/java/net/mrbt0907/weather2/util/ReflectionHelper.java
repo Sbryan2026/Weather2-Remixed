@@ -1,12 +1,16 @@
 package net.mrbt0907.weather2.util;
+
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.mrbt0907.weather2.Weather2;
+import com.google.common.base.MoreObjects;
+
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
 public class ReflectionHelper
 {
@@ -14,15 +18,34 @@ public class ReflectionHelper
 	private static Field modifiers = null;
 	private static boolean enabled = false;
 	
-	@SuppressWarnings("deprecation")
-	private static Field getField(Class <?> clazz, String fieldName, String fieldObfName)
+	public static Field getField(Class <?> clazz, String fieldName, String fieldObfName)
 	{
 		Field field = FIELDS.get(fieldObfName);
-		
 		if (field == null)
 		{
-			field = net.minecraftforge.fml.relauncher.ReflectionHelper.findField(clazz, fieldName, fieldObfName);
+			String name = FMLLaunchHandler.isDeobfuscatedEnvironment() ? fieldName : MoreObjects.firstNonNull(fieldObfName, fieldName);
+			try
+			{
+				field = clazz.getDeclaredField(name);
+				field.setAccessible(true);
+			}
+			catch (Exception e) {};
 			
+			if (field == null)
+			{
+				Class <?> superClass = clazz.getSuperclass();
+				while (superClass != null)
+				{
+					try
+					{
+						field = superClass.getDeclaredField(name);
+						field.setAccessible(true);
+						break;
+					}
+					catch (Exception e) {};
+					superClass = superClass.getSuperclass();
+				}
+			}
 			if (field != null)
 				FIELDS.put(fieldObfName, field);
 		}
@@ -76,7 +99,18 @@ public class ReflectionHelper
 		return null;
 	}
 
-	public static List<String> view(String... classes)
+	public static Class<?> getClass(String clazzName)
+	{
+		Class<?> clazz = null;
+		try
+		{
+			clazz = Class.forName(clazzName);
+		}
+		catch (Exception e) {}
+		return clazz;
+	}
+	
+	public static List<String> viewFields(String... classes)
 	{
 		List<String> found = new ArrayList<String>();
 		for (int i = 0; i < classes.length; i++)
@@ -88,7 +122,6 @@ public class ReflectionHelper
 				for (int ii = 0; ii < fields.length; ii++)	
 				try
 				{
-					Weather2.debug("Found variable:  " + Modifier.toString(fields[ii].getModifiers()) + " " + fields[ii].getType().getSimpleName() + " " + fields[ii].getName() + ";");
 					found.add("Found variable:  " + Modifier.toString(fields[ii].getModifiers()) + " " + fields[ii].getType().getSimpleName() + " " + fields[ii].getName() + ";");
 				}
 				catch (Exception e) {}
@@ -96,4 +129,25 @@ public class ReflectionHelper
 			catch (Exception e) {}
 		return found;
 	}
+	public static List<String> viewMethods(String... classes)
+	{
+		List<String> found = new ArrayList<String>();
+		for (int i = 0; i < classes.length; i++)
+			try
+			{
+				Class <?> clazz = (Class<?>) Class.forName(classes[i]);
+				Method[] fields = clazz.getDeclaredMethods();
+				
+				for (int ii = 0; ii < fields.length; ii++)	
+				try
+				{
+					found.add("Found method:  " + Modifier.toString(fields[ii].getModifiers()) + " " + fields[ii].getReturnType().getSimpleName() + " " + fields[ii].getName() + ";");
+				}
+				catch (Exception e) {}
+			}
+			catch (Exception e) {}
+		return found;
+	}
 }
+
+

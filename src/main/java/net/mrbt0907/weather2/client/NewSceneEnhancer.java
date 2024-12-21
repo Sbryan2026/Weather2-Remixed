@@ -37,7 +37,6 @@ import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WindReader;
 import net.mrbt0907.weather2.api.weather.IWeatherRain;
 import net.mrbt0907.weather2.api.weather.WeatherEnum;
-import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2.client.entity.particle.EntityWaterfallFX;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;

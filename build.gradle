@@ -1,110 +1,122 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net/' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.73'
-    }
+buildscript
+{
+	repositories
+	{
+		mavenCentral()
+		maven {url = 'https://maven.minecraftforge.net/'}
+		maven
+		{
+			name = 'sponge'
+			url = 'https://repo.spongepowered.org/repository/maven-public'
+		}
+	}
+	dependencies
+	{
+		classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.73'
+		classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+	}
 }
-        
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+		
 apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 
-version = '2.9.0'
-group = 'net.mrbt0907.weather2' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'Weather2Remastered-1.12.2'
+project.mkdir "libs"
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+version = mod_version
+group = mod_group
+archivesBaseName = mod_name
 
-minecraft {
-    // The mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   Snapshot are built nightly.
-    // stable_#            Stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // Simply re-run your setup task after changing the mappings to update your workspace.
-    //mappings channel: 'snapshot', version: '20171003-1.12'
-    mappings channel: 'stable', version: '39-1.12'
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    
-    accessTransformer = file('src/main/resources/META-INF/weather2_at.cfg')
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
-    runs {
-        client {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-        }
-
-        server {
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-        }
-    }
+repositories
+{
+	maven
+	{
+		name = "Blame jared for this one"
+		url = "https://maven.blamejared.com/"
+	}
+	maven
+	{
+		name = "ModMaven"
+		url = "https://modmaven.dev"
+	}
+	maven
+	{
+		name = 'SpongePowered'
+		url = 'https://repo.spongepowered.org/repository/maven-public/'
+   	}
 }
 
-repositories {
-	maven {
-    	name = "Blame jared for this one"
-    	url = "https://maven.blamejared.com/"
-  }
-  maven {
-    // location of a maven mirror for JEI files, as a fallback
-    name = "ModMaven"
-    url = "https://modmaven.dev"
-  }
+dependencies
+{
+	minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+ 	runtimeOnly fg.deobf("mezz.jei:jei_${minecraft_version}:${jei_version}")
+ 	implementation files("libs/${coroutil_jar}")
+	implementation "org.spongepowered:mixin:0.8.5"
+	annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+	testAnnotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 }
 
-dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
-	compileOnly fg.deobf("mezz.jei:jei_1.12.2:4.16.1.302:api")
- 	runtimeOnly fg.deobf("mezz.jei:jei_1.12.2:4.16.1.302")
- 	implementation files('libs/coroutil-1.12.1-1.2.37.jar')
- 	implementation ("net.minecraftforge:mergetool:0.2.3.3") { force = true }
+minecraft
+{
+	mappings channel: minecraft_mappings_channel, version: minecraft_mappings_version
+	accessTransformer = file("src/main/resources/META-INF/weather2_at.cfg")
+	
+	runs
+	{
+		client
+		{
+			workingDirectory project.file(client_directory)
+			property 'forge.logging.markers', 'REGISTRIES'
+			property 'forge.logging.console.level', 'debug'
+		}
+
+		server
+		{
+			workingDirectory project.file(server_directory)
+			property 'forge.logging.markers', 'REGISTRIES'
+			property 'forge.logging.console.level', 'debug'
+		}
+	}
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
-jar {
-    manifest {
-        attributes([
-            "Specification-Title": "Weather 2 - Remastered",
-            "Specification-Vendor": "Mrbt0907",
-            "Specification-Version": "2.8.15", // We are version 1 of ourselves
-
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"Mrbt0907",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
+jar
+{
+	from {configurations.compileClasspath.filter {"mixin-0.8.5.jar" == it.name}.collect{it.isDirectory() ? it : zipTree(it)}}
+	{
+		exclude 'LICENSE.txt', 'module-info.class', 'META-INF/MANIFSET.MF', 'META-INF/maven/**', 'META-INF/*.RSA', 'META-INF/*.SF'
+	}
+	manifest
+	{
+		attributes (
+			'FMLAT': 'META-INF/weather2_at.cfg',
+			'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+			'MixinConfigs': 'META-INF/weather2_mixin.json',
+			'FMLCorePluginContainsFMLMod': 'true',
+            "ForceLoadAsMod": 'true'
+		)
+	}
+	
+	finalizedBy 'reobfJar'
 }
 
-// Example configuration to allow publishing using the maven-publish task
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar') 
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-//publish.dependsOn('reobfJar')
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
+processResources
+{
+	duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+	
+	inputs.property 'version', mod_version
+	inputs.property 'mcversion', minecraft_version
+	from(sourceSets.main.resources.srcDirs)
+	{
+		include 'mcmod.info'
+		expand 'version':mod_version, 'mcversion':minecraft_version
+	}
+	from(sourceSets.main.resources.srcDirs)
+	{
+		exclude 'mcmod.info'
+	}
 }
+
+//When Forge 1.12 loads mods from a directory that's been put on the classpath, it expects to find resources in the same directory.
+//Default Gradle behavior puts resources in ./build/resources/main instead of ./build/classes/main/java. Let's change that.
+sourceSets.all {it.output.resourcesDir = it.output.classesDirs.getFiles().iterator().next()}

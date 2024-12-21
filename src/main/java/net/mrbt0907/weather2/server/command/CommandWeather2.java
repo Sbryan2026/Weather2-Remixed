@@ -10,7 +10,6 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.NumberInvalidException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
@@ -646,7 +645,7 @@ public class CommandWeather2 extends CommandBase
 							{
 								if (size > 2)
 								{
-									List<String> found = ReflectionHelper.view(args[2]);
+									List<String> found = ReflectionHelper.viewFields(args[2]);
 									for (String line : found)
 										say(sender, "test.class.success", line);
 								}
