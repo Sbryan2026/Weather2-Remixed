@@ -17,7 +17,7 @@ Head to the releases tab on the right and grab the version of the mod you want. 
 - Requires coroutil-1.12.1-1.2.37 in libs folder (Create the folder in your project folder if it doesn't exist)
 - run "gradlew eclipse genEclipseRuns"
 
-*If you get an error when running the project like "Launch configuration runClient references non-existing project", right click on the run.launch file -> Run As -> Run Configurations -> Environment -> and change "MC_VERSION" to 1.12.2.*
+*If you get an error when running the project like "Reference to undefined variable MC_VERSION", right click on the run.launch file -> Run As -> Run Configurations -> Environment -> and change "MC_VERSION" to 1.12.2.*
 
 *If you encounter any other issues with the project, try reading https://github.com/quat1024/modern-forge-1.12-template?tab=readme-ov-file#common-problems*
 
