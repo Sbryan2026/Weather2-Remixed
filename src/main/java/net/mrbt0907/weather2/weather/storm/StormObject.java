@@ -1236,25 +1236,25 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 	@Override
 	public float getDownfall(Vec3 pos)
 	{
-		return rain;
+		return getDownfall();
 	}
 
 	@Override
 	public float getDownfall(BlockPos pos)
 	{
-		return rain;
+		return getDownfall();
 	}
 
 	@Override
 	public boolean hasDownfall(Vec3 pos)
 	{
-		return hasDownfall();
+		return hasDownfall() && this.pos.distanceSq(pos.posX, this.pos.posY, pos.posZ) <= size;
 	}
 
 	@Override
 	public boolean hasDownfall(BlockPos pos)
 	{
-		return hasDownfall();
+		return hasDownfall() && this.pos.distanceSq((double) pos.getX(), this.pos.posY, (double) pos.getZ()) <= size;
 	}
 
 	@Override

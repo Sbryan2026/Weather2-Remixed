@@ -28,8 +28,6 @@ import net.mrbt0907.weather2.network.packets.PacketData;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.util.WeatherUtilSound;
-import net.mrbt0907.weather2.weather.EntityRendererEX;
-
 import org.lwjgl.input.Mouse;
 
 public class ClientTickHandler
@@ -95,25 +93,6 @@ public class ClientTickHandler
 		
         Minecraft mc = FMLClientHandler.instance().getClient();
         World world = mc.world;
-        if (ConfigMisc.proxy_render_override)
-        {
-        	if (!(mc.entityRenderer instanceof EntityRendererEX))
-        	{
-				oldRenderer = mc.entityRenderer;
-        		EntityRendererEX temp = new EntityRendererEX(mc, mc.getResourceManager());
-		        mc.entityRenderer = temp;
-        	}
-    	}
-        else
-        {
-    		if ((mc.entityRenderer instanceof EntityRendererEX))
-    		{
-    			if (oldRenderer != null)
-    				mc.entityRenderer = oldRenderer;
-    			else
-					mc.entityRenderer = new EntityRenderer(mc, mc.getResourceManager());
-    		}
-    	}
 
 		if (world != null)
 		{

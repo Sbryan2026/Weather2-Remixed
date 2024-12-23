@@ -28,6 +28,11 @@ version = mod_version
 group = mod_group
 archivesBaseName = mod_name
 
+mixin {
+    add sourceSets.main, 'META-INF/weather2_mixin.refmap.json'
+    config 'META-INF/weather2_mixin.json'
+}
+
 repositories
 {
 	maven
