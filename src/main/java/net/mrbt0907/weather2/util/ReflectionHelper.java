@@ -7,13 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.google.common.base.MoreObjects;
-
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
 public class ReflectionHelper
 {
+	private static final List<String> LOADED = new ArrayList<String>();
 	private static final Map<String, Field> FIELDS = new HashMap<String, Field>();
 	private static Field modifiers = null;
 	private static boolean enabled = false;
@@ -147,6 +146,22 @@ public class ReflectionHelper
 			}
 			catch (Exception e) {}
 		return found;
+	}
+	
+	public static boolean isClassLoaded(String clazz)
+	{
+		try
+		{
+			if (LOADED.contains(clazz)) return true;
+			Class<?> cls = Class.forName(clazz, false, null);
+			if (cls == null) return false;
+			LOADED.add(clazz);
+			return true;
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
 	}
 }
 

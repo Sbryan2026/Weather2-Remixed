@@ -23,14 +23,16 @@ apply plugin: 'org.spongepowered.mixin'
 
 project.mkdir "libs"
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 version = mod_version
 group = mod_group
 archivesBaseName = mod_name
 
 mixin {
-    add sourceSets.main, 'META-INF/weather2_mixin.refmap.json'
+    add sourceSets.main, 'META-INF/weather2_mixin_refmap.json'
     config 'META-INF/weather2_mixin.json'
+    debug.strict.targets = false
 }
 
 repositories
@@ -60,6 +62,7 @@ dependencies
 	implementation "org.spongepowered:mixin:0.8.5"
 	annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 	testAnnotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+	compileOnly files("libs/OptiFine_1.12.2_HD_U_G5.jar")
 }
 
 minecraft
@@ -74,6 +77,7 @@ minecraft
 			workingDirectory project.file(client_directory)
 			property 'forge.logging.markers', 'REGISTRIES'
 			property 'forge.logging.console.level', 'debug'
+            arg '-torg.spongepowered.asm.launch.MixinTweaker'
 		}
 
 		server
@@ -81,6 +85,7 @@ minecraft
 			workingDirectory project.file(server_directory)
 			property 'forge.logging.markers', 'REGISTRIES'
 			property 'forge.logging.console.level', 'debug'
+            arg '-torg.spongepowered.asm.launch.MixinTweaker'
 		}
 	}
 }
@@ -97,6 +102,7 @@ jar
 			'FMLAT': 'META-INF/weather2_at.cfg',
 			'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
 			'MixinConfigs': 'META-INF/weather2_mixin.json',
+            'FMLCorePlugin': 'net.mrbt0907.weather2.Weather2MixinThing',
 			'FMLCorePluginContainsFMLMod': 'true',
             "ForceLoadAsMod": 'true'
 		)

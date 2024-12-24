@@ -4,9 +4,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import CoroUtil.config.ConfigCoroUtil;
-import extendedrenderer.EventHandler;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.mrbt0907.weather2.config.ConfigParticle;
@@ -24,19 +21,21 @@ public class MixinEntityRenderer
 		 * --- water
 		 * --- stained glass, etc
 		 */
-		if (ConfigCoroUtil.useEntityRenderHookForShaders)
-		{
-			GlStateManager.pushMatrix();
-            GlStateManager.disableCull();
-            GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.alphaFunc(516, 0.1F);
-			EventHandler.hookRenderShaders(partialTicks);
-			GlStateManager.popMatrix();
-		}
+			if (CoroUtil.config.ConfigCoroUtil.useEntityRenderHookForShaders)
+			{
+				GlStateManager.pushMatrix();
+	            GlStateManager.disableCull();
+	            GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
+	            GlStateManager.enableBlend();
+	            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+	            GlStateManager.alphaFunc(516, 0.1F);
+	            extendedrenderer.EventHandler.hookRenderShaders(partialTicks);
+				GlStateManager.popMatrix();
+			}
 		if (!ConfigParticle.enable_vanilla_rain)
 			callback.cancel(); //note, the overcast effect change will effect vanilla non particle rain distance too, particle rain for life!
+	
+		//TEst.renderRainModified(partialTicks, callback);
 	}
 	
 	@Inject(method = "addRainParticles()V", at = @At("HEAD"), cancellable=true)
@@ -45,4 +44,6 @@ public class MixinEntityRenderer
 		if (!ConfigParticle.enable_vanilla_rain)
 			callback.cancel();
 	}
+	
+	
 }

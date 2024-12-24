@@ -13,6 +13,7 @@ import net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.world.WorldEvent.Save;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -367,15 +368,15 @@ public class EventHandlerForge
 		
 		NewSceneEnhancer scene = NewSceneEnhancer.instance();
 		float farplane = ConfigParticle.enable_extended_render_distance ? (float) ConfigParticle.extended_render_distance : event.getFarPlaneDistance();
-		
+		EntityRenderer renderer = event.getRenderer();
 		try
 		{
-			event.getRenderer().farPlaneDistance = farplane;
+			renderer.farPlaneDistance = farplane;
 		}
 		catch (Exception e)
 		{
 			if (event.getFarPlaneDistance() != farplane)
-				ReflectionHelper.set(EntityRenderer.class, event.getRenderer(), "farPlaneDistance", "field_78530_s", farplane);
+				ReflectionHelper.set(renderer.getClass(), renderer, "farPlaneDistance", "field_78530_s", farplane);
 		}
 		
 		scene.renderDistance = farplane;

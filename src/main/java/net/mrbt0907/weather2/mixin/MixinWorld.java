@@ -14,7 +14,7 @@ import net.mrbt0907.weather2.weather.WeatherManager;
 @Mixin(World.class)
 public class MixinWorld
 {
-	@Inject(method = "isRainingAt(Lnet/minecraft/util/math/BlockPos;)V", at = @At("RETURN"), cancellable=true)
+	@Inject(method = "isRainingAt(Lnet/minecraft/util/math/BlockPos;)Z", at = @At("RETURN"), cancellable=true)
 	private void isRainingAt2(BlockPos position, CallbackInfoReturnable<Boolean> callback)
 	{
 		World world = (World)(Object) this;
