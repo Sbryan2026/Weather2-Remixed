@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -27,14 +26,17 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.config.ConfigGrab;
+import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 
 public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnData
 {	
+	private static final IBlockState AIR = Blocks.AIR.getDefaultState();
 	public Block block;
 	public IBlockState state;
-	public TileEntity tileentity;
+	public Class<? extends TileEntity> tileClass;
+	public NBTTagCompound tileEntityNBT;
 	public Material material;
 	public int metadata;
 	//mode 0 = use gravity
@@ -47,20 +49,34 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 	public double vecZ;
 	public int gravityDelay;
 	
-	public EntityMovingBlock(World var1)
+	public EntityMovingBlock(World world)
 	{
-		super(var1);
-		mode = 1;
-		age = 0;
-		state = Blocks.STONE.getDefaultState();
-		block = state.getBlock();
+		this(world, 0, 0, 0, AIR, null);
 		noCollision = true;
-		gravityDelay = 60;
 	}
 
 	public EntityMovingBlock(World world, int x, int y, int z, IBlockState state, StormObject storm)
 	{
+		
 		super(world);
+		this.state = state;
+		block = state.getBlock();
+		metadata = state.getBlock().getMetaFromState(state);
+		material = state.getMaterial();
+		if (block.hasTileEntity(state))
+		{
+			TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
+			if (tile != null)
+			{
+				tileClass = tile.getClass();
+				tileEntityNBT = tile.writeToNBT(new NBTTagCompound());
+			}
+			else
+			{
+				tileClass = null;
+				tileEntityNBT = null;
+			}
+		}
 		mode = 1;
 		age = 0;
 		noCollision = false;
@@ -73,10 +89,6 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 		prevPosX = (x + 0.5F);
 		prevPosY = (y + 0.5F);
 		prevPosZ = (double)(z + 0.5F);
-		metadata = state.getBlock().getMetaFromState(state);
-		material = state.getMaterial();
-		this.state = state;
-		block = state.getBlock();
 	}
 
 	@Override
@@ -104,10 +116,6 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 	public void onUpdate()
 	{
 		super.onUpdate();
-		//new kill off when distant method
-		if (!world.isRemote)
-			if (world.getClosestPlayer(this.posX, 50, this.posZ, 512, false) == null)
-				setDead();
 		
 		if (block.equals(Blocks.AIR))
 			setDead();
@@ -119,7 +127,7 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 			{
 				mode = 0;
 
-				if (tileentity == null && ConfigGrab.Storm_Tornado_rarityOfDisintegrate != -1 && rand.nextInt((ConfigGrab.Storm_Tornado_rarityOfDisintegrate + 1) * 20) == 0)
+				if (tileEntityNBT == null && ConfigGrab.Storm_Tornado_rarityOfDisintegrate != -1 && rand.nextInt((ConfigGrab.Storm_Tornado_rarityOfDisintegrate + 1) * 20) == 0)
 					setDead();
 			}
 
@@ -304,7 +312,7 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 					}
 					else
 					{
-						this.blockify(var8, var17, var9, var3.sideHit);
+						this.blockify(var8, var17, var9);
 					}
 
 
@@ -341,24 +349,35 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 		return this.world.rayTraceBlocks(new Vec3d(this.posX, this.posY + (double)this.getEyeHeight(), this.posZ), new Vec3d(par1Entity.posX, par1Entity.posY + (double)par1Entity.getEyeHeight(), par1Entity.posZ)) == null;
 	}
 
-	private void blockify(int x, int y, int z, EnumFacing var4)
+	private void blockify(int x, int y, int z)
 	{
 		//TODO: this was the only thing killing off moving blocks on client side, syncing is broken server to client?
 		if (world.isRemote) return;
 			setDead();
-
 		try
-		{		
-			BlockPos pos = new BlockPos(x, y, z);
-			IBlockState state = Weather2.getChunkUtil(world).getBlockState(world, pos);
-	
-			if (tileentity != null || ConfigGrab.Storm_Tornado_rarityOfBreakOnFall > 0 && rand.nextInt(ConfigGrab.Storm_Tornado_rarityOfBreakOnFall + 1) != 0)
-				if (!state.getMaterial().isLiquid() && Weather2.getChunkUtil(world).isValidPos(world, y))
-					Weather2.getChunkUtil(world).setBlockState(world, x, y, z, this.state);
+		{
+			if (ConfigGrab.Storm_Tornado_rarityOfBreakOnFall > 0 && rand.nextInt(ConfigGrab.Storm_Tornado_rarityOfBreakOnFall + 1) != 0)
+			{
+				if (ChunkUtils.isValidPos(world, y))
+				{
+					BlockPos pos = new BlockPos(x, y, z);
+					ChunkUtils.setBlockState(world, pos, this.state);
+					
+					if (tileEntityNBT != null)
+					{
+						TileEntity tile = block.createTileEntity(world, state);
+						if (tile != null)
+						{
+							tile.readFromNBT(tileEntityNBT);
+							world.setTileEntity(pos, tile);
+						}
+					}
+				}
+			}
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			Weather2.error(e);
 		}
 	}
 
@@ -373,57 +392,65 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 	{
 		nbt.setString("Tile", Block.REGISTRY.getNameForObject(block).toString());
 		nbt.setByte("Metadata", (byte)metadata);
-		NBTTagCompound var2 = new NBTTagCompound();
-
-		if (tileentity != null)
-			tileentity.writeToNBT(var2);
-
-		nbt.setTag("TileEntity", var2);
+		
+		if (tileClass != null)
+			nbt.setString("TileClass", tileClass.getName());
+		if (tileEntityNBT != null)
+			nbt.setTag("TileEntity", tileEntityNBT);
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbt)
 	{
-		block = (Block)Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("Tile")));
+		block = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("Tile")));
 		metadata = nbt.getByte("Metadata") & 15;
 		state = block.getStateFromMeta(metadata);
-		tileentity = null;
-
-		if (block instanceof BlockContainer)
-		{
-			tileentity = ((BlockContainer)this.block).createNewTileEntity(world, metadata);
-			NBTTagCompound var2 = nbt.getCompoundTag("TileEntity");
-			tileentity.readFromNBT(var2);
-		}
+		material = state.getMaterial();
+		
+		if (nbt.hasKey("TileClass"))
+			try {tileClass = (Class<? extends TileEntity>) Class.forName(nbt.getString("TileClass"));}
+			catch (Exception e) {tileClass = null;}
+		else
+			tileClass = null;
+		
+		if (nbt.hasKey("TileEntity"))
+			tileEntityNBT = nbt.getCompoundTag("TileEntity");
+		else
+			tileEntityNBT = null;
 	}
 
 	@Override
 	public void writeSpawnData(ByteBuf data)
 	{
-		String str = "blank";
-		if (block != null && Block.REGISTRY.getNameForObject(block) != null)
-			str = Block.REGISTRY.getNameForObject(block).toString();
-		ByteBufUtils.writeUTF8String(data, str);
+		ResourceLocation id = block != null ? Block.REGISTRY.getNameForObject(block) : null;
+		String thing = tileClass == null ? "" : tileClass.getName();
+		ByteBufUtils.writeUTF8String(data, id == null ? "" : id.toString());
+		ByteBufUtils.writeUTF8String(data, thing);
 		data.writeInt(metadata);
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Override
 	public void readSpawnData(ByteBuf data)
 	{
 		String str = ByteBufUtils.readUTF8String(data);
-		if (!str.equals("blank"))
+		String tileClass = ByteBufUtils.readUTF8String(data);
+		if (!str.equals(""))
 		{
 			block = Block.REGISTRY.getObject(new ResourceLocation(str));
 			metadata = data.readInt();
 		}
 		else
 		{
-			block = Blocks.STONE;
+			block = AIR.getBlock();
 			metadata = 0;
 		}
-
+		
+		if (!tileClass.equals(""))
+			try {this.tileClass = (Class<? extends TileEntity>) Class.forName(tileClass);}
+			catch (Exception e) {this.tileClass = null;}
+		
 		state = block.getStateFromMeta(metadata);
 		material = state.getMaterial();
 	}

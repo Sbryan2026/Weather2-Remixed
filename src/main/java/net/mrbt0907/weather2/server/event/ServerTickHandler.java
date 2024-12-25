@@ -40,12 +40,8 @@ public class ServerTickHandler
 		
 		//regularly save data
 		if (world != null)
-		{
 			if (world.getTotalWorldTime() % ConfigMisc.auto_save_interval == 0)
 				Weather2.writeOutData(false);
-			
-			Weather2.serverChunkUtil.tick();
-		}
 		
 		World worlds[] = DimensionManager.getWorlds();
 		World dim;

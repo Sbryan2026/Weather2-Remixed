@@ -10,8 +10,12 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -27,19 +31,18 @@ import net.mrbt0907.weather2.entity.EntityMovingBlock;
 public class RenderFlyingBlock extends Render<Entity>
 {
 	Block renderBlock;
+	TileEntity tile;
 	
     public RenderFlyingBlock(RenderManager manager, Block parBlock)
     {
     	super(manager);
     	renderBlock = parBlock;
+    	tile = null;
     }
     
     @Override
-
-	/**
-	 * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-	 */
-	protected ResourceLocation getEntityTexture(Entity entity) {
+	protected ResourceLocation getEntityTexture(Entity entity)
+    {
 		return TextureMap.LOCATION_BLOCKS_TEXTURE;
 	}
 
@@ -49,75 +52,84 @@ public class RenderFlyingBlock extends Render<Entity>
 		IBlockState state = null;
 
 		if (entity instanceof EntityMovingBlock)
-		{
-				state = ((EntityMovingBlock) entity).state;
-		}
-		else
-		{
-			if (renderBlock != null)
-				state = renderBlock.getDefaultState();
-		}
+			state = ((EntityMovingBlock) entity).state;
+		else if (renderBlock != null)
+			state = renderBlock.getDefaultState();
+		
+		if (state == null) return;
+		
+		EnumBlockRenderType renderType = state.getRenderType();
+		World world = entity.world;
+		int age = entity.ticksExisted * 5;
 
-		try {
-			if (state != null)
+		if (renderType == EnumBlockRenderType.MODEL)
+		{
+			this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			GlStateManager.pushMatrix();
+			GlStateManager.disableLighting();
+			Tessellator tessellator = Tessellator.getInstance();
+			BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+			if (this.renderOutlines)
 			{
-				IBlockState iblockstate = state;
+				GlStateManager.enableColorMaterial();
+				GlStateManager.enableOutlineMode(this.getTeamColor(entity));
+			}
 
-				int age = entity.ticksExisted * 5;
+			bufferbuilder.begin(7, DefaultVertexFormats.BLOCK);
+			BlockPos blockpos = new BlockPos(entity.posX, entity.getEntityBoundingBox().maxY, entity.posZ);
+				
+			GlStateManager.translate((float)(x), (float)(y), (float)(z));
+			bufferbuilder.setTranslation((double)((float)(-blockpos.getX()) - 0.5F), (double)(-blockpos.getY()), (double)((float)(-blockpos.getZ()) - 0.5F));
+			GlStateManager.rotate((float)(age * 0.1F * 180.0D / 12.566370964050293D - 0.0D), 1.0F, 0.0F, 0.0F);
+			GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 1.0F, 0.0F);
+			GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 0.0F, 1.0F);
+			//GlStateManager.scale(entity.width, entity.width, entity.width);
+			
+			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+			blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(state), state, blockpos, bufferbuilder, false, MathHelper.getPositionRandom(entity.getPosition()));
+			bufferbuilder.setTranslation(0.0D, 0.0D, 0.0D);
+			tessellator.draw();
 
-				if (iblockstate.getRenderType() == EnumBlockRenderType.MODEL)
+			if (this.renderOutlines)
+			{
+				GlStateManager.disableOutlineMode();
+				GlStateManager.disableColorMaterial();
+			}
+
+			GlStateManager.enableLighting();
+			GlStateManager.popMatrix();
+			super.doRender(entity, x, y, z, entityYaw, partialTicks);
+		}
+		else if (renderType == EnumBlockRenderType.ENTITYBLOCK_ANIMATED)
+		{
+			if (entity instanceof EntityMovingBlock)
+			{
+				EntityMovingBlock movingBlock = (EntityMovingBlock) entity;
+
+				if (movingBlock.tileClass != null)
 				{
-					World world = entity.world;
-
-					if (iblockstate != world.getBlockState(new BlockPos(entity)) && iblockstate.getRenderType() != EnumBlockRenderType.INVISIBLE)
-					{
-						this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-						GlStateManager.pushMatrix();
-						GlStateManager.disableLighting();
-						Tessellator tessellator = Tessellator.getInstance();
-						BufferBuilder bufferbuilder = tessellator.getBuffer();
-
-						if (this.renderOutlines)
+					if (tile == null)
+						tile = state.getBlock().createTileEntity(world, state);
+					
+					if (tile != null)
+						try
 						{
-							GlStateManager.enableColorMaterial();
-							GlStateManager.enableOutlineMode(this.getTeamColor(entity));
+							GlStateManager.pushMatrix();
+							if (this.renderOutlines)
+							{
+								GlStateManager.enableColorMaterial();
+								GlStateManager.enableOutlineMode(this.getTeamColor(entity));
+							}
+							TileEntityRendererDispatcher.instance.render(tile, x, y, z, partialTicks);
+							
+							GlStateManager.popMatrix();
 						}
-
-						bufferbuilder.begin(7, DefaultVertexFormats.BLOCK);
-						BlockPos blockpos = new BlockPos(entity.posX, entity.getEntityBoundingBox().maxY, entity.posZ);
-						//GlStateManager.translate((float)(x - (double)blockpos.getX() - 0.5D), (float)(y - (double)blockpos.getY()), (float)(z - (double)blockpos.getZ() - 0.5D));
-						GlStateManager.translate((float)(x), (float)(y), (float)(z));
-						bufferbuilder.setTranslation((double)((float)(-blockpos.getX()) - 0.5F), (double)(-blockpos.getY()), (double)((float)(-blockpos.getZ()) - 0.5F));
-						GlStateManager.rotate((float)(age * 0.1F * 180.0D / 12.566370964050293D - 0.0D), 1.0F, 0.0F, 0.0F);
-						GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 1.0F, 0.0F);
-						GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 0.0F, 1.0F);
-						if (entity instanceof EntityIceBall) {
-							float iceScale = entity.width;
-							GlStateManager.scale(iceScale, iceScale, iceScale);
-						}
-						BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-						blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(iblockstate), iblockstate, blockpos, bufferbuilder, false, MathHelper.getPositionRandom(entity.getPosition()));
-						bufferbuilder.setTranslation(0.0D, 0.0D, 0.0D);
-						tessellator.draw();
-
-						if (this.renderOutlines)
-						{
-							GlStateManager.disableOutlineMode();
-							GlStateManager.disableColorMaterial();
-						}
-
-						GlStateManager.enableLighting();
-						GlStateManager.popMatrix();
-						super.doRender(entity, x, y, z, entityYaw, partialTicks);
-					}
+						catch (Exception e)
+						{e.printStackTrace();}
 				}
 			}
+			super.doRender(entity, x, y, z, entityYaw, partialTicks);
 		}
-		catch (Exception ex)
-		{
-			Weather2.error(ex);
-		}
-
-
     }
 }

@@ -1,6 +1,5 @@
 package net.mrbt0907.weather2.weather.storm;
 
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 import CoroUtil.util.ChunkCoordinatesBlock;
@@ -18,7 +17,6 @@ import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
@@ -409,23 +407,6 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 				}
 			}
 		}
-		
-		trackAndExtinguishEntities();
-	}
-
-	public void trackAndExtinguishEntities()
-	{
-		if (ConfigStorm.storm_rain_extinguish_delay <= 0) return;
-
-		if (isRaining() && manager.getWorld().getTotalWorldTime() % ConfigStorm.storm_rain_extinguish_delay == 0)
-		{
-			BlockPos posBP = new BlockPos(posGround.posX, posGround.posY, posGround.posZ);
-			List<EntityLivingBase> listEnts = manager.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(posBP).grow(size));
-
-			for (EntityLivingBase ent : listEnts)
-				if (ent.world.canBlockSeeSky(ent.getPosition()))
-					ent.extinguish();
-		}
 	}
 	
 	public void tickSnowFall()
@@ -568,7 +549,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		{
 			if (par2 >= 0 && par2 < 256 && world.getLightFor(EnumSkyBlock.BLOCK, pos) < 10)
 			{
-				IBlockState iblockstate1 = Weather2.getChunkUtil(world).getBlockState(world, pos);
+				IBlockState iblockstate1 = ChunkUtils.getBlockState(world, pos);
 				if ((iblockstate1.getBlock().isAir(iblockstate1, world, pos) || iblockstate1.getBlock() == Blocks.SNOW_LAYER) && Blocks.SNOW_LAYER.canPlaceBlockAt(world, pos))
 					return true;
 			}

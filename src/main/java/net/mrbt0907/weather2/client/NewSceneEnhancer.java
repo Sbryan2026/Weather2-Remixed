@@ -49,6 +49,7 @@ import net.mrbt0907.weather2.config.ConfigVolume;
 import net.mrbt0907.weather2.config.EZConfigParser;
 import net.mrbt0907.weather2.registry.SoundRegistry;
 import net.mrbt0907.weather2.util.BlockSESnapshot;
+import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.WeatherUtil;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
@@ -833,7 +834,7 @@ public class NewSceneEnhancer implements Runnable
 		
 		if (MC.world.isBlockLoaded(pos))
 		{
-			IBlockState state = Weather2.clientChunkUtil.getBlockState(MC.world, pos);
+			IBlockState state = ChunkUtils.getBlockState(MC.world, pos);
 			return state;
 		}
 		

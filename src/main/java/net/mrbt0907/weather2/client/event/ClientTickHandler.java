@@ -98,7 +98,6 @@ public class ClientTickHandler
 		{
 			checkClientWeather();
 			weatherManager.tick();
-			Weather2.clientChunkUtil.tick();
 			
 			if (!ConfigMisc.aesthetic_mode && ConfigMisc.enable_forced_clouds_off && world.provider.getDimension() == 0)
 				mc.gameSettings.clouds = 0;
@@ -193,7 +192,6 @@ public class ClientTickHandler
 		if (weatherManager != null) {
 			Weather2.debug("Weather2: Detected old WeatherManagerClient with unloaded world, clearing its data");
 			WeatherUtilSound.reset();
-			Weather2.clientChunkUtil.clearCache();
 			weatherManager.reset(true);
 			weatherManager = null;
 		}

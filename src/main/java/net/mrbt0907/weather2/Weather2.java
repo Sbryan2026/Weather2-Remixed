@@ -37,8 +37,6 @@ public class Weather2
 	@Mod.Instance( value = Weather2.MODID )
 	public static Weather2 instance;
 	public static Logger log;
-	public static ChunkUtils clientChunkUtil;
-	public static ChunkUtils serverChunkUtil;
 	@SidedProxy(modId = Weather2.MODID, clientSide = "net.mrbt0907.weather2.ClientProxy", serverSide = "net.mrbt0907.weather2.CommonProxy")
 	public static CommonProxy proxy;
 
@@ -63,10 +61,6 @@ public class Weather2
 		ConfigModEX.register(new ConfigFoliage());
 		EZConfigParser.loadNBT();
 		info("Starting Weather2 - Remastered...");
-		if (FMLCommonHandler.instance().getSide().equals(Side.CLIENT))
-			clientChunkUtil = new ChunkUtils();
-		else
-			serverChunkUtil = new ChunkUtils();
 		debug("Running preInit...");
 		proxy.preInit();
 		debug("Finished preInit");
@@ -103,8 +97,6 @@ public class Weather2
 	{
 		event.registerServerCommand(new CommandWeather2());
 		WeatherAPI.refreshDimensionRules();
-		if (serverChunkUtil == null)
-			serverChunkUtil = new ChunkUtils();
 	}
 	
 	@Mod.EventHandler
@@ -115,8 +107,6 @@ public class Weather2
 	{
 		writeOutData(true);
 		ServerTickHandler.reset();
-		serverChunkUtil.clearCache();
-		serverChunkUtil = null;
 	}
 	
 	public static void writeOutData(boolean unloadInstances)
@@ -135,11 +125,6 @@ public class Weather2
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-
-	public static ChunkUtils getChunkUtil(World world)
-	{
-		return world.isRemote ? clientChunkUtil : serverChunkUtil;
 	}
 	
 	public static void info(Object message)

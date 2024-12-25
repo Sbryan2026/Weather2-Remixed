@@ -13,6 +13,8 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -68,7 +70,6 @@ public class TornadoHelper
 	
 	public static void tickProcess(World world)
 	{
-		ChunkUtils util = Weather2.getChunkUtil(world);
 		if (!snapshots.isEmpty())
 		{
 			snapshots.forEach(snapshot ->
@@ -81,18 +82,25 @@ public class TornadoHelper
 					}
 					else
 					{
-						util.setBlockState(world, snapshot.pos.getX(), snapshot.pos.getY(), snapshot.pos.getZ(), AIR, snapshot.state);
 						EntityMovingBlock entity = new EntityMovingBlock(world, snapshot.pos.getX(), snapshot.pos.getY(), snapshot.pos.getZ(), snapshot.state, snapshot.storm);
 						entity.motionX += (world.rand.nextDouble() - world.rand.nextDouble()) * 1.0D;
 						entity.motionZ += (world.rand.nextDouble() - world.rand.nextDouble()) * 1.0D;
 						entity.motionY = 1.0D;
+						if (snapshot.block.hasTileEntity(snapshot.state))
+						{
+							TileEntity tile = world.getTileEntity(snapshot.pos);
+							if (tile != null && tile instanceof IInventory)
+								((IInventory)tile).clear();
+						}
+						ChunkUtils.setBlockState(world, snapshot.pos.getX(), snapshot.pos.getY(), snapshot.pos.getZ(), AIR);
 						world.spawnEntity(entity);
+						
 					}
 					putToCache(world, -1, false);
 				}
 				else
 				{
-					util.setBlockState(world, snapshot.pos.getX(), snapshot.pos.getY(), snapshot.pos.getZ(), snapshot.newState, snapshot.state);
+					ChunkUtils.setBlockState(world, snapshot.pos.getX(), snapshot.pos.getY(), snapshot.pos.getZ(), snapshot.newState);
 					putToCache(world, -1, true);
 				}
 			});
@@ -139,7 +147,6 @@ public class TornadoHelper
 			boolean shouldGrab = true, shouldReplace = true, shouldContinue = true;
 			BlockPos pos;
 			IBlockState state;
-			ChunkUtils util = Weather2.getChunkUtil(world);
 			if (ConfigGrab.grab_blocks && world.getTotalWorldTime() % (ConfigGrab.grab_process_delay > 0 ? ConfigGrab.grab_process_delay : 1) == 0)
 			{
 				int x = 0, z = 0, grabbed = 0, replaced = 0;
@@ -155,13 +162,13 @@ public class TornadoHelper
 						z = (int)(storm.pos_funnel_base.posZ + Maths.random(-loopSize, loopSize));
 							
 						pos = new BlockPos(x, y, z);
-						state = util.getBlockState(world, x, y, z);
+						state = ChunkUtils.getBlockState(world, x, y, z);
 
 						if (!isBlockGrabbingBlocked(world, state, pos))
 						{
 							shouldGrab = grabbed < maxGrabs && getGrabbed(world) < ConfigGrab.max_flying_blocks;
 							shouldReplace = replaced < maxReplaces && getReplaced(world) < ConfigGrab.max_replaced_blocks;
-							
+
 							if (shouldGrab && grabBlock(world, pos, state))
 							{
 								grabbed++;
@@ -184,7 +191,7 @@ public class TornadoHelper
 				if (storm.stage >= Stage.TORNADO.getStage() + 1)
 				for (int i = 0; i < firesPerTickMax; i++) {
 					BlockPos posUp = new BlockPos(storm.posGround.posX, storm.posGround.posY + Maths.random(30), storm.posGround.posZ);
-					state = util.getBlockState(world, posUp);
+					state = ChunkUtils.getBlockState(world, posUp);
 					if (CoroUtilBlock.isAir(state.getBlock())) {
 						EntityMovingBlock mBlock = new EntityMovingBlock(world, posUp.getX(), posUp.getY(), posUp.getZ(), Blocks.FIRE.getDefaultState(), storm);
 						mBlock.metadata = 15;
@@ -211,13 +218,13 @@ public class TornadoHelper
 
 				if (dist < size/2 + randSize/2 && getGrabbed(world) < 300) {
 					pos = new BlockPos(tryX, tryY, tryZ);
-					Block block = util.getBlockState(world, pos).getBlock();
+					Block block = ChunkUtils.getBlockState(world, pos).getBlock();
 					BlockPos posUp = new BlockPos(tryX, tryY+1, tryZ);
-					Block blockUp = util.getBlockState(world, posUp).getBlock();
+					Block blockUp = ChunkUtils.getBlockState(world, posUp).getBlock();
 
 					if (!CoroUtilBlock.isAir(block) && CoroUtilBlock.isAir(blockUp))
 					{
-						util.setBlockState(world, posUp, Blocks.FIRE.getDefaultState());
+						ChunkUtils.setBlockState(world, posUp, Blocks.FIRE.getDefaultState());
 					}
 				}
 			}
@@ -231,6 +238,7 @@ public class TornadoHelper
 	{
 		if (ConfigGrab.enable_grab_list && WeatherUtilBlock.canGrabBlock(storm, pos, state))
 		{
+			
 			String id = state.getBlock().getRegistryName().toString();
 			
 			if (ConfigGrab.enable_grab_list && WeatherAPI.getGrabList().exists(id) || !ConfigGrab.enable_grab_list && !ConfigGrab.enable_replace_list)

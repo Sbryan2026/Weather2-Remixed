@@ -24,6 +24,7 @@ import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
 import net.mrbt0907.weather2.config.ConfigParticle;
 import net.mrbt0907.weather2.config.ConfigStorm;
+import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.WeatherUtil;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
@@ -63,7 +64,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		if (!(system instanceof StormObject)) return;
 		StormObject storm = (StormObject) this.system;
 		EntityPlayer entP = Minecraft.getMinecraft().player;
-		IBlockState state = ConfigCoroUtil.optimizedCloudRendering ? Blocks.AIR.getDefaultState() : Weather2.clientChunkUtil.getBlockState(manager.getWorld(), (int) storm.pos_funnel_base.posX, (int) storm.pos_funnel_base.posY - 1, (int) storm.pos_funnel_base.posZ);
+		IBlockState state = ConfigCoroUtil.optimizedCloudRendering ? Blocks.AIR.getDefaultState() : ChunkUtils.getBlockState(manager.getWorld(), (int) storm.pos_funnel_base.posX, (int) storm.pos_funnel_base.posY - 1, (int) storm.pos_funnel_base.posZ);
 		Material material = state.getMaterial();
 		double maxRenderDistance = NewSceneEnhancer.instance().renderDistance + 64.0D;
 		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigParticle.particle_scale_mult, storm.getLayerHeight() * 0.01F);
