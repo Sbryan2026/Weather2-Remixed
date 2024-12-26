@@ -351,6 +351,7 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 
 	private void blockify(int x, int y, int z)
 	{
+		this.onRemovedFromWorld();
 		//TODO: this was the only thing killing off moving blocks on client side, syncing is broken server to client?
 		if (world.isRemote) return;
 			setDead();
@@ -386,7 +387,7 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 	{
 		return false;
 	}
-
+	
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound nbt)
 	{

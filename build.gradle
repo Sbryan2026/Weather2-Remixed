@@ -62,7 +62,7 @@ dependencies
 	implementation "org.spongepowered:mixin:0.8.5"
 	annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 	testAnnotationProcessor "org.spongepowered:mixin:0.8.5:processor"
-	compileOnly files("libs/OptiFine_1.12.2_HD_U_G5.jar")
+	//compileOnly files("libs/OptiFine_1.12.2_HD_U_G5.jar")
 }
 
 minecraft

@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -134,6 +135,12 @@ public class WeatherAPI
 	public static ConfigList getEntityGrabList()
 	{
 		return entityList;
+	}
+	
+	/**Gets the estimated wind speed based on the stage of tornado provided with support for decimals*/
+	public static float getEFWindSpeed(float stageMultiplier)
+	{
+		return 65.0F + 27.0F * stageMultiplier;
 	}
 	
 	/**Gets the estimated wind speed based on the stage of tornado provided*/
@@ -276,9 +283,26 @@ public class WeatherAPI
     	replaceList.clear();
     	replaceList.addAll(list);
     	list = processGrabList(blockEntries, event.windResistanceList, ConfigGrab.wind_resistance_partial_matches, 2);
+    	//Go through all entries and add missing wind entries
+    	Set<ResourceLocation> blocks = Block.REGISTRY.getKeys();
+    	String strID; Block block; IBlockState state;
+    	for (ResourceLocation id : blocks)
+    	{
+    		strID = id.toString();
+    		if (!list.containsKey(strID))
+    		{
+    			block = Block.REGISTRY.getObject(id);
+    			if (block.blockHardness >= 0.0F)
+    			{
+    				state = block.getDefaultState();
+    				list.add(strID, state.getMaterial().isToolNotRequired() || block.isToolEffective("axe", block.getDefaultState()) ? WeatherAPI.getEFWindSpeed(block.blockHardness) : WeatherAPI.getEFWindSpeed(block.blockHardness * 2.0F));
+    			}
+    		}
+    	}
     	windResistanceList.clear();
     	windResistanceList.addAll(list);
     	list = processGrabList(entityEntries, event.entityList, ConfigGrab.entity_blacklist_partial_matches, 0);
+    	
     	entityList.clear();
     	entityList.addAll(list);
     	

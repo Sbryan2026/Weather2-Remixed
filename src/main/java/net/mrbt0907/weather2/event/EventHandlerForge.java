@@ -177,7 +177,10 @@ public class EventHandlerForge
 		event.windResistanceList.add("minecraft:diamond_block", WeatherAPI.getEFWindSpeed(7));
 		event.windResistanceList.add("minecraft:gold_block", WeatherAPI.getEFWindSpeed(6));
 		event.windResistanceList.add("minecraft:stone", WeatherAPI.getEFWindSpeed(6));
-		
+
+		event.grabList.add("minecraft:furnace");
+		event.grabList.add("minecraft:chest");
+		event.grabList.add("minecraft:hopper");
 		event.grabList.add("minecraft:glass");
 		event.grabList.add("minecraft:stained_glass");
 		event.grabList.add("minecraft:glass_pane");
