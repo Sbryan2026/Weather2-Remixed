@@ -1,4 +1,4 @@
-package net.mrbt0907.weather2.server.weather;
+package net.mrbt0907.weather2.weather;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,7 +38,6 @@ import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
 import net.mrbt0907.weather2.util.WeatherUtilEntity;
-import net.mrbt0907.weather2.weather.WeatherManager;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 import net.mrbt0907.weather2.weather.storm.TornadoHelper;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;

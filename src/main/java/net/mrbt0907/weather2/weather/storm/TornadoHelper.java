@@ -4,6 +4,7 @@ import java.util.*;
 
 import CoroUtil.block.TileEntityRepairingBlock;
 import CoroUtil.util.UtilMining;
+import extendedrenderer.ExtendedRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -25,6 +26,7 @@ import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.api.weather.IWeatherStaged;
 import net.mrbt0907.weather2.api.weather.WeatherEnum;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
+import net.mrbt0907.weather2.client.entity.particle.ParticleMovingBlock;
 import net.mrbt0907.weather2.config.ConfigGrab;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.entity.EntityMovingBlock;
@@ -47,6 +49,7 @@ public class TornadoHelper
 	public static HashMap<Integer, Long> grabbedLastQueryTime = new HashMap<Integer, Long>();
 	public static HashMap<Integer, Integer> grabbedCache = new HashMap<Integer, Integer>();
 	public static HashMap<Integer, Integer> replacedCache = new HashMap<Integer, Integer>();
+	
 	public static int maxGrabs;
 	public static int maxReplaces;
 	public StormObject storm;
@@ -177,7 +180,6 @@ public class TornadoHelper
 									
 							if (shouldReplace && replaceBlock(world, pos, state))
 							{
-	
 								replaced++;
 							}
 						shouldContinue = shouldGrab || shouldReplace;

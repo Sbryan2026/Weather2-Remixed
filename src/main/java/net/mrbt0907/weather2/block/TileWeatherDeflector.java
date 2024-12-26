@@ -14,10 +14,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.mrbt0907.weather2.config.ConfigStorm;
+import net.mrbt0907.weather2.event.ServerTickHandler;
 import net.mrbt0907.weather2.network.packets.PacketWeatherObject;
-import net.mrbt0907.weather2.server.event.ServerTickHandler;
-import net.mrbt0907.weather2.server.weather.WeatherManagerServer;
 import net.mrbt0907.weather2.util.Maths.Vec3;
+import net.mrbt0907.weather2.weather.WeatherManagerServer;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 
 public class TileWeatherDeflector extends TileEntity implements ITickable

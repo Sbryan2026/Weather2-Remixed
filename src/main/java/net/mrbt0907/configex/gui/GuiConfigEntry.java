@@ -24,6 +24,8 @@ public class GuiConfigEntry
 	public final boolean hasPermission;
 	public final boolean showMin;
 	public final boolean showMax;
+	public final boolean requiresRestart;
+	public final boolean requiresWorldRestart;
 	
 	public GuiConfigEntry(FieldInstance field, boolean serverValue)
 	{
@@ -42,6 +44,8 @@ public class GuiConfigEntry
 		max = field.max;
 		showMin = field.showMin;
 		showMax = field.showMax;
+		requiresRestart = field.requiresRestart;
+		requiresWorldRestart = !field.requiresRestart && field.requiresWorldRestart;
 	}
 	
 	@SideOnly(Side.CLIENT)

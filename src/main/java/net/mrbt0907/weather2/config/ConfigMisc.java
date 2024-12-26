@@ -103,7 +103,11 @@ public class ConfigMisc implements IConfigEX {
 	@Enforce
 	@Comment("Disabling this recipe will keep them from using other recipes since it depends on this item")
 	public static boolean disable_weather_item = false;
-
+	@Enforce
+	@RequiresWorldReload
+	@Permission(4)
+	@Comment("The name of the command used to spawn storms")
+	public static String command_weather2 = "weather2";
 	
 	//dimension settings
 	@Hidden

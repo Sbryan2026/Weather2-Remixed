@@ -11,7 +11,6 @@ import net.mrbt0907.weather2.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.ConfigWind;
 import net.mrbt0907.weather2.network.packets.PacketWind;
-import net.mrbt0907.weather2.server.weather.WeatherManagerServer;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.weather.storm.SandstormObject;

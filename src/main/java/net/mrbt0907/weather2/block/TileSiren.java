@@ -1,13 +1,11 @@
 package net.mrbt0907.weather2.block;
 
 import CoroUtil.util.CoroUtilPhysics;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
@@ -24,7 +22,7 @@ import net.mrbt0907.weather2.util.WeatherUtilSound;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 import net.mrbt0907.weather2.weather.storm.SandstormObject;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TileSiren extends TileEntity implements ITickable
@@ -87,27 +85,14 @@ public class TileSiren extends TileEntity implements ITickable
     
     private void tickAlert()
     {
-        if (!this.world.isRemote && this.world.getTotalWorldTime() % 20 == 0)
+    	if (!world.isRemote && world.getTotalWorldTime() % 5L == 0L)
         {
-            double d0 = 120;
-            
-            int posX = this.pos.getX();
-            int posY = this.pos.getY();
-            int posZ = this.pos.getZ();
-            AxisAlignedBB axisalignedbb = (new AxisAlignedBB((double)posX, (double)posY, (double)posZ, (double)(posX + 1),  (double)(posY + 1), (double)(posZ + 1))).grow(d0);
-            List<EntityVillager> list = world.<EntityVillager>getEntitiesWithinAABB(EntityVillager.class, axisalignedbb);
-
-            for (EntityVillager entity : list)
-            {
-            	Iterator<EntityAITasks.EntityAITaskEntry> iter = entity.tasks.taskEntries.iterator();
-            	while (iter.hasNext())
-            	{
-            		EntityAITasks.EntityAITaskEntry entry = iter.next();
-            		EntityAIBase ai = entry.action;
-            		
-            		if (ai instanceof EntityAIMoveIndoorsStorm) {((EntityAIMoveIndoorsStorm) ai).isAlert = true;}
-            	}
-            }
+            List<Entity> entities = new ArrayList<Entity>(world.loadedEntityList);
+            for (Entity entity : entities)
+            	if (entity instanceof EntityLiving && entity.getDistanceSq(pos) < 120.0D)
+                	((EntityLiving)entity).tasks.taskEntries.forEach(task -> {
+                		if (task.action instanceof EntityAIMoveIndoorsStorm) ((EntityAIMoveIndoorsStorm)task.action).isAlert = true;
+                	});
         }
     }
 }

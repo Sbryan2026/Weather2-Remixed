@@ -16,7 +16,6 @@ import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
 import net.mrbt0907.weather2.config.ConfigFoliage;
 import net.mrbt0907.weather2.config.ConfigMisc;
-import net.mrbt0907.weather2.server.event.ServerTickHandler;
 
 public class EventHandlerFML {
 

@@ -12,7 +12,6 @@ import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.config.EZConfigParser;
 import net.mrbt0907.weather2.network.packets.PacketEZGUI;
-import net.mrbt0907.weather2.server.event.ServerTickHandler;
 import net.mrbt0907.weather2.util.WeatherUtilSound;
 import CoroUtil.packet.PacketHelper;
 

@@ -55,7 +55,7 @@ public class WeatherAPI
 			if (world.isRemote)
 				manager = getManager();
 			else
-				manager = net.mrbt0907.weather2.server.event.ServerTickHandler.dimensionSystems.get(world.provider.getDimension());
+				manager = net.mrbt0907.weather2.event.ServerTickHandler.dimensionSystems.get(world.provider.getDimension());
 		
 		return manager;
 	}
@@ -70,7 +70,7 @@ public class WeatherAPI
 	/**Gets the weather manager used in the dimension id provided. There is a weather manager for each dimension.*/
 	public static WeatherManager getManager(int dimension)
 	{
-		return net.mrbt0907.weather2.server.event.ServerTickHandler.dimensionSystems.get(dimension);
+		return net.mrbt0907.weather2.event.ServerTickHandler.dimensionSystems.get(dimension);
 	}
 	
 	/**Gets the closest weather object in the world the client is in*/

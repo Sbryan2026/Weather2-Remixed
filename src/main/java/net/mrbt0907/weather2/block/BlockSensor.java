@@ -16,9 +16,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.config.ConfigMisc;
-import net.mrbt0907.weather2.server.event.ServerTickHandler;
-import net.mrbt0907.weather2.server.weather.WeatherManagerServer;
+import net.mrbt0907.weather2.event.ServerTickHandler;
 import net.mrbt0907.weather2.util.Maths.Vec3;
+import net.mrbt0907.weather2.weather.WeatherManagerServer;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 
 public class BlockSensor extends Block

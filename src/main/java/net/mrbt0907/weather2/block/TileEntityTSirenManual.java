@@ -1,17 +1,15 @@
 package net.mrbt0907.weather2.block;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -62,32 +60,20 @@ public class TileEntityTSirenManual extends TileEntity implements ITickable
     
     private void tickAlert()
     {
-        if (!this.world.isRemote && this.world.getTotalWorldTime() % 10L == 0L)
+        if (!world.isRemote && world.getTotalWorldTime() % 5L == 0L)
         {
-            double d0 = 120;
-            
-            int posX = this.pos.getX();
-            int posY = this.pos.getY();
-            int posZ = this.pos.getZ();
-            AxisAlignedBB axisalignedbb = (new AxisAlignedBB((double)posX, (double)posY, (double)posZ, (double)(posX + 1),  (double)(posY + 1), (double)(posZ + 1))).grow(d0);
-            List<EntityVillager> list = world.<EntityVillager>getEntitiesWithinAABB(EntityVillager.class, axisalignedbb);
-
-            for (EntityVillager entity : list)
-            {
-            	Iterator<EntityAITasks.EntityAITaskEntry> iter = entity.tasks.taskEntries.iterator();
-            	while (iter.hasNext())
-            	{
-            		EntityAITasks.EntityAITaskEntry entry = iter.next();
-            		EntityAIBase ai = entry.action;
-            		
-            		if (ai instanceof EntityAIMoveIndoorsStorm) {((EntityAIMoveIndoorsStorm) ai).isAlert = true;}
-            	}
-            }
+            List<Entity> entities = new ArrayList<Entity>(world.loadedEntityList);
+            for (Entity entity : entities)
+            	if (entity instanceof EntityLiving && entity.getDistanceSq(pos) < 120.0D)
+                	((EntityLiving)entity).tasks.taskEntries.forEach(task -> {
+                		if (task.action instanceof EntityAIMoveIndoorsStorm) ((EntityAIMoveIndoorsStorm)task.action).isAlert = true;
+                	});
         }
     }
+    
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
     {
-    	return (oldState.getBlock() != newState.getBlock());
+    	return oldState.getBlock() != newState.getBlock();
     }
 }

@@ -75,8 +75,6 @@ public class ParticleManagerEX extends RotatingParticleManager
 		
 		if (useParticleShaders)
 		{
-			
-
 			for (Particle particle : particles)
 			{
 				mesh = meshes.get(particle);
@@ -119,6 +117,11 @@ public class ParticleManagerEX extends RotatingParticleManager
 		}
 	}
 	
+	public void addEffect(Particle effect)
+    {
+        super.addEffect(effect);
+    }
+	
 	/**
 	 * Renders all current particles. Args player, partialTickTime
 	 */
@@ -131,7 +134,7 @@ public class ParticleManagerEX extends RotatingParticleManager
 			return;
 		}
 		
-		boolean useParticleShaders = useShaders && ConfigCoroUtil.particleShaders;
+		boolean useParticleShaders = false;//useShaders && ConfigCoroUtil.particleShaders;
 		Particle.interpPosX = entityIn.lastTickPosX + (entityIn.posX - entityIn.lastTickPosX) * (double)partialTicks;
 		Particle.interpPosY = entityIn.lastTickPosY + (entityIn.posY - entityIn.lastTickPosY) * (double)partialTicks;
 		Particle.interpPosZ = entityIn.lastTickPosZ + (entityIn.posZ - entityIn.lastTickPosZ) * (double)partialTicks;
@@ -209,7 +212,8 @@ public class ParticleManagerEX extends RotatingParticleManager
 		
 		for (Map.Entry<TextureAtlasSprite, List<ArrayDeque<Particle>[][]>> entry1 : fxLayers.entrySet())
 		{
-			if (entry1.getKey() == null) continue;
+			if (entry1.getKey() == null)
+				continue;
 			InstancedMeshParticle mesh = null;
 			if (useParticleShaders)
 			{

@@ -1,23 +1,20 @@
 package net.mrbt0907.weather2.entity.AI;
 
 import CoroUtil.ai.ITaskInitializer;
-import CoroUtil.util.CoroUtilPhysics;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageDoorInfo;
+import net.mrbt0907.weather2.api.weather.WeatherEnum;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.config.ConfigStorm;
-import net.mrbt0907.weather2.server.event.ServerTickHandler;
+import net.mrbt0907.weather2.event.ServerTickHandler;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.weather.WeatherManager;
-import net.mrbt0907.weather2.weather.storm.WeatherObject;
-import net.mrbt0907.weather2.weather.storm.SandstormObject;
-
-import java.util.List;
 
 /**
  * Based off of EntityAIMoveIndoors
@@ -28,144 +25,88 @@ import java.util.List;
  */
 public class EntityAIMoveIndoorsStorm extends EntityAIBase implements ITaskInitializer
 {
-    private EntityCreature entityObj;
-    private VillageDoorInfo doorInfo;
-    public boolean isAlert = false;
-    private int insidePosX = -1;
-    private int insidePosZ = -1;
+	private EntityCreature entity;
+	protected PathNavigate navigator;
+	private VillageDoorInfo doorInfo;
+	public boolean isAlert = false;
+	private int insidePosX = -1;
+	private int insidePosZ = -1;
 
-    public EntityAIMoveIndoorsStorm() {
-        this.setMutexBits(1);
-    }
+	public EntityAIMoveIndoorsStorm(EntityCreature entity)
+	{
+		setMutexBits(1);
+		setEntity(entity);
+	}
 
-    public EntityAIMoveIndoorsStorm(EntityCreature entityObjIn)
-    {
-        this();
-        this.entityObj = entityObjIn;
-    }
+	@Override
+	public boolean shouldExecute()
+	{
+		WeatherManager weatherManager = ServerTickHandler.getWeatherSystemForDim(entity.world.provider.getDimension());
+		if (weatherManager == null) return false;
 
-    /**
-     * Returns whether the EntityAIBase should begin execution.
-     */
-    @Override
-    public boolean shouldExecute()
-    {
+		BlockPos blockpos = entity.getPosition();
+		Vec3 pos = new Vec3(blockpos);
+		boolean runInside = isAlert || weatherManager.getWorstWeather(pos, ConfigStorm.villager_detection_range, Stage.SEVERE.getStage(), Integer.MAX_VALUE, WeatherEnum.Type.CLOUD) != null;
 
-        WeatherManager weatherManager = ServerTickHandler.getWeatherSystemForDim(entityObj.world.provider.getDimension());
-        if (weatherManager == null) return false;
+		if (runInside)
+			//if villager is right next to its safe spot, cancel
+			if (insidePosX != -1 && entity.getDistanceSq((double)insidePosX, this.entity.posY, (double)insidePosZ) < 4.0D)
+				return false;
+			else
+			{
+				Village village = entity.world.getVillageCollection().getNearestVillage(blockpos, 14);
 
-        BlockPos blockpos = new BlockPos(this.entityObj);
-        Vec3 pos = new Vec3(blockpos);
+				if (village == null)
+					return false;
+				else
+				{
+					doorInfo = village.getDoorInfo(blockpos);
+					return doorInfo != null;
+				}
+			}
+		else
+			return false;
+	}
 
-        boolean runInside = false;
-        
-        
-        if (!this.entityObj.world.isDaytime() || isAlert) 
-            runInside = true;
-        else
-        {
-            WeatherObject so = weatherManager.getClosestWeather(pos, ConfigStorm.villager_detection_range, Stage.SEVERE.getStage(), Integer.MAX_VALUE);
+	@Override
+	public boolean shouldContinueExecuting()
+	{
+		return !navigator.noPath();
+	}
 
-            if (so != null) {
-                runInside = true;
-            } else {
-                //sandstorms check
-                SandstormObject sandstorm = weatherManager.getClosestSandstormByIntensity(pos);
+	@Override
+	public void startExecuting()
+	{
+		insidePosX = -1;
+		BlockPos blockpos = this.doorInfo.getInsideBlockPos();
+		int i = blockpos.getX();
+		int j = blockpos.getY();
+		int k = blockpos.getZ();
+	
+		if (entity.getDistanceSq(blockpos) > 256.0D)
+		{
+			Vec3d vec3d = RandomPositionGenerator.findRandomTargetBlockTowards(this.entity, 14, 3, new Vec3d((double)i + 0.5D, (double)j, (double)k + 0.5D));
+	
+			if (vec3d != null)
+				navigator.tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 1.0D);
+		}
+		else
+			navigator.tryMoveToXYZ((double)i + 0.5D, (double)j, (double)k + 0.5D, 1.0D);
+	}
 
-                if (sandstorm != null) {
-                    List<CoroUtil.util.Vec3> points = sandstorm.getSandstormAsShape();
+	@Override
+	public void resetTask()
+	{
+		insidePosX = doorInfo.getInsideBlockPos().getX();
+		insidePosZ = doorInfo.getInsideBlockPos().getZ();
+		doorInfo = null;
+		isAlert = false;
+	}
 
-                    if (CoroUtilPhysics.getDistanceToShape(pos.toVec3Coro(), points) < ConfigStorm.villager_detection_range) {
-                        runInside = true;
-                    }
-                }
-            }
-        }
-
-        if (runInside)
-        {
-            /*if (this.entityObj.getRNG().nextInt(10) != 0)
-            {
-                return false;
-            }
-            else */
-            //if villager is right next to its safe spot, cancel
-            if (this.insidePosX != -1 && this.entityObj.getDistanceSq((double)this.insidePosX, this.entityObj.posY, (double)this.insidePosZ) < 4.0D)
-            {
-                return false;
-            }
-            else
-            {
-                Village village = this.entityObj.world.getVillageCollection().getNearestVillage(blockpos, 14);
-
-                if (village == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    this.doorInfo = village.getDoorInfo(blockpos);
-                    return this.doorInfo != null;
-                }
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**
-     * Returns whether an in-progress EntityAIBase should continue executing
-     */
-
-    @Override
-    public boolean shouldContinueExecuting()
-    {
-        return !this.entityObj.getNavigator().noPath();
-    }
-
-    /**
-     * Execute a one shot task or start executing a continuous task
-     */
-    @Override
-    public void startExecuting()
-    {
-        this.insidePosX = -1;
-        BlockPos blockpos = this.doorInfo.getInsideBlockPos();
-        int i = blockpos.getX();
-        int j = blockpos.getY();
-        int k = blockpos.getZ();
-
-        if (this.entityObj.getDistanceSq(blockpos) > 256.0D)
-        {
-            Vec3d vec3d = RandomPositionGenerator.findRandomTargetBlockTowards(this.entityObj, 14, 3, new Vec3d((double)i + 0.5D, (double)j, (double)k + 0.5D));
-
-            if (vec3d != null)
-            {
-                this.entityObj.getNavigator().tryMoveToXYZ(vec3d.x, vec3d.y, vec3d.z, 1.0D);
-            }
-        }
-        else
-        {
-            this.entityObj.getNavigator().tryMoveToXYZ((double)i + 0.5D, (double)j, (double)k + 0.5D, 1.0D);
-        }
-    }
-
-    /**
-     * Resets the task
-     */
-    @Override
-    public void resetTask()
-    {
-        this.insidePosX = this.doorInfo.getInsideBlockPos().getX();
-        this.insidePosZ = this.doorInfo.getInsideBlockPos().getZ();
-        this.doorInfo = null;
-        this.isAlert = false;
-    }
-
-    @Override
-    public void setEntity(EntityCreature creature) {
-        this.entityObj = creature;
-    }
+	@Override
+	public void setEntity(EntityCreature entity)
+	{
+		this.entity = entity;
+		navigator = entity.getNavigator();
+	}
 }

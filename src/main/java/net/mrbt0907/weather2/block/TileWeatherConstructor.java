@@ -7,9 +7,9 @@ import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.ConfigStorm;
+import net.mrbt0907.weather2.event.ServerTickHandler;
 import net.mrbt0907.weather2.network.packets.PacketWeatherObject;
-import net.mrbt0907.weather2.server.event.ServerTickHandler;
-import net.mrbt0907.weather2.server.weather.WeatherManagerServer;
+import net.mrbt0907.weather2.weather.WeatherManagerServer;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 

@@ -22,6 +22,8 @@ public class FieldInstance
 	public final String comment;
 	public final boolean enforce;
 	public final boolean hide;
+	public final boolean requiresRestart;
+	public final boolean requiresWorldRestart;
 	public final int permission;
 	/**Config type<p>
 	 * 0 - Unsupported<br>
@@ -55,6 +57,8 @@ public class FieldInstance
 		comment = commentAnnotation == null ? "" : ConfigManager.formatComment(commentAnnotation.value());
 		enforce = field.isAnnotationPresent(Enforce.class);
 		hide = field.isAnnotationPresent(Hidden.class);
+		requiresWorldRestart = field.isAnnotationPresent(RequiresWorldReload.class);
+		requiresRestart = field.isAnnotationPresent(RequiresRestart.class);
 		Permission permissionAnnotation = field.getAnnotation(Permission.class);
 		permission = permissionAnnotation == null ? 3 : permissionAnnotation.value();
 		if(permission < 0 || permission > 4)
@@ -339,6 +343,6 @@ public class FieldInstance
 	
 	public String toString()
 	{
-		return String.format("{instance=" + config.getName() + ", registryName=" + registryName + ", enforced=" + enforce + ", hide=" + hide + ", permission=" + permission + ", defaultValue=" + defaultValue + "}");
+		return String.format("{instance=" + config.getName() + ", registryName=" + registryName + ", enforced=" + enforce + ", hide=" + hide + ", requiresRestart=" + requiresRestart + ", requiresWorldRestart=" + requiresWorldRestart + ", permission=" + permission + ", defaultValue=" + defaultValue + "}");
 	}
 }

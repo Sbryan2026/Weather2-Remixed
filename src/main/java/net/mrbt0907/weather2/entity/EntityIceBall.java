@@ -20,7 +20,6 @@ public class EntityIceBall extends EntityThrowableUsefull implements IWindHandle
 {
 	public int ticksInAir;
 	
-
 	public EntityIceBall(World world)
 	{
 		super(world);
@@ -35,11 +34,10 @@ public class EntityIceBall extends EntityThrowableUsefull implements IWindHandle
 		float f = 0.4F;
 		float size = Maths.random(0.1F, 0.6F);
 		setSize(size, size);
-        this.motionX = (double)(-Maths.fastSin(-this.rotationYaw / 180.0F * (float)Math.PI) * Maths.fastCos(-this.rotationPitch / 180.0F * (float)Math.PI) * f);
-        this.motionZ = (double)(Maths.fastCos(-this.rotationYaw / 180.0F * (float)Math.PI) * Maths.fastCos(-this.rotationPitch / 180.0F * (float)Math.PI) * f);
-        this.motionY = (double)(-Maths.fastSin((-this.rotationPitch + this.func_70183_g()) / 180.0F * (float)Math.PI) * f);
+        motionX = (double)(-Maths.fastSin(-rotationYaw / 180.0F * (float)Math.PI) * Maths.fastCos(-rotationPitch / 180.0F * (float)Math.PI) * f);
+        motionZ = (double)(Maths.fastCos(-rotationYaw / 180.0F * (float)Math.PI) * Maths.fastCos(-rotationPitch / 180.0F * (float)Math.PI) * f);
+        motionY = (double)(-Maths.fastSin((-rotationPitch + func_70183_g()) / 180.0F * (float)Math.PI) * f);
 		ticksMaxAlive = Integer.MAX_VALUE;
-		
 	}
 
 	public EntityIceBall(World world, double d, double d1, double d2)
@@ -52,11 +50,12 @@ public class EntityIceBall extends EntityThrowableUsefull implements IWindHandle
 	public void onUpdate()
     {
 		super.onUpdate();
+		
 		//gravity
 		if (motionY > -3.0D)
 			motionY -= 0.1D;
 		
-		if (!this.world.isRemote)
+		if (!world.isRemote)
         {
 			if (collided || isInWater())
 				setDead();
@@ -64,47 +63,33 @@ public class EntityIceBall extends EntityThrowableUsefull implements IWindHandle
     }
 	
 	@Override
-	protected float getGravityVelocity()
-	{
-		return 0F;
-	}
-	
-	@Override
 	public RayTraceResult tickEntityCollision(Vec3 vec3, Vec3 vec31)
 	{
-		RayTraceResult movingobjectposition = null;		
-        Entity entity = null, target = null;
-        List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().grow(motionX, motionY, motionZ).grow(0.5D, 1D, 0.5D));
-        EntityLivingBase owner = getThrower();
-        
+		RayTraceResult result = null;
         if (ticksInAir >= 4)
-	        for (int j = 0; j < list.size(); ++j)
+        {
+            List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().grow(motionX, motionY, motionZ).grow(0.5D, 1D, 0.5D));
+            EntityLivingBase owner = getThrower();
+	        for (Entity entity : list)
 	        {
-	            target = list.get(j);
-	
-	            if (target.canBeCollidedWith() && target != owner)
+	            if (entity.canBeCollidedWith() && entity != owner)
 	            {
-	            	entity = target;
+	                result = new RayTraceResult(entity);
 	                break;
 	            }
 	        }
-
-        if (entity != null)
-            movingobjectposition = new RayTraceResult(entity);
+        }
         
-        return movingobjectposition;
+        return result;
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult movingobjectposition)
+	protected void onImpact(RayTraceResult raytrace)
 	{
 		if (!world.isRemote)
 		{
-			if (movingobjectposition.entityHit != null)
-			{
-				float damage = width * 10.0F * (float) (-motionY / 3.0F);
-				movingobjectposition.entityHit.attackEntityFrom(DamageSource.FALLING_BLOCK, damage);
-			}
+			if (raytrace.entityHit != null)
+				raytrace.entityHit.attackEntityFrom(DamageSource.FALLING_BLOCK, width * 10.0F * (float) (-motionY / 3.0F));
 			
 			world.playSound(null, new BlockPos(posX, posY, posZ), SoundEvents.BLOCK_STONE_STEP, SoundCategory.AMBIENT, 3F, 5F - width * 5.0F);//0.2F + world.rand.nextFloat() * 0.1F);
 			setDead();
@@ -112,33 +97,17 @@ public class EntityIceBall extends EntityThrowableUsefull implements IWindHandle
 	}
 	
 	@Override
-	public void setDead()
-	{
-		super.setDead();
-	}
-	
-
+	protected float getGravityVelocity() {return 0.0F;}
 	@Override
-	public float getWindWeight()
-	{
-		return 4;
-	}
-
+	public float getWindWeight() {return 4.0F;}
 	@Override
-	public int getParticleDecayExtra()
-	{
-		return 0;
-	}
-
+	public int getParticleDecayExtra() {return 0;}
 	@Override
 	public void shoot(double x, double y, double z, float velocity, float inaccuracy) {}
-
 	@Override
 	protected void entityInit() {}
-
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound compound) {}
-
+	protected void readEntityFromNBT(NBTTagCompound nbt) {}
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound compound) {}
+	protected void writeEntityToNBT(NBTTagCompound nbt) {}
 }

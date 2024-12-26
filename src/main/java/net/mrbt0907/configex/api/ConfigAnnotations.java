@@ -51,6 +51,16 @@ public class ConfigAnnotations
 	@Target(ElementType.FIELD)
 	public static @interface Hidden {}
 	
+	/**Notifies players that this variable only changes when the world is reloaded*/
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public static @interface RequiresWorldReload {}
+	
+	/**Notifies players that this variable only changes when the game is restarted*/
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public static @interface RequiresRestart {}
+	
 	/**Limits the range of the variable to a specified minimum and maximum integer value*/
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)

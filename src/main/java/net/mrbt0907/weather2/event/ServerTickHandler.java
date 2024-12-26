@@ -1,4 +1,4 @@
-package net.mrbt0907.weather2.server.event;
+package net.mrbt0907.weather2.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.EZConfigParser;
 import net.mrbt0907.weather2.network.packets.PacketEZGUI;
-import net.mrbt0907.weather2.server.weather.WeatherManagerServer;
+import net.mrbt0907.weather2.weather.WeatherManagerServer;
 
 public class ServerTickHandler
 {
