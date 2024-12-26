@@ -14,6 +14,17 @@ import net.mrbt0907.weather2.weather.WeatherManager;
 @Mixin(World.class)
 public class MixinWorld
 {
+	@Inject(method = "isRaining()Z", at = @At("RETURN"), cancellable=true)
+	private void isRaining2(CallbackInfoReturnable<Boolean> callback)
+	{
+		World world = (World)(Object) this;
+		if (ConfigMisc.overcast_mode ? !callback.getReturnValueZ() : true)
+		{
+			WeatherManager manager = WeatherAPI.getManager(world);
+			callback.setReturnValue(manager != null && manager.hasDownfall());
+		}
+	}
+	
 	@Inject(method = "isRainingAt(Lnet/minecraft/util/math/BlockPos;)Z", at = @At("RETURN"), cancellable=true)
 	private void isRainingAt2(BlockPos position, CallbackInfoReturnable<Boolean> callback)
 	{

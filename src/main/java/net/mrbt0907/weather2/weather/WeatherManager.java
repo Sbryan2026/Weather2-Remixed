@@ -221,6 +221,16 @@ public class WeatherManager
 		}
 	}
 
+	public boolean hasDownfall()
+	{
+		List<WeatherObject> systems = getWeatherObjects();
+		
+		for(WeatherObject system : systems)
+			if (system instanceof IWeatherRain && ((IWeatherRain)system).hasDownfall())
+				return true;
+		return false;
+	}
+	
 	public boolean hasDownfall(BlockPos pos)
 	{
 		return hasDownfall(new Vec3(pos));

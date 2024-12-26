@@ -366,8 +366,8 @@ public class EventHandlerForge
 	public void onFogRender(RenderFogEvent event)
 	{
 		if (ConfigMisc.toaster_pc_mode) return;
-		
 		NewSceneEnhancer scene = NewSceneEnhancer.instance();
+
 		float farplane = ConfigParticle.enable_extended_render_distance ? (float) ConfigParticle.extended_render_distance : event.getFarPlaneDistance();
 		EntityRenderer renderer = event.getRenderer();
 		try
@@ -382,7 +382,7 @@ public class EventHandlerForge
 		
 		scene.renderDistance = farplane;
 		
-		if (scene.shouldChangeFog())
+		if (ConfigParticle.enable_extended_render_distance)
 		{
 			GlStateManager.setFog(GlStateManager.FogMode.EXP);
 			GlStateManager.setFogDensity(scene.fogMult);

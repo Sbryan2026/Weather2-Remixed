@@ -75,7 +75,7 @@ public class NewSceneEnhancer implements Runnable
 	
 	
 	//----- Local Variables -----\\
-	protected final Minecraft MC;
+	public final Minecraft MC;
 	/**The cached result of a weather object if it exists*/
 	protected volatile WeatherObject cachedSystem;
 	/**The cached result of a weather object's distance to the player*/
