@@ -8,7 +8,9 @@
 		"MixinWorld"
 	],
 	"client": [
-		"MixinEntityRenderer"
+		"MixinEntityRenderer",
+		"MixinRenderGlobal",
+		"MixinShaders"
 	],
 	"injectors": {
 		"defaultRequire": 1
