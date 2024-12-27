@@ -1,4 +1,4 @@
-package net.mrbt0907.weather2.mixin;
+package net.mrbt0907.weather2.mixin.injection;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,19 +14,20 @@ import net.mrbt0907.weather2.weather.WeatherManager;
 @Mixin(World.class)
 public class MixinWorld
 {
+	/** Injecting into isRaining allows other objects in Minecraft to detect whether it is raining all over or if any storm is raining */
 	@Inject(method = "isRaining()Z", at = @At("RETURN"), cancellable=true)
-	private void isRaining2(CallbackInfoReturnable<Boolean> callback)
+	private void isRaining(CallbackInfoReturnable<Boolean> callback)
 	{
-		World world = (World)(Object) this;
 		if (ConfigMisc.overcast_mode ? !callback.getReturnValueZ() : true)
 		{
-			WeatherManager manager = WeatherAPI.getManager(world);
+			WeatherManager manager = WeatherAPI.getManager((World)(Object) this);
 			callback.setReturnValue(manager != null && manager.hasDownfall());
 		}
 	}
 	
+	/** Injecting into isRainingAt allows other objects in Minecraft to detect whether it can rain where they are and if any storms above the position is raining */
 	@Inject(method = "isRainingAt(Lnet/minecraft/util/math/BlockPos;)Z", at = @At("RETURN"), cancellable=true)
-	private void isRainingAt2(BlockPos position, CallbackInfoReturnable<Boolean> callback)
+	private void isRainingAt(BlockPos position, CallbackInfoReturnable<Boolean> callback)
 	{
 		World world = (World)(Object) this;
 		if (ConfigMisc.overcast_mode ? !callback.getReturnValueZ() : true)

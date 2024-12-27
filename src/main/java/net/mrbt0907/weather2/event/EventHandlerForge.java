@@ -1,7 +1,6 @@
 package net.mrbt0907.weather2.event;
 
 import extendedrenderer.render.FoliageRenderer;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIMoveIndoors;
@@ -33,7 +32,6 @@ import net.mrbt0907.weather2.config.ConfigParticle;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.entity.AI.EntityAIMoveIndoorsStorm;
 import net.mrbt0907.weather2.registry.ParticleRegistry;
-import net.mrbt0907.weather2.util.ReflectionHelper;
 import net.mrbt0907.weather2.util.UtilEntityBuffsMini;
 import net.mrbt0907.weather2.weather.WindManager;
 

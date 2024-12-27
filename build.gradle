@@ -102,7 +102,7 @@ jar
 			'FMLAT': 'weather2_at.cfg',
 			'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
 			'MixinConfigs': 'META-INF/weather2_mixin.json',
-            'FMLCorePlugin': 'net.mrbt0907.weather2.Weather2MixinThing',
+            //'FMLCorePlugin': 'net.mrbt0907.weather2.Weather2MixinThing',
 			'FMLCorePluginContainsFMLMod': 'true',
             "ForceLoadAsMod": 'true'
 		)

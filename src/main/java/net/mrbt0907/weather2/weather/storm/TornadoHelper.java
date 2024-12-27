@@ -4,7 +4,6 @@ import java.util.*;
 
 import CoroUtil.block.TileEntityRepairingBlock;
 import CoroUtil.util.UtilMining;
-import extendedrenderer.ExtendedRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -26,7 +25,6 @@ import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.api.weather.IWeatherStaged;
 import net.mrbt0907.weather2.api.weather.WeatherEnum;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
-import net.mrbt0907.weather2.client.entity.particle.ParticleMovingBlock;
 import net.mrbt0907.weather2.config.ConfigGrab;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.entity.EntityMovingBlock;

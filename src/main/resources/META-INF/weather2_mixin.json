@@ -1,7 +1,7 @@
 {
 	"required": true,
 	"minVersion": "0.8",
-	"package": "net.mrbt0907.weather2.mixin",
+	"package": "net.mrbt0907.weather2.mixin.injection",
 	"refmap": "META-INF/weather2_mixin_refmap.json",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
