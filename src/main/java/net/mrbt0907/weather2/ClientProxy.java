@@ -4,8 +4,7 @@ import extendedrenderer.ExtendedRenderer;
 import extendedrenderer.shader.IShaderListener;
 import extendedrenderer.shader.ShaderListenerRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.renderer.entity.RenderLightningBolt;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -28,18 +27,16 @@ import net.mrbt0907.weather2.client.block.RenderRadar;
 import net.mrbt0907.weather2.client.block.RenderWeatherConstructor;
 import net.mrbt0907.weather2.client.block.RenderWindVane;
 import net.mrbt0907.weather2.client.entity.RenderFlyingBlock;
-import net.mrbt0907.weather2.client.entity.RenderLightningBolt;
-import net.mrbt0907.weather2.client.entity.RenderLightningBoltCustom;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
 import net.mrbt0907.weather2.client.gui.GuiWeather;
 import net.mrbt0907.weather2.client.rendering.ParticleManagerEX;
 import net.mrbt0907.weather2.config.ConfigParticle;
 import net.mrbt0907.weather2.entity.EntityIceBall;
-import net.mrbt0907.weather2.entity.EntityLightningBolt;
-import net.mrbt0907.weather2.entity.EntityLightningBoltCustom;
+import net.mrbt0907.weather2.entity.EntityLightningEX;
 import net.mrbt0907.weather2.entity.EntityMovingBlock;
 import net.mrbt0907.weather2.util.WeatherUtil;
+
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Weather2.MODID)
 public class ClientProxy extends CommonProxy
@@ -52,30 +49,6 @@ public class ClientProxy extends CommonProxy
 		clientTickHandler = new ClientTickHandler();
 	}
 
-	@Override
-	public void init()
-	{
-		super.init();
-		
-		addMapping(EntityIceBall.class, new RenderFlyingBlock(Minecraft.getMinecraft().getRenderManager(), Blocks.ICE));
-		addMapping(EntityMovingBlock.class, new RenderFlyingBlock(Minecraft.getMinecraft().getRenderManager(), null));
-		addMapping(EntityLightningBolt.class, new RenderLightningBolt(Minecraft.getMinecraft().getRenderManager()));
-		addMapping(EntityLightningBoltCustom.class, new RenderLightningBoltCustom(Minecraft.getMinecraft().getRenderManager()));
-		
-		ClientRegistry.bindTileEntitySpecialRenderer(TileSiren.class, new RenderSiren());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileWindVane.class, new RenderWindVane());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileRadar.class, new RenderRadar());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileWeatherConstructor.class, new RenderWeatherConstructor());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileWeatherDeflector.class, new RenderWeatherDeflector());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileAnemometer.class, new RenderAnemometer());
-	}
-
-	
-	@SuppressWarnings({ "deprecation", "unchecked", "rawtypes" })
-	private static void addMapping(Class<? extends Entity> entityClass, Render render) {
-		RenderingRegistry.registerEntityRenderingHandler(entityClass, render);
-	}
-	
 	@Override
 	public void preInit()
 	{
@@ -93,6 +66,14 @@ public class ClientProxy extends CommonProxy
 				FoliageEnhancerShader.shadersReset();
 			}
 		});
+	}
+	
+	@Override
+	public void init()
+	{
+		super.init();
+		initEntities();
+		initTileEntities();
 	}
 	
 	@Override
@@ -116,5 +97,23 @@ public class ClientProxy extends CommonProxy
 		super.postPostInit();
 		ExtendedRenderer.rotEffRenderer = new ParticleManagerEX(Minecraft.getMinecraft().world, Minecraft.getMinecraft().renderEngine);
 	}
+
+	private void initEntities()
+	{
+		RenderingRegistry.registerEntityRenderingHandler(EntityIceBall.class, manager -> new RenderFlyingBlock(manager, Blocks.ICE));
+		RenderingRegistry.registerEntityRenderingHandler(EntityMovingBlock.class, manager -> new RenderFlyingBlock(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityLightningEX.class, manager -> new RenderLightningBolt(manager));
+		//RenderingRegistry.registerEntityRenderingHandler(EntityLightningBolt.class, manager -> new RenderLightningBolt(manager));
+		//RenderingRegistry.registerEntityRenderingHandler(EntityLightningBoltCustom.class, manager -> new RenderLightningBoltCustom(manager));
+	}
 	
+	private void initTileEntities()
+	{
+		ClientRegistry.bindTileEntitySpecialRenderer(TileSiren.class, new RenderSiren());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileWindVane.class, new RenderWindVane());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileRadar.class, new RenderRadar());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileWeatherConstructor.class, new RenderWeatherConstructor());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileWeatherDeflector.class, new RenderWeatherDeflector());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileAnemometer.class, new RenderAnemometer());
+	}
 }

@@ -21,8 +21,7 @@ import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.config.ConfigParticle;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.ConfigVolume;
-import net.mrbt0907.weather2.entity.EntityLightningBolt;
-import net.mrbt0907.weather2.entity.EntityLightningBoltCustom;
+import net.mrbt0907.weather2.entity.EntityLightningEX;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.weather.WeatherManager;
 import net.mrbt0907.weather2.weather.storm.FrontObject;
@@ -34,6 +33,7 @@ import net.mrbt0907.weather2.weather.volcano.VolcanoObject;
 @SideOnly(Side.CLIENT)
 public class WeatherManagerClient extends WeatherManager
 {
+	private static final Minecraft MC = Minecraft.getMinecraft(); 
 	//data for client, stormfronts synced from server
 	//new for 1.10.2, replaces world.weatherEffects use
 	public List<Particle> effectedParticles = new ArrayList<Particle>();
@@ -184,31 +184,22 @@ public class WeatherManagerClient extends WeatherManager
 				int posZS = mainNBT.getInteger("posZ");
 				if (mainNBT.hasKey("entityID"))
 				{
-					boolean custom = mainNBT.getBoolean("useCustomLightning");
-					
-					//Weather.dbg("uhhh " + parNBT);
-					
 					double posX = (double)posXS;
 					double posY = (double)posYS;
 					double posZ = (double)posZS;
-					Entity ent = null;
-					if (!custom)
-						ent = new EntityLightningBolt(getWorld(), posX, posY, posZ);
-					else
-						ent = new EntityLightningBoltCustom(getWorld(), posX, posY, posZ);
+					Entity ent = new EntityLightningEX(world, posX, posY, posZ);
 					ent.serverPosX = posXS;
 					ent.serverPosY = posYS;
 					ent.serverPosZ = posZS;
 					ent.rotationYaw = 0.0F;
 					ent.rotationPitch = 0.0F;
 					ent.setEntityId(mainNBT.getInteger("entityID"));
-					getWorld().addWeatherEffect(ent);
+					world.addWeatherEffect(ent);
 				}
 				else if (ConfigParticle.enable_sky_lightning)
 				{
-					Minecraft mc = Minecraft.getMinecraft(); 
 					int x = mainNBT.getInteger("posX"), y = mainNBT.getInteger("posY"), z = mainNBT.getInteger("posZ");
-					if (mc.player != null && Maths.distanceSq(mc.player.posX, mc.player.posY, mc.player.posZ, x, y, z) <= ConfigStorm.max_lightning_bolt_distance)
+					if (MC.player != null && Maths.distanceSq(MC.player.posX, MC.player.posY, MC.player.posZ, x, y, z) <= ConfigStorm.max_lightning_bolt_distance)
 					{
 						world.setLastLightningBolt(4);
 						world.playSound(x, y, z, SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.WEATHER, 64.0F * (float)ConfigVolume.lightning, Maths.random(0.65F, 0.75F), false);
@@ -291,7 +282,7 @@ public class WeatherManagerClient extends WeatherManager
 	public void refreshParticleLimit()
 	{
 		int systems = 0;
-		final EntityPlayerSP player = Minecraft.getMinecraft().player;
+		final EntityPlayerSP player = MC.player;
 		if (player == null) return;
 		for (WeatherObject system : this.systems.values())
 			if (system.pos.distanceSq(player.posX, system.pos.posY, player.posZ) < NewSceneEnhancer.instance().renderDistance)

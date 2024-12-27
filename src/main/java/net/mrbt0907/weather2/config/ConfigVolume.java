@@ -9,33 +9,33 @@ import java.io.File;
 public class ConfigVolume implements IConfigEX
 {
 	@Permission(0)
-	@DoubleRange(min=0.0D, max=1.0D)
+	@FloatRange(min=0.0F, max=1.0F)
 	@Comment("How loud lightning sounds are ingame. 1.0 is full volume, higher is louder, and lower is softer")
-	public static double lightning = 1.0D;
+	public static float lightning = 1.0F;
 	@Permission(0)
-	@DoubleRange(min=0.0D, max=1.0D)
+	@FloatRange(min=0.0F, max=1.0F)
 	@Comment("How loud waterfall sounds are ingame. 1.0 is full volume, higher is louder, and lower is softer")
-	public static double waterfall = 0.5D;
+	public static float waterfall = 0.5F;
 	@Permission(0)
-	@DoubleRange(min=0.0D, max=1.0D)
+	@FloatRange(min=0.0F, max=1.0F)
 	@Comment("How loud wind sounds are ingame. 1.0 is full volume, higher is louder, and lower is softer")
-	public static double wind = 0.15D;
+	public static float wind = 0.15F;
 	@Permission(0)
-	@DoubleRange(min=0.0D, max=1.0D)
+	@FloatRange(min=0.0F, max=1.0F)
 	@Comment("How loud leaves are ingame. 1.0 is full volume, higher is louder, and lower is softer")
-	public static double leaves = 0.5D;
+	public static float leaves = 0.5F;
 	@Permission(0)
-	@DoubleRange(min=0.0D, max=1.0D)
+	@FloatRange(min=0.0F, max=1.0F)
 	@Comment("How loud tornado/hurricane sounds are ingame. 1.0 is full volume, higher is louder, and lower is softer")
-	public static double cyclone = 1.0D;
+	public static float cyclone = 1.0F;
 	@Permission(0)
-	@DoubleRange(min=0.0D, max=1.0D)
+	@FloatRange(min=0.0F, max=1.0F)
 	@Comment("How loud debris sounds are ingame. 1.0 is full volume, higher is louder, and lower is softer")
-	public static double debris = 1.0D;
+	public static float debris = 1.0F;
 	@Permission(0)
-	@DoubleRange(min=0.0D, max=1.0D)
+	@FloatRange(min=0.0F, max=1.0F)
 	@Comment("How loud sirens are ingame. 1.0 is full volume, higher is louder, and lower is softer")
-	public static double sirens = 1.0D;
+	public static float sirens = 1.0F;
 	
     @Override
     public String getName()

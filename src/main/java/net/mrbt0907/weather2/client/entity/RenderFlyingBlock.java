@@ -29,6 +29,11 @@ public class RenderFlyingBlock extends Render<Entity>
 	Block renderBlock;
 	TileEntity tile;
 	
+	public RenderFlyingBlock(RenderManager manager)
+    {
+		this(manager, null);
+    }
+	
     public RenderFlyingBlock(RenderManager manager, Block parBlock)
     {
     	super(manager);
