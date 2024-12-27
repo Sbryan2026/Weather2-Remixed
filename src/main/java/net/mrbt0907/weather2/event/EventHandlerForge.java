@@ -367,22 +367,8 @@ public class EventHandlerForge
 	{
 		if (ConfigMisc.toaster_pc_mode) return;
 		NewSceneEnhancer scene = NewSceneEnhancer.instance();
-
-		float farplane = ConfigParticle.enable_extended_render_distance ? (float) ConfigParticle.extended_render_distance : event.getFarPlaneDistance();
-		EntityRenderer renderer = event.getRenderer();
-		try
-		{
-			renderer.farPlaneDistance = farplane;
-		}
-		catch (Exception e)
-		{
-			if (event.getFarPlaneDistance() != farplane)
-				ReflectionHelper.set(renderer.getClass(), renderer, "farPlaneDistance", "field_78530_s", farplane);
-		}
 		
-		scene.renderDistance = farplane;
-		
-		if (ConfigParticle.enable_extended_render_distance)
+		if (ConfigParticle.enable_extended_render_distance || scene.shouldChangeFog())
 		{
 			GlStateManager.setFog(GlStateManager.FogMode.EXP);
 			GlStateManager.setFogDensity(scene.fogMult);

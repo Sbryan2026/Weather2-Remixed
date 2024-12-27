@@ -1,29 +1,35 @@
 package net.mrbt0907.weather2.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-import net.minecraftforge.client.ForgeHooksClient;
+import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.config.ConfigParticle;
 
+@Pseudo
 @Mixin(EntityRenderer.class)
-public class MixinEntityRenderer
+public abstract class MixinEntityRenderer
 {
-	@Inject(method = "setupFog(IF)V", at = @At("HEAD"), cancellable=true)
-	private void setupFog(int startCoords, float partialTicks, CallbackInfo callback)
+	@Shadow
+    private float farPlaneDistance;
+    private float clipDistance;
+    
+	@Inject(method = "setupCameraTransform(FI)V", at = @At("RETURN"), cancellable=true)
+	private void transf(float partialTicks, int pass, CallbackInfo callback)
 	{
-		callback.cancel();
-		EntityRenderer renderer = (EntityRenderer) (Object) this;
-        final Entity entity = renderer.mc.getRenderViewEntity();
-		ForgeHooksClient.getFogDensity(renderer, entity, ActiveRenderInfo.getBlockStateAtEntityViewpoint((World)renderer.mc.world, entity, partialTicks), partialTicks, 0);
+		EntityRenderer renderer = (EntityRenderer)(Object) this;
+		NewSceneEnhancer scene = NewSceneEnhancer.instance();
+
+		farPlaneDistance = ConfigParticle.enable_extended_render_distance ? (float) ConfigParticle.extended_render_distance : renderer.mc.gameSettings.renderDistanceChunks * 16;
+		scene.renderDistance = farPlaneDistance;
+		clipDistance = farPlaneDistance * 2.0f;
+        if (clipDistance < 173.0f)
+            clipDistance = 173.0f;
 	}
 	
 	@Inject(method = "renderRainSnow(F)V", at = @At("HEAD"), cancellable=true)
@@ -48,4 +54,5 @@ public class MixinEntityRenderer
 		if (!ConfigParticle.enable_vanilla_rain)
 			callback.cancel();
 	}
+
 }
