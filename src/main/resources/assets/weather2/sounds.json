@@ -93,6 +93,35 @@
 			{"name": "weather2:env/heavy_rain_4"}
 		]
 	},
+	"entity.lightning.thunder.near":
+	{
+		"subtitle": "subtitle.weather2.entity.lightning.thunder.near",
+		"sounds":
+		[
+			{"name": "weather2:weather/thunder_muffled_near1"},
+			{"name": "weather2:weather/thunder_muffled_near2"}
+		]
+	},
+	"entity.lightning.thunder.far":
+	{
+		"subtitle": "subtitle.weather2.entity.lightning.thunder.far",
+		"sounds":
+		[
+			{"name": "weather2:weather/thunder_distant1"},
+			{"name": "weather2:weather/thunder_distant2"},
+			{"name": "weather2:weather/thunder_distant3", "stream": true},
+			{"name": "weather2:weather/thunder_distant4"}
+		]
+	},
+	"weather.storm":
+	{
+		
+		"subtitle": "subtitle.weather2.weather.storm",
+		"sounds":
+		[
+			{"name": "weather2:streaming/storm_far", "stream": true}
+		]
+	},
 	"weather.debris":
 	{
 		

@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.mrbt0907.weather2.Weather2;
-import net.mrbt0907.weather2.block.TileAnemometer;
+import net.mrbt0907.weather2.block.tile.TileAnemometer;
 
 import org.lwjgl.opengl.GL11;
 

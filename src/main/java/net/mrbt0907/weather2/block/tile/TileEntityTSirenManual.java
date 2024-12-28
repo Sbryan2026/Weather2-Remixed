@@ -1,4 +1,4 @@
-package net.mrbt0907.weather2.block;
+package net.mrbt0907.weather2.block.tile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.mrbt0907.weather2.block.BlockSiren;
 import net.mrbt0907.weather2.client.sound.MovingSoundEX;
 import net.mrbt0907.weather2.config.ConfigVolume;
 import net.mrbt0907.weather2.entity.AI.EntityAITakeCover;

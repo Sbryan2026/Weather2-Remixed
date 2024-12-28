@@ -1,4 +1,4 @@
-package net.mrbt0907.weather2.block;
+package net.mrbt0907.weather2.block.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

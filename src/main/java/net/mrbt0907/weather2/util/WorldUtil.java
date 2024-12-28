@@ -50,7 +50,7 @@ public class WorldUtil
 		List<Entity> entities = new ArrayList<Entity>(world.loadedEntityList);
 		for (Entity entity : entities)
 		{
-			distance = entity.getDistanceSq(x, y, z);
+			distance = entity.getDistance(x, y, z);
 			if (distance < maxDistance && predicate != null ? predicate.test(entity) : true)
 			{
 				maxDistance = distance;
@@ -69,7 +69,7 @@ public class WorldUtil
 	{
 		List<Entity> targets = new ArrayList<Entity>(), entities = new ArrayList<Entity>(world.loadedEntityList);
 		for (Entity entity : entities)
-			if (entity.getDistanceSq(x, y, z) < maxDistance && predicate != null ? predicate.test(entity) : true)
+			if (entity.getDistance(x, y, z) < maxDistance && (predicate != null ? predicate.test(entity) : true))
 				targets.add(entity);
 		return targets;
 	}

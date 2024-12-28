@@ -37,6 +37,7 @@ import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WindReader;
 import net.mrbt0907.weather2.api.weather.IWeatherRain;
 import net.mrbt0907.weather2.api.weather.WeatherEnum;
+import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2.client.entity.particle.EntityWaterfallFX;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
@@ -755,18 +756,29 @@ public class NewSceneEnhancer implements Runnable
 				WeatherUtilSound.playForcedSound(type == 0 ? SoundRegistry.rainLight : SoundEvents.WEATHER_RAIN, SoundCategory.WEATHER, MC.player, type == 0 ? 1.0F : 0.1F + (rain * 0.9F), 1.0F - (rain * 0.1F), -1F, true, false);
 			}
 		}
-		
+		StormObject storm;
 		for (int i = 0; i < size && success < 4; i++)
 		{
 			wo = weather.get(i);
 			if (wo instanceof StormObject && success < 3)
 			{
-				if (((StormObject)wo).isDeadly() && cachedFunnelDistance - wo.size + 200.0D <= 0.0D)
+				storm = (StormObject) wo;
+				if (storm.isDeadly())
 				{
-					WeatherUtilSound.play2DSound(SoundRegistry.windFast, SoundCategory.WEATHER, ((StormObject)wo).pos_funnel_base, 1000 + i, (float) ConfigVolume.cyclone, ((StormObject)wo).isViolent ? 0.7F : 0.8F, ((StormObject)wo).funnelSize + 350.0F, false);
-					if (wo.type.equals(Type.TORNADO))
-						WeatherUtilSound.play2DSound(SoundRegistry.debris, SoundCategory.WEATHER, ((StormObject)wo).pos_funnel_base, 2000 + i, (float) ConfigVolume.debris, 1.0F, ((StormObject)wo).funnelSize + 150.0F, false);
-					success += 2;
+					boolean violent = (storm.isViolent || storm.stage > Stage.TORNADO.getStage() + 2);
+					if (!violent && cachedFunnelDistance - wo.size + 200.0D <= 0.0D)
+					{
+						WeatherUtilSound.play2DSound(SoundRegistry.windFast, SoundCategory.WEATHER, storm.pos_funnel_base, 1000 + i, (float) ConfigVolume.cyclone, storm.isViolent ? 0.7F : 0.8F, storm.funnelSize + 350.0F, false);
+						if (wo.type.equals(Type.TORNADO))
+							WeatherUtilSound.play2DSound(SoundRegistry.debris, SoundCategory.WEATHER, storm.pos_funnel_base, 2000 + i, (float) ConfigVolume.debris, 1.0F, storm.funnelSize + 150.0F, false);
+						success += 2;
+					}
+					else if (violent && cachedFunnelDistance - wo.size * 2.0D <= 0.0D)
+					{
+						
+						WeatherUtilSound.play2DSound(SoundRegistry.storm, SoundCategory.WEATHER, storm.pos_funnel_base, 1000 + i, (float) ConfigVolume.cyclone, storm.isViolent ? 0.9F : 1.0F, wo.size * 2.0F, false);
+						success ++;
+					}
 				}
 			}
 			else if (wo.pos.distanceSq(pos) - wo.size + 100.0D <= 0.0D)

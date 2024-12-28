@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
@@ -22,6 +21,7 @@ import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.ConfigVolume;
 import net.mrbt0907.weather2.entity.EntityLightningEX;
+import net.mrbt0907.weather2.registry.SoundRegistry;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.weather.WeatherManager;
 import net.mrbt0907.weather2.weather.storm.FrontObject;
@@ -196,13 +196,20 @@ public class WeatherManagerClient extends WeatherManager
 					ent.setEntityId(mainNBT.getInteger("entityID"));
 					world.addWeatherEffect(ent);
 				}
-				else if (ConfigClient.enable_sky_lightning)
+				else
 				{
 					int x = mainNBT.getInteger("posX"), y = mainNBT.getInteger("posY"), z = mainNBT.getInteger("posZ");
-					if (MC.player != null && Maths.distanceSq(MC.player.posX, MC.player.posY, MC.player.posZ, x, y, z) <= ConfigStorm.max_lightning_bolt_distance)
+					double distance = Maths.distanceSq(MC.player.posX, MC.player.posY, MC.player.posZ, x, y, z);
+					if (MC.player != null)
 					{
-						world.setLastLightningBolt(4);
-						world.playSound(x, y, z, SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.WEATHER, 64.0F * (float)ConfigVolume.lightning, Maths.random(0.65F, 0.75F), false);
+						if (distance < ConfigStorm.max_lightning_bolt_distance)
+						{
+							if (ConfigClient.enable_sky_lightning)
+								world.setLastLightningBolt(4);
+							world.playSound(x, y, z, SoundRegistry.thunderNear, SoundCategory.WEATHER, 10000.0F * (float)ConfigVolume.lightning, Maths.random(0.65F, 0.75F), true);
+						}
+						else if (distance < ConfigStorm.max_lightning_bolt_distance * 1.5D)
+							world.playSound(x, y, z, SoundRegistry.thunderFar, SoundCategory.WEATHER, 10000.0F * (float)ConfigVolume.lightning, Maths.random(0.65F, 0.75F), false);
 					}
 				}
 				break;

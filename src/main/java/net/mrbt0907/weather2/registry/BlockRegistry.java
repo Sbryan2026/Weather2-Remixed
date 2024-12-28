@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.block.*;
+import net.mrbt0907.weather2.block.tile.*;
 
 @SuppressWarnings("unused")
 public class BlockRegistry
@@ -16,7 +17,7 @@ public class BlockRegistry
 	private static RegistryEvent.Register<Block> registry;
 	
 	public static final Block wire = new BlockSensor();
-	public static final BlockMachine radio = new BlockMachine(Material.CLAY);
+	public static final BlockRadio radio = new BlockRadio(Material.CLAY);
 	public static final Block wind_chimes = new BlockNewSiren();
 	public static final Block air_horn_siren = new BlockNewSiren();
 	public static final Block emergency_siren_alt = new BlockNewSiren();
@@ -73,6 +74,7 @@ public class BlockRegistry
 		addBlock("temperature_sensor", temperatureSensor);
 		addBlock("wind_sensor", windSensor);
 		addBlock("barometer_sensor", barometerSensor);
+		addBlock("radio_transmitter", radio);
 		
 		addTileEntity("tornado_siren", TileSiren.class);
 		addTileEntity("tornado_siren_manual", TileEntityTSirenManual.class);
@@ -82,6 +84,7 @@ public class BlockRegistry
 		addTileEntity("weather_deflector", TileWeatherDeflector.class);
 		addTileEntity("anemometer", TileAnemometer.class);
 		addTileEntity("machine_case", TileMachine.class);
+		addTileEntity("radio_transmitter", TileRadioTransmitter.class);
 		registry = null;
 		Weather2.debug("Finished registering blocks");
 	}

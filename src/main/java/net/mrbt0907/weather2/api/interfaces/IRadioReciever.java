@@ -1,0 +1,3 @@
+package net.mrbt0907.weather2.api.interfaces;
+
+public interface IRadioReciever<T> extends IRadio<T> {}

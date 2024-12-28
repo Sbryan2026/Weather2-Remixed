@@ -31,7 +31,6 @@ public class EventHandlerFML {
 	@SubscribeEvent
 	public void tickServer(ServerTickEvent event)
 	{
-
 		if (event.phase == Phase.START)
 			ServerTickHandler.onTickInGame();
 

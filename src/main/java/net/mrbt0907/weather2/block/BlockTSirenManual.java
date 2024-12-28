@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.mrbt0907.weather2.block.tile.TileEntityTSirenManual;
 
 public class BlockTSirenManual extends BlockSiren {
 

@@ -39,12 +39,18 @@ public class SoundRegistry
 	//Weather
 	/*Sound that plays when a cyclone is damaging blocks nearby*/
 	public static SoundEvent debris;
+	/*Sound that plays when a big or violent storm is nearby*/
+	public static SoundEvent storm;
 	/*Sound that plays when a strong sandstorm is nearby*/
 	public static SoundEvent sandstormFast;
 	/*Sound that plays when a sandstorm is nearby*/
 	public static SoundEvent sandstorm;
 	/*Sound that plays when a weak sandstorm is nearby*/
 	public static SoundEvent sandstormSlow;
+	/*Sound that plays when thunder strikes in a somewhat far context*/
+	public static SoundEvent thunderNear;
+	/*Sound that plays when thunder strikes really far away*/
+	public static SoundEvent thunderFar;
 
 	public static void init()
 	{
@@ -58,9 +64,12 @@ public class SoundRegistry
 		rainLight = register("ambient.rain.light");
 		rainHeavy = register("ambient.rain.heavy");
 		debris = register("weather.debris");
+		storm = register("weather.storm");
 		sandstormFast = register("weather.sandstorm.fast");
 		sandstorm = register("weather.sandstorm");
 		sandstormSlow = register("weather.sandstorm.slow");
+		thunderNear = register("entity.lightning.thunder.near");
+		thunderFar = register("entity.lightning.thunder.far");
 	}
 
 	private static SoundEvent register(String path)

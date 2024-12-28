@@ -1,4 +1,4 @@
-package net.mrbt0907.weather2.block;
+package net.mrbt0907.weather2.block.tile;
 
 import CoroUtil.util.CoroUtilPhysics;
 import net.minecraft.entity.Entity;
@@ -9,6 +9,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
+import net.mrbt0907.weather2.block.BlockSiren;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.sound.MovingSoundEX;
 import net.mrbt0907.weather2.config.ConfigMisc;
