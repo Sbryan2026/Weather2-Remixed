@@ -12,6 +12,7 @@ import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.block.BlockSiren;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.sound.MovingSoundEX;
+import net.mrbt0907.weather2.client.sound.SoundHandler;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.ConfigSand;
 import net.mrbt0907.weather2.config.ConfigVolume;
@@ -19,7 +20,6 @@ import net.mrbt0907.weather2.entity.AI.EntityAITakeCover;
 import net.mrbt0907.weather2.registry.BlockRegistry;
 import net.mrbt0907.weather2.registry.SoundRegistry;
 import net.mrbt0907.weather2.util.Maths.Vec3;
-import net.mrbt0907.weather2.util.WeatherUtilSound;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 import net.mrbt0907.weather2.weather.storm.SandstormObject;
 
@@ -61,7 +61,7 @@ public class TileSiren extends TileEntity implements ITickable
     		WeatherObject so = ClientTickHandler.weatherManager.getWorstWeather(pos, ConfigMisc.siren_scan_range, Stage.TORNADO.getStage(), Integer.MAX_VALUE);
 
             if (so != null)
-            	sound = WeatherUtilSound.playForcedSound(SoundRegistry.siren, SoundCategory.RECORDS, pos, (float) ConfigVolume.sirens, 1.0F, 120.0F, true, false);
+            	sound = SoundHandler.playMovingSound(getPos(), SoundRegistry.siren, SoundCategory.RECORDS, 2, ConfigVolume.sirens, 1.0F, 356.0D);
             else
             {
                 if (!ConfigSand.disable_darude_sandstorm_plz) {
@@ -77,7 +77,7 @@ public class TileSiren extends TileEntity implements ITickable
                         double dist = Math.min(distMax, CoroUtilPhysics.getDistanceToShape(pos.toVec3Coro(), points));
 
                         if (inStorm || dist < distMax)
-                        	sound = WeatherUtilSound.playForcedSound(SoundRegistry.sirenDarude, SoundCategory.RECORDS, pos, (float) ConfigVolume.sirens, 1.0F, 120.0F, true, false);
+                        	sound = SoundHandler.playMovingSound(getPos(), SoundRegistry.sirenDarude, SoundCategory.RECORDS, 2, ConfigVolume.sirens, 1.0F, 356.0D);
                     }
                 }
             }

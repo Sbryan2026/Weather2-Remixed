@@ -16,12 +16,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.block.BlockSiren;
 import net.mrbt0907.weather2.client.sound.MovingSoundEX;
+import net.mrbt0907.weather2.client.sound.SoundHandler;
 import net.mrbt0907.weather2.config.ConfigVolume;
 import net.mrbt0907.weather2.entity.AI.EntityAITakeCover;
 import net.mrbt0907.weather2.registry.BlockRegistry;
 import net.mrbt0907.weather2.registry.SoundRegistry;
-import net.mrbt0907.weather2.util.Maths.Vec3;
-import net.mrbt0907.weather2.util.WeatherUtilSound;
 
 public class TileEntityTSirenManual extends TileEntity implements ITickable
 {
@@ -53,10 +52,7 @@ public class TileEntityTSirenManual extends TileEntity implements ITickable
     public void tickClient()
     {
     	if (sound == null || sound.isDonePlaying() || !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(sound))
-    	{
-    		Vec3 pos = new Vec3(getPos().getX(), getPos().getY(), getPos().getZ());
-        	sound = WeatherUtilSound.playForcedSound(SoundRegistry.siren, SoundCategory.RECORDS, pos, (float) ConfigVolume.sirens, 1.0F, 356.0F, true, true);
-    	}
+        	sound = SoundHandler.playMovingSound(getPos(), SoundRegistry.siren, SoundCategory.RECORDS, 2, ConfigVolume.sirens, 1.0F, 356.0D);
     }
     
     private void tickAlert()

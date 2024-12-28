@@ -31,6 +31,7 @@ import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
 import net.mrbt0907.weather2.client.gui.GuiWeather;
 import net.mrbt0907.weather2.client.rendering.ParticleManagerEX;
+import net.mrbt0907.weather2.client.sound.SoundHandler;
 import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.entity.EntityIceBall;
 import net.mrbt0907.weather2.entity.EntityLightningEX;
@@ -53,7 +54,7 @@ public class ClientProxy extends CommonProxy
 	public void preInit()
 	{
 		super.preInit();
-		
+		MinecraftForge.EVENT_BUS.register(SoundHandler.class);
 		ShaderListenerRegistry.addListener(new IShaderListener()
 		{
 			@Override

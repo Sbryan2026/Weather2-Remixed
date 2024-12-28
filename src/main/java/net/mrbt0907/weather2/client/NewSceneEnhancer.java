@@ -20,6 +20,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFlame;
 import net.minecraft.init.Blocks;
@@ -42,6 +43,7 @@ import net.mrbt0907.weather2.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2.client.entity.particle.EntityWaterfallFX;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
+import net.mrbt0907.weather2.client.sound.SoundHandler;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.ConfigClient;
@@ -56,7 +58,6 @@ import net.mrbt0907.weather2.util.WeatherUtil;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
 import net.mrbt0907.weather2.util.WeatherUtilEntity;
 import net.mrbt0907.weather2.util.WeatherUtilParticle;
-import net.mrbt0907.weather2.util.WeatherUtilSound;
 import net.mrbt0907.weather2.util.Maths.Vec;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.weather.WindManager;
@@ -745,15 +746,13 @@ public class NewSceneEnhancer implements Runnable
 		float windSpeed = WindReader.getWindSpeed(MC.world, pos);
 		int size = weather.size(), success = 0;
 		
-		WeatherUtilSound.tick();
-		
 		if (!ConfigClient.enable_vanilla_rain)
 		{
 			BlockPos playerPos = MC.player.getPosition(), groundPos = MC.world.getPrecipitationHeight(playerPos);
 			if (MC.world.rand.nextInt(3) == 0 && playerPos.distanceSq(groundPos) < 16.0D && rain > 0.0D)
 			{
 				int type = rain > 0.6F ? 2 : rain > 0.3F ? 1 : 0; 
-				WeatherUtilSound.playForcedSound(type == 0 ? SoundRegistry.rainLight : SoundEvents.WEATHER_RAIN, SoundCategory.WEATHER, MC.player, type == 0 ? 1.0F : 0.1F + (rain * 0.9F), 1.0F - (rain * 0.1F), -1F, true, false);
+				SoundHandler.playStaticSound(type == 0 ? SoundRegistry.rainLight : SoundEvents.WEATHER_RAIN, SoundCategory.WEATHER, 1, type == 0 ? 1.0F : 0.1F + (rain * 0.9F), 1.0F - (rain * 0.1F));
 			}
 		}
 		StormObject storm;
@@ -768,37 +767,38 @@ public class NewSceneEnhancer implements Runnable
 					boolean violent = (storm.isViolent || storm.stage > Stage.TORNADO.getStage() + 2);
 					if (!violent && cachedFunnelDistance - wo.size + 200.0D <= 0.0D)
 					{
-						WeatherUtilSound.play2DSound(SoundRegistry.windFast, SoundCategory.WEATHER, storm.pos_funnel_base, 1000 + i, (float) ConfigVolume.cyclone, storm.isViolent ? 0.7F : 0.8F, storm.funnelSize + 350.0F, false);
+						SoundHandler.playMovingSound(storm.pos_funnel_base, SoundRegistry.windFast, SoundCategory.WEATHER, 2, ConfigVolume.cyclone, storm.isViolent ? 0.7F : 0.8F, storm.funnelSize + 350.0F);
 						if (wo.type.equals(Type.TORNADO))
-							WeatherUtilSound.play2DSound(SoundRegistry.debris, SoundCategory.WEATHER, storm.pos_funnel_base, 2000 + i, (float) ConfigVolume.debris, 1.0F, storm.funnelSize + 150.0F, false);
+							SoundHandler.playMovingSound(storm.pos_funnel_base, SoundRegistry.debris, SoundCategory.WEATHER, 2, ConfigVolume.debris, 1.0F, storm.funnelSize + 150.0F);
 						success += 2;
 					}
 					else if (violent && cachedFunnelDistance - wo.size * 2.0D <= 0.0D)
 					{
-						
-						WeatherUtilSound.play2DSound(SoundRegistry.storm, SoundCategory.WEATHER, storm.pos_funnel_base, 1000 + i, (float) ConfigVolume.cyclone, storm.isViolent ? 0.9F : 1.0F, wo.size * 2.0F, false);
+						SoundHandler.playMovingSound(storm.pos_funnel_base, SoundRegistry.storm, SoundCategory.WEATHER, 1, ConfigVolume.cyclone, storm.isViolent ? 0.9F : 1.0F, wo.size * 2.0F);
 						success ++;
 					}
 				}
 			}
 			else if (wo.pos.distanceSq(pos) - wo.size + 100.0D <= 0.0D)
 			{
-				WeatherUtilSound.play2DSound(SoundRegistry.sandstorm, SoundCategory.WEATHER, wo, 3000 + i, (float) ConfigVolume.cyclone, 1.0F, wo.size + 100.0F, false);
+				SoundHandler.playMovingSound(wo, SoundRegistry.sandstorm, SoundCategory.WEATHER, 2, ConfigVolume.cyclone, 1.0F, wo.size + 100.0F);
 				success++;
 			}
 		}
 		
 		if (windSpeed > 6.5F)
 		{
-			if (WeatherUtilSound.isSoundActive(0, SoundRegistry.wind))
-				WeatherUtilSound.stopSound(0);
-			WeatherUtilSound.playSound(SoundRegistry.windFast, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F, false);
+			ISound sound = SoundHandler.getSound(SoundRegistry.wind, 0);
+			if (sound != null)
+				MC.getSoundHandler().stopSound(sound);
+			SoundHandler.playStaticSound(SoundRegistry.windFast, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F);
 		}
 		else if (windSpeed > 1.4F)
 		{
-			if (WeatherUtilSound.isSoundActive(0, SoundRegistry.windFast))
-				WeatherUtilSound.stopSound(0);
-			WeatherUtilSound.playSound(SoundRegistry.wind, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F, false);
+			ISound sound = SoundHandler.getSound(SoundRegistry.windFast, 0);
+			if (sound != null)
+				MC.getSoundHandler().stopSound(sound);
+			SoundHandler.playStaticSound(SoundRegistry.wind, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F);
 		}
 	}
 	

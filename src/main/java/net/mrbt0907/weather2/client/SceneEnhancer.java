@@ -65,7 +65,6 @@ import net.mrbt0907.weather2.util.WeatherUtil;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
 import net.mrbt0907.weather2.util.WeatherUtilEntity;
 import net.mrbt0907.weather2.util.WeatherUtilParticle;
-import net.mrbt0907.weather2.util.WeatherUtilSound;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 import net.mrbt0907.weather2.weather.WindManager;
@@ -1814,7 +1813,7 @@ public class SceneEnhancer implements Runnable
 		float windSpeed = WindReader.getWindSpeed(mc.world, pos);
 		int size = weather.size(), success = 0;
 		
-		WeatherUtilSound.tick();
+		//WeatherUtilSound.tick();
 		
 		for (int i = 0; i < size && success < 4; i++)
 		{
@@ -1823,29 +1822,29 @@ public class SceneEnhancer implements Runnable
 			{
 				if (((StormObject)wo).isDeadly() && ((StormObject)wo).pos_funnel_base.distanceSq(pos) - wo.size + 200.0D <= 0.0D)
 				{
-					WeatherUtilSound.play2DSound(SoundRegistry.windFast, SoundCategory.WEATHER, ((StormObject)wo).pos_funnel_base, 1000 + i, (float) ConfigVolume.cyclone, ((StormObject)wo).isViolent ? 0.7F : 0.8F, ((StormObject)wo).funnelSize + 350.0F, false);
-					WeatherUtilSound.play2DSound(SoundRegistry.debris, SoundCategory.WEATHER, ((StormObject)wo).pos_funnel_base, 2000 + i, (float) ConfigVolume.debris, 1.0F, ((StormObject)wo).funnelSize + 150.0F, false);
+					//WeatherUtilSound.play2DSound(SoundRegistry.windFast, SoundCategory.WEATHER, ((StormObject)wo).pos_funnel_base, 1000 + i, (float) ConfigVolume.cyclone, ((StormObject)wo).isViolent ? 0.7F : 0.8F, ((StormObject)wo).funnelSize + 350.0F, false);
+					//WeatherUtilSound.play2DSound(SoundRegistry.debris, SoundCategory.WEATHER, ((StormObject)wo).pos_funnel_base, 2000 + i, (float) ConfigVolume.debris, 1.0F, ((StormObject)wo).funnelSize + 150.0F, false);
 					success += 2;
 				}
 			}
 			else if (wo.pos.distanceSq(pos) - wo.size + 100.0D <= 0.0D)
 			{
-				WeatherUtilSound.play2DSound(SoundRegistry.sandstorm, SoundCategory.WEATHER, wo, 3000 + i, (float) ConfigVolume.cyclone, 1.0F, wo.size + 100.0F, false);
+				//WeatherUtilSound.play2DSound(SoundRegistry.sandstorm, SoundCategory.WEATHER, wo, 3000 + i, (float) ConfigVolume.cyclone, 1.0F, wo.size + 100.0F, false);
 				success++;
 			}
 		}
 		
 		if (windSpeed > 6.5F)
 		{
-			if (WeatherUtilSound.isSoundActive(0, SoundRegistry.wind))
-				WeatherUtilSound.stopSound(0);
-			WeatherUtilSound.playSound(SoundRegistry.windFast, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F, false);
+			//if (WeatherUtilSound.isSoundActive(0, SoundRegistry.wind))
+				//WeatherUtilSound.stopSound(0);
+			//WeatherUtilSound.playSound(SoundRegistry.windFast, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F, false);
 		}
 		else if (windSpeed > 1.4F)
 		{
-			if (WeatherUtilSound.isSoundActive(0, SoundRegistry.windFast))
-				WeatherUtilSound.stopSound(0);
-			WeatherUtilSound.playSound(SoundRegistry.wind, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F, false);
+			//if (WeatherUtilSound.isSoundActive(0, SoundRegistry.windFast))
+				//WeatherUtilSound.stopSound(0);
+			//WeatherUtilSound.playSound(SoundRegistry.wind, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F, false);
 		}
 	}
 }

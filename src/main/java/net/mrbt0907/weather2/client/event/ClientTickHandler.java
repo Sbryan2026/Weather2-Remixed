@@ -27,7 +27,6 @@ import net.mrbt0907.weather2.config.EZConfigParser;
 import net.mrbt0907.weather2.network.packets.PacketData;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.Maths.Vec3;
-import net.mrbt0907.weather2.util.WeatherUtilSound;
 import org.lwjgl.input.Mouse;
 
 public class ClientTickHandler
@@ -191,7 +190,6 @@ public class ClientTickHandler
     public static void resetClientWeather() {
 		if (weatherManager != null) {
 			Weather2.debug("Weather2: Detected old WeatherManagerClient with unloaded world, clearing its data");
-			WeatherUtilSound.reset();
 			weatherManager.reset(true);
 			weatherManager = null;
 		}
