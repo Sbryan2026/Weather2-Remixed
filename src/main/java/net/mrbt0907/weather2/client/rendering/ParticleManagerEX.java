@@ -41,7 +41,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.util.Maths;
 
 public class ParticleManagerEX extends RotatingParticleManager
@@ -128,7 +128,7 @@ public class ParticleManagerEX extends RotatingParticleManager
 	@Override
 	public void renderParticles(Entity entityIn, float partialTicks)
 	{
-		if (ConfigParticle.enable_legacy_rendering)
+		if (ConfigClient.enable_legacy_rendering)
 		{
 			super.renderParticles(entityIn, partialTicks);
 			return;

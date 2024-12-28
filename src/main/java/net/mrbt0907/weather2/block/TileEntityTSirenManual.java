@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.client.sound.MovingSoundEX;
 import net.mrbt0907.weather2.config.ConfigVolume;
-import net.mrbt0907.weather2.entity.AI.EntityAIMoveIndoorsStorm;
+import net.mrbt0907.weather2.entity.AI.EntityAITakeCover;
 import net.mrbt0907.weather2.registry.BlockRegistry;
 import net.mrbt0907.weather2.registry.SoundRegistry;
 import net.mrbt0907.weather2.util.Maths.Vec3;
@@ -66,7 +66,7 @@ public class TileEntityTSirenManual extends TileEntity implements ITickable
             for (Entity entity : entities)
             	if (entity instanceof EntityLiving && entity.getDistanceSq(pos) < 120.0D)
                 	((EntityLiving)entity).tasks.taskEntries.forEach(task -> {
-                		if (task.action instanceof EntityAIMoveIndoorsStorm) ((EntityAIMoveIndoorsStorm)task.action).isAlert = true;
+                		if (task.action instanceof EntityAITakeCover) ((EntityAITakeCover)task.action).isAlert = true;
                 	});
         }
     }

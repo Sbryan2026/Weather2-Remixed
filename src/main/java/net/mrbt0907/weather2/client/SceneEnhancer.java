@@ -54,7 +54,7 @@ import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
 import net.mrbt0907.weather2.client.weather.tornado.TornadoFunnel;
 import net.mrbt0907.weather2.config.ConfigMisc;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.ConfigVolume;
 import net.mrbt0907.weather2.config.EZConfigParser;
@@ -170,7 +170,7 @@ public class SceneEnhancer implements Runnable
 		while (true) {
 			try {
 				tickClientThreaded();
-				Thread.sleep(ConfigParticle.scene_enhancer_thread_delay);
+				Thread.sleep(ConfigClient.scene_enhancer_thread_delay);
 			} catch (Throwable throwable) {
 				throwable.printStackTrace();
 			}
@@ -238,7 +238,7 @@ public class SceneEnhancer implements Runnable
 		if (mc.world != null && mc.player != null && EZConfigParser.isEffectsEnabled(mc.world.provider.getDimension()) && ClientTickHandler.weatherManager != null)
 		{
 			if (mc.world.getTotalWorldTime() % 10L == 0L)
-				wo = ClientTickHandler.weatherManager.getClosestWeather(new Vec3(mc.player.posX, mc.player.posY, mc.player.posZ), ConfigParticle.extended_render_distance);
+				wo = ClientTickHandler.weatherManager.getClosestWeather(new Vec3(mc.player.posX, mc.player.posY, mc.player.posZ), ConfigClient.extended_render_distance);
 			profileSurroundings();
 			tryAmbientSounds();
 		}
@@ -401,7 +401,7 @@ public class SceneEnhancer implements Runnable
 						if (block != null) {
 							
 							//Waterfall
-							if (ConfigParticle.enable_waterfall_splash && ((block.getMaterial(block.getDefaultState()) == Material.WATER))) {
+							if (ConfigClient.enable_waterfall_splash && ((block.getMaterial(block.getDefaultState()) == Material.WATER))) {
 								
 								int meta = getBlockMetadata(worldRef, xx, yy, zz);
 								if ((meta & 8) != 0) {
@@ -478,7 +478,7 @@ public class SceneEnhancer implements Runnable
 	
 	public void tickParticlePrecipitation()
 	{
-		if (ConfigParticle.enable_precipitation)
+		if (ConfigClient.enable_precipitation)
 		{
 			EntityPlayer entP = FMLClientHandler.instance().getClient().player;
 			
@@ -515,13 +515,13 @@ public class SceneEnhancer implements Runnable
 				if (curPrecipVal > 0)
 				{
 					int spawnCount;
-					int spawnNeed = (int)(curPrecipVal * 20F * ConfigParticle.precipitation_particle_rate * particleAmp);
+					int spawnNeed = (int)(curPrecipVal * 20F * ConfigClient.precipitation_particle_rate * particleAmp);
 					int safetyCutout = 100;
 
 					int extraRenderCount = 15;
 
 					//attempt to fix the cluttering issue more noticable when barely anything spawning
-					if (curPrecipVal < 0.1 && ConfigParticle.precipitation_particle_rate > 0) {
+					if (curPrecipVal < 0.1 && ConfigClient.precipitation_particle_rate > 0) {
 						//swap rates
 						int oldVal = extraRenderCount;
 						extraRenderCount = spawnNeed;
@@ -595,15 +595,15 @@ public class SceneEnhancer implements Runnable
 							}
 						}
 
-						boolean groundSplash = ConfigParticle.enable_precipitation_splash;
-						boolean downfall = ConfigParticle.enable_heavy_precipitation;
+						boolean groundSplash = ConfigClient.enable_precipitation_splash;
+						boolean downfall = ConfigClient.enable_heavy_precipitation;
 
 						//TODO: make ground splash and downfall use spawnNeed var style design
 
 						spawnAreaSize = 100;
 						//ground splash
 						if (groundSplash == true && curPrecipVal > 0.15F) {
-							for (int i = 0; i < 30F * curPrecipVal * ConfigParticle.precipitation_particle_rate * particleAmp * 5F; i++) {
+							for (int i = 0; i < 30F * curPrecipVal * ConfigClient.precipitation_particle_rate * particleAmp * 5F; i++) {
 								BlockPos pos = new BlockPos(
 										entP.posX + rand.nextInt(spawnAreaSize) - (spawnAreaSize / 2),
 										entP.posY - 5 + rand.nextInt(15),
@@ -669,7 +669,7 @@ public class SceneEnhancer implements Runnable
 							else
 								scanAheadRange = 10;
 
-							for (int i = 0; i < 1.0F * curPrecipVal * ConfigParticle.precipitation_particle_rate; i++)
+							for (int i = 0; i < 1.0F * curPrecipVal * ConfigClient.precipitation_particle_rate; i++)
 							{
 								BlockPos pos = new BlockPos(
 										entP.posX + rand.nextInt(spawnAreaSize) - (spawnAreaSize / 2),
@@ -723,7 +723,7 @@ public class SceneEnhancer implements Runnable
 
 						spawnCount = 0;
 						//less for snow, since it falls slower so more is on screen longer
-						spawnNeed = (int)(curPrecipVal * 40F * ConfigParticle.precipitation_particle_rate * particleAmp);
+						spawnNeed = (int)(curPrecipVal * 40F * ConfigClient.precipitation_particle_rate * particleAmp);
 
 						int spawnAreaSize = 50;
 
@@ -828,7 +828,7 @@ public class SceneEnhancer implements Runnable
 				
 				if (storm.hasDownfall() && sizeToUse > stormDist)
 				{
-					double rainIntensity = ConfigParticle.enable_vanilla_rain ? 0.0D : overcastIntensity * Math.min((storm.rain - IWeatherRain.MINIMUM_DRIZZLE) / 300.0F, 1.0F);
+					double rainIntensity = ConfigClient.enable_vanilla_rain ? 0.0D : overcastIntensity * Math.min((storm.rain - IWeatherRain.MINIMUM_DRIZZLE) / 300.0F, 1.0F);
 					
 					tempAdj = WeatherUtil.getTemperature(mc.world, mc.player.getPosition());
 					
@@ -911,7 +911,7 @@ public class SceneEnhancer implements Runnable
 
 	public static void tickRainRates() {
 
-		float rateChange = (float) (0.0005F * ConfigParticle.rain_change_mult);
+		float rateChange = (float) (0.0005F * ConfigClient.rain_change_mult);
 
 		curOvercastStr = CoroUtilMisc.adjVal(curOvercastStr, curOvercastStrTarget, rateChange);
 		curPrecipStr = CoroUtilMisc.adjVal(curPrecipStr, curPrecipStrTarget, rateChange);
@@ -1035,12 +1035,12 @@ public class SceneEnhancer implements Runnable
 		
 		float windStr = WindReader.getWindSpeed(world, new Vec3(curX, curY, curZ));
 
-		if ((!ConfigParticle.enable_falling_leaves && !ConfigParticle.enable_waterfall_splash)) {return;}
+		if ((!ConfigClient.enable_falling_leaves && !ConfigClient.enable_waterfall_splash)) {return;}
 
 		//Wind requiring code goes below
 		int spawnRate = (int)(30 / (windStr + 0.001));
 		float lastBlockCount = lastTickFoundBlocks;
-		float particleCreationRate = (float) ConfigParticle.ambient_particle_rate;
+		float particleCreationRate = (float) ConfigClient.ambient_particle_rate;
 		float maxScaleSample = 15000;
 		if (lastBlockCount > maxScaleSample) lastBlockCount = maxScaleSample-1;
 		float scaleRate = (maxScaleSample - lastBlockCount) / maxScaleSample;
@@ -1147,7 +1147,7 @@ public class SceneEnhancer implements Runnable
 								}
 							}
 						}
-						else if (ConfigParticle.enable_waterfall_splash && player.getDistance(xx,  yy, zz) < 16 && (block != null && block.getMaterial(block.getDefaultState()) == Material.WATER))
+						else if (ConfigClient.enable_waterfall_splash && player.getDistance(xx,  yy, zz) < 16 && (block != null && block.getMaterial(block.getDefaultState()) == Material.WATER))
 						{	
 							int meta = getBlockMetadata(world, xx, yy, zz);
 							
@@ -1202,7 +1202,7 @@ public class SceneEnhancer implements Runnable
 							}
 							
 						}
-						else if (ConfigParticle.enable_fire_particle && block == Blocks.FIRE)
+						else if (ConfigClient.enable_fire_particle && block == Blocks.FIRE)
 						{
 							lastTickFoundBlocks++;
 							
@@ -1216,12 +1216,12 @@ public class SceneEnhancer implements Runnable
 								spawnQueueNormal.add(entityfx);
 							}
 						}
-						if (ConfigParticle.enable_wind_particle && windStr > 3.0F && curDampness < 0.35F && (material == Material.GRASS || material == Material.GROUND || material == Material.SAND))
+						if (ConfigClient.enable_wind_particle && windStr > 3.0F && curDampness < 0.35F && (material == Material.GRASS || material == Material.GROUND || material == Material.SAND))
 						{
 							lastTickFoundBlocks++;
 							float windStrAlt = Math.min(windStr * 0.6F, 1.0F);
 							
-							if (world.rand.nextInt((int)((spawnRate * (2.0F - windStrAlt)) / ConfigParticle.wind_particle_rate)/4) == 0)
+							if (world.rand.nextInt((int)((spawnRate * (2.0F - windStrAlt)) / ConfigClient.wind_particle_rate)/4) == 0)
 							{
 								BlockPos pos = new BlockPos(xx, yy ,zz);
 								AxisAlignedBB axisalignedbb = block.getDefaultState().getBoundingBox(world, pos);
@@ -1356,7 +1356,7 @@ public class SceneEnhancer implements Runnable
 					for (Particle entity1 : WeatherUtilParticle.fxLayers[layer][i])
 					{
 						
-						if (ConfigParticle.enable_vanilla_rain)
+						if (ConfigClient.enable_vanilla_rain)
 						{
 							String className = entity1.getClass().getName();
 							if (className.contains("net.minecraft.") || className.contains("weather2.")) {
@@ -1616,8 +1616,8 @@ public class SceneEnhancer implements Runnable
 			Random rand = mc.world.rand;
 			int spawnAreaSize = 80;
 
-			double sandstormParticleRateDebris = ConfigParticle.sandstorm_debris_particle_rate;
-			double sandstormParticleRateDust = ConfigParticle.sandstorm_dust_particle_rate;
+			double sandstormParticleRateDebris = ConfigClient.sandstorm_debris_particle_rate;
+			double sandstormParticleRateDust = ConfigClient.sandstorm_dust_particle_rate;
 
 			float adjustAmountSmooth75 = (fogMult * 8F) - 7F;
 
@@ -1783,7 +1783,7 @@ public class SceneEnhancer implements Runnable
 		Minecraft mc = Minecraft.getMinecraft();
 		IBlockState iblockstate = ActiveRenderInfo.getBlockStateAtEntityViewpoint(mc.world, mc.getRenderViewEntity(), 1F);
 		if (iblockstate.getMaterial().isLiquid()) return false;
-		return ConfigParticle.enable_extended_render_distance && EZConfigParser.isWeatherEnabled(ClientTickHandler.weatherManager.getDimension());
+		return ConfigClient.enable_extended_render_distance && EZConfigParser.isWeatherEnabled(ClientTickHandler.weatherManager.getDimension());
 	}
 	
 	public static void renderWorldLast(RenderWorldLastEvent event) {

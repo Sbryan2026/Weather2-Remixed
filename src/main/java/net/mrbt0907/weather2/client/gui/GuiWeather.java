@@ -15,7 +15,7 @@ import net.mrbt0907.weather2.api.WindReader;
 import net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.item.ItemSensor;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.WeatherUtil;
@@ -38,7 +38,7 @@ public class GuiWeather extends WeatherUtilGui
 			if (manager != null)
 			{
 				ItemStack stack = mc.player.getHeldItem(EnumHand.MAIN_HAND);
-				if (ConfigParticle.enable_debug_renderer)
+				if (ConfigClient.enable_debug_renderer)
 					for (int i = 0; i < AbstractWeatherRenderer.renderDebugInfo.size(); i++)
 						drawString(mc.fontRenderer, AbstractWeatherRenderer.renderDebugInfo.get(i), 0, 2 + 10 * i, 0xFFFFFF00);
 				

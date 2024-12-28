@@ -24,7 +24,7 @@ import net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer;
 import net.mrbt0907.weather2.api.weather.WeatherEnum;
 import net.mrbt0907.weather2.client.rendering.NormalStormRenderer;
 import net.mrbt0907.weather2.config.ConfigGrab;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.EZConfigParser;
 import net.mrbt0907.weather2.util.ConfigList;
@@ -209,11 +209,11 @@ public class WeatherAPI
 			Weather2.debug("All weather renderers have been updated: " + particleRenderers.size() + " total");
 		}
 		
-		if (ConfigParticle.particle_renderer.matches("^\\d$"))
+		if (ConfigClient.particle_renderer.matches("^\\d$"))
 		{
 			try
 			{
-				int i = 0, ii = Integer.parseInt(ConfigParticle.particle_renderer);
+				int i = 0, ii = Integer.parseInt(ConfigClient.particle_renderer);
 				for (ResourceLocation id : particleRenderers.keySet())
 				{
 					if (i == ii)
@@ -224,13 +224,13 @@ public class WeatherAPI
 			catch (Exception e)
 			{
 				Weather2.error(e);
-				ConfigParticle.particle_renderer = Weather2.MODID + ":normal";
+				ConfigClient.particle_renderer = Weather2.MODID + ":normal";
 				currentParticleRenderer = new ResourceLocation(Weather2.MODID, "normal");
 			}
 		}
 		else
 			for (ResourceLocation id : particleRenderers.keySet())
-				if (id.toString().equals(ConfigParticle.particle_renderer))
+				if (id.toString().equals(ConfigClient.particle_renderer))
 					currentParticleRenderer = id;
 		
 		Weather2.debug("Set particle renderer to " + (currentParticleRenderer == null ? "none" : currentParticleRenderer.toString()));

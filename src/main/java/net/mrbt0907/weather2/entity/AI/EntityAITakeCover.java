@@ -23,7 +23,7 @@ import net.mrbt0907.weather2.weather.WeatherManager;
  *
  * Inject with same priority as original task, do not override original task
  */
-public class EntityAIMoveIndoorsStorm extends EntityAIBase implements ITaskInitializer
+public class EntityAITakeCover extends EntityAIBase implements ITaskInitializer
 {
 	private EntityCreature entity;
 	protected PathNavigate navigator;
@@ -32,7 +32,7 @@ public class EntityAIMoveIndoorsStorm extends EntityAIBase implements ITaskIniti
 	private int insidePosX = -1;
 	private int insidePosZ = -1;
 
-	public EntityAIMoveIndoorsStorm(EntityCreature entity)
+	public EntityAITakeCover(EntityCreature entity)
 	{
 		setMutexBits(1);
 		setEntity(entity);

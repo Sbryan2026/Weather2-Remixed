@@ -11,7 +11,7 @@ import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import java.io.File;
 
 
-public class ConfigParticle implements IConfigEX
+public class ConfigClient implements IConfigEX
 {
 	@Permission(0)
 	@Comment("Determines the renderer used for storms and clouds. Accepts number ids and renderer ids. Ex: 0 or " + Weather2.MODID + ":normal uses the default renderer.")

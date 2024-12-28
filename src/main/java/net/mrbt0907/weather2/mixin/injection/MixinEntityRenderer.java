@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.config.ConfigMisc;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.mixin.MixinWorldReciever;
 
 @Pseudo
@@ -30,7 +30,7 @@ public abstract class MixinEntityRenderer
 		EntityRenderer renderer = (EntityRenderer)(Object) this;
 		NewSceneEnhancer scene = NewSceneEnhancer.instance();
 
-		farPlaneDistance = ConfigParticle.enable_extended_render_distance ? (float) ConfigParticle.extended_render_distance : renderer.mc.gameSettings.renderDistanceChunks * 16;
+		farPlaneDistance = ConfigClient.enable_extended_render_distance ? (float) ConfigClient.extended_render_distance : renderer.mc.gameSettings.renderDistanceChunks * 16;
 		scene.renderDistance = farPlaneDistance;
 		clipDistance = farPlaneDistance * 2.0f;
         if (clipDistance < 173.0f)
@@ -52,7 +52,7 @@ public abstract class MixinEntityRenderer
 	@Inject(method = "addRainParticles()V", at = @At("HEAD"), cancellable=true)
 	private void renderSplash(CallbackInfo callback)
 	{
-		if (ConfigMisc.proxy_render_override && !ConfigParticle.enable_vanilla_rain)
+		if (ConfigMisc.proxy_render_override && !ConfigClient.enable_vanilla_rain)
 			callback.cancel();
 	}
 

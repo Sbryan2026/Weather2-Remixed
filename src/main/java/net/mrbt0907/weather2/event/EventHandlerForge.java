@@ -3,8 +3,8 @@ package net.mrbt0907.weather2.event;
 import extendedrenderer.render.FoliageRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIMoveIndoors;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogColors;
@@ -28,16 +28,15 @@ import net.mrbt0907.weather2.client.rendering.April24StormRenderer;
 import net.mrbt0907.weather2.client.rendering.LegacyStormRenderer;
 import net.mrbt0907.weather2.config.ConfigFoliage;
 import net.mrbt0907.weather2.config.ConfigMisc;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
-import net.mrbt0907.weather2.entity.AI.EntityAIMoveIndoorsStorm;
+import net.mrbt0907.weather2.entity.AI.EntityAITakeCover;
 import net.mrbt0907.weather2.registry.ParticleRegistry;
-import net.mrbt0907.weather2.util.UtilEntityBuffsMini;
+import net.mrbt0907.weather2.util.WeatherUtilEntity;
 import net.mrbt0907.weather2.weather.WindManager;
 
 public class EventHandlerForge
 {
-
 	@SubscribeEvent
 	public void onParticleRendererRegister(EventRegisterParticleRenderer event)
 	{
@@ -366,7 +365,7 @@ public class EventHandlerForge
 		if (ConfigMisc.toaster_pc_mode) return;
 		NewSceneEnhancer scene = NewSceneEnhancer.instance();
 		
-		if (ConfigParticle.enable_extended_render_distance || scene.shouldChangeFog())
+		if (ConfigClient.enable_extended_render_distance || scene.shouldChangeFog())
 		{
 			GlStateManager.setFog(GlStateManager.FogMode.EXP);
 			GlStateManager.setFogDensity(scene.fogMult);
@@ -381,17 +380,17 @@ public class EventHandlerForge
 	}
 
 	@SubscribeEvent
-	public void onEntityCreatedOrLoaded(EntityJoinWorldEvent event)
+	public void onEntityJoined(EntityJoinWorldEvent event)
 	{
-		if (event.getEntity().world.isRemote) return;
+		Entity entity = event.getEntity();
+		if (entity.world.isRemote) return;
 
-		if (ConfigStorm.enable_villagers_take_cover)
+		if (ConfigStorm.enable_villagers_take_cover && entity instanceof EntityCreature)
 		{
-			if (event.getEntity() instanceof EntityVillager)
-			{
-				EntityVillager ent = (EntityVillager) event.getEntity();
-				UtilEntityBuffsMini.replaceTaskIfMissing(ent, EntityAIMoveIndoors.class, EntityAIMoveIndoorsStorm.class, 2);
-			}
+			EntityCreature creature = (EntityCreature) entity;
+			
+			if (!WeatherUtilEntity.hasAITask(creature, EntityAITakeCover.class) && WeatherUtilEntity.hasAITask(creature, EntityAIMoveIndoors.class))
+				creature.tasks.addTask(1, new EntityAITakeCover(creature));
 		}
 	}
 

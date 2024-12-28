@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer;
 import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.registry.ParticleRegistry;
 import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
@@ -41,7 +41,7 @@ public class LegacyStormRenderer extends AbstractWeatherRenderer
 	{
 		if (!(system instanceof StormObject)) return;
 		StormObject storm = (StormObject) this.system;
-		if (manager.getWorld().getTotalWorldTime() % (ConfigParticle.cloud_particle_delay + 1L) == 0L)
+		if (manager.getWorld().getTotalWorldTime() % (ConfigClient.cloud_particle_delay + 1L) == 0L)
 			for (int i = 0; i < 1; i++)
 			{
 				double x = storm.pos.posX + (Maths.random(storm.size) - Maths.random(storm.size)) * 0.3D;
@@ -63,7 +63,7 @@ public class LegacyStormRenderer extends AbstractWeatherRenderer
 				itCount = 4;
 			
 			
-			if (manager.getWorld().getTotalWorldTime() % (ConfigParticle.funnel_particle_delay + 1L) == 0L)
+			if (manager.getWorld().getTotalWorldTime() % (ConfigClient.funnel_particle_delay + 1L) == 0L)
 				for (int i = 0; i < itCount; i++)
 				{
 					double tryX2 = storm.pos_funnel_base.posX + Maths.random(storm.tornadoHelper.getTornadoBaseSize() * 2) - storm.tornadoHelper.getTornadoBaseSize();
@@ -73,7 +73,7 @@ public class LegacyStormRenderer extends AbstractWeatherRenderer
 					Block blockIDDown = ChunkUtils.getBlockState(manager.getWorld(), (int)tryX2, (int)storm.pos_funnel_base.posY - 2, (int)tryZ2).getBlock();
 					int colorID = 0;
 			
-					if (ConfigParticle.enable_tornado_block_colors)
+					if (ConfigClient.enable_tornado_block_colors)
 						if (storm.isFirenado)
 							colorID = 7;
 						else if (storm.isSpout)

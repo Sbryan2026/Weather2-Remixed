@@ -5,7 +5,7 @@ import extendedrenderer.EventHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.resources.IResourceManager;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 
 public class EntityRendererEX extends EntityRenderer
 {
@@ -27,7 +27,7 @@ public class EntityRendererEX extends EntityRenderer
 		if (ConfigCoroUtil.useEntityRenderHookForShaders)
 			EventHandler.hookRenderShaders(par1);
 		
-		if (ConfigParticle.enable_vanilla_rain)
+		if (ConfigClient.enable_vanilla_rain)
 			super.renderRainSnow(par1); //note, the overcast effect change will effect vanilla non particle rain distance too, particle rain for life!
 	}
 	
@@ -35,7 +35,7 @@ public class EntityRendererEX extends EntityRenderer
 	@Override
 	public void addRainParticles()
 	{
-		if (ConfigParticle.enable_vanilla_rain)
+		if (ConfigClient.enable_vanilla_rain)
 			super.addRainParticles();
 	}
 }

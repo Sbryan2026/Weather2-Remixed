@@ -2,7 +2,10 @@ package net.mrbt0907.weather2.util;
 
 import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
@@ -166,5 +169,13 @@ public class WeatherUtilEntity {
 		}
 
 		return player;
+	}
+	
+	public static boolean hasAITask(EntityCreature creature, Class<? extends EntityAIBase> clazz)
+	{
+		for (EntityAITasks.EntityAITaskEntry entry : creature.tasks.taskEntries)
+			if (clazz.isAssignableFrom(entry.action.getClass()))
+				return true;
+		return false;
 	}
 }

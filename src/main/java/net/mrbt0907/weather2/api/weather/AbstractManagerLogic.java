@@ -3,7 +3,6 @@ package net.mrbt0907.weather2.api.weather;
 import net.minecraft.world.World;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.weather.WeatherManager;
-import net.mrbt0907.weather2.weather.storm.WeatherObject;
 
 public abstract class AbstractManagerLogic
 {
@@ -27,7 +26,7 @@ public abstract class AbstractManagerLogic
 	//-- Helper Methods --\\
 	public void spawn()
 	{
-		WeatherObject weather = null;
+		//WeatherObject weather = null;
 		
 	}
 	public void despawn()

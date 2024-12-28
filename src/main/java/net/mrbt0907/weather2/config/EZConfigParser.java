@@ -201,39 +201,39 @@ public class EZConfigParser
 					switch(value)
 					{
 						case 0:
-							ConfigParticle.max_cloud_coverage_perc = 0.0D;
-							ConfigParticle.min_cloud_coverage_perc = 0.0D;
-							ConfigParticle.cloud_particle_delay = 666999;
+							ConfigClient.max_cloud_coverage_perc = 0.0D;
+							ConfigClient.min_cloud_coverage_perc = 0.0D;
+							ConfigClient.cloud_particle_delay = 666999;
 							break;
 						case 1:
-							ConfigParticle.max_cloud_coverage_perc = 15.0D;
-							ConfigParticle.min_cloud_coverage_perc = 0.0D;
-							ConfigParticle.cloud_particle_delay = 10;
+							ConfigClient.max_cloud_coverage_perc = 15.0D;
+							ConfigClient.min_cloud_coverage_perc = 0.0D;
+							ConfigClient.cloud_particle_delay = 10;
 							break;
 						case 2:
-							ConfigParticle.max_cloud_coverage_perc = 25.0D;
-							ConfigParticle.min_cloud_coverage_perc = 10.0D;
-							ConfigParticle.cloud_particle_delay = 5;
+							ConfigClient.max_cloud_coverage_perc = 25.0D;
+							ConfigClient.min_cloud_coverage_perc = 10.0D;
+							ConfigClient.cloud_particle_delay = 5;
 							break;
 						case 3:
-							ConfigParticle.max_cloud_coverage_perc = 50.0D;
-							ConfigParticle.min_cloud_coverage_perc = 20.0D;
-							ConfigParticle.cloud_particle_delay = 3;
+							ConfigClient.max_cloud_coverage_perc = 50.0D;
+							ConfigClient.min_cloud_coverage_perc = 20.0D;
+							ConfigClient.cloud_particle_delay = 3;
 							break;
 						case 4:
-							ConfigParticle.max_cloud_coverage_perc = 80.0D;
-							ConfigParticle.min_cloud_coverage_perc = 250.0D;
-							ConfigParticle.cloud_particle_delay = 2;
+							ConfigClient.max_cloud_coverage_perc = 80.0D;
+							ConfigClient.min_cloud_coverage_perc = 250.0D;
+							ConfigClient.cloud_particle_delay = 2;
 							break;
 						case 5:
-							ConfigParticle.max_cloud_coverage_perc = 100.0D;
-							ConfigParticle.min_cloud_coverage_perc = 50.0D;
-							ConfigParticle.cloud_particle_delay = 1;
+							ConfigClient.max_cloud_coverage_perc = 100.0D;
+							ConfigClient.min_cloud_coverage_perc = 50.0D;
+							ConfigClient.cloud_particle_delay = 1;
 							break;
 						case 6:
-							ConfigParticle.max_cloud_coverage_perc = 200.0D;
-							ConfigParticle.min_cloud_coverage_perc = 50.0D;
-							ConfigParticle.cloud_particle_delay = 0;
+							ConfigClient.max_cloud_coverage_perc = 200.0D;
+							ConfigClient.min_cloud_coverage_perc = 50.0D;
+							ConfigClient.cloud_particle_delay = 0;
 							break;
 					}
 					break;
@@ -241,60 +241,60 @@ public class EZConfigParser
 					switch(value)
 					{
 						case 0:
-							ConfigParticle.sandstorm_debris_particle_rate = 0.0D;
-							ConfigParticle.sandstorm_dust_particle_rate = 0.0D;
-							ConfigParticle.funnel_particle_delay = 666999;
-							ConfigParticle.ground_debris_particle_delay = 666999;
-							ConfigParticle.enable_tornado_block_colors = false;
-							ConfigParticle.enable_tornado_debris = false;
+							ConfigClient.sandstorm_debris_particle_rate = 0.0D;
+							ConfigClient.sandstorm_dust_particle_rate = 0.0D;
+							ConfigClient.funnel_particle_delay = 666999;
+							ConfigClient.ground_debris_particle_delay = 666999;
+							ConfigClient.enable_tornado_block_colors = false;
+							ConfigClient.enable_tornado_debris = false;
 							break;
 						case 1:
-							ConfigParticle.sandstorm_debris_particle_rate = 0.025D;
-							ConfigParticle.sandstorm_dust_particle_rate = 0.05D;
-							ConfigParticle.funnel_particle_delay = 45;
-							ConfigParticle.ground_debris_particle_delay = 20;
-							ConfigParticle.enable_tornado_block_colors = false;
-							ConfigParticle.enable_tornado_debris = false;
+							ConfigClient.sandstorm_debris_particle_rate = 0.025D;
+							ConfigClient.sandstorm_dust_particle_rate = 0.05D;
+							ConfigClient.funnel_particle_delay = 45;
+							ConfigClient.ground_debris_particle_delay = 20;
+							ConfigClient.enable_tornado_block_colors = false;
+							ConfigClient.enable_tornado_debris = false;
 							break;
 						case 2:
-							ConfigParticle.sandstorm_debris_particle_rate = 0.05D;
-							ConfigParticle.sandstorm_dust_particle_rate = 0.1D;
-							ConfigParticle.funnel_particle_delay = 20;
-							ConfigParticle.ground_debris_particle_delay = 10;
-							ConfigParticle.enable_tornado_block_colors = false;
-							ConfigParticle.enable_tornado_debris = false;
+							ConfigClient.sandstorm_debris_particle_rate = 0.05D;
+							ConfigClient.sandstorm_dust_particle_rate = 0.1D;
+							ConfigClient.funnel_particle_delay = 20;
+							ConfigClient.ground_debris_particle_delay = 10;
+							ConfigClient.enable_tornado_block_colors = false;
+							ConfigClient.enable_tornado_debris = false;
 							break;
 						case 3:
-							ConfigParticle.sandstorm_debris_particle_rate = 0.1D;
-							ConfigParticle.sandstorm_dust_particle_rate = 0.15D;
-							ConfigParticle.funnel_particle_delay = 10;
-							ConfigParticle.ground_debris_particle_delay = 5;
-							ConfigParticle.enable_tornado_block_colors = false;
-							ConfigParticle.enable_tornado_debris = false;
+							ConfigClient.sandstorm_debris_particle_rate = 0.1D;
+							ConfigClient.sandstorm_dust_particle_rate = 0.15D;
+							ConfigClient.funnel_particle_delay = 10;
+							ConfigClient.ground_debris_particle_delay = 5;
+							ConfigClient.enable_tornado_block_colors = false;
+							ConfigClient.enable_tornado_debris = false;
 							break;
 						case 4:
-							ConfigParticle.sandstorm_debris_particle_rate = 0.15D;
-							ConfigParticle.sandstorm_dust_particle_rate = 0.4D;
-							ConfigParticle.funnel_particle_delay = 5;
-							ConfigParticle.ground_debris_particle_delay = 5;
-							ConfigParticle.enable_tornado_block_colors = true;
-							ConfigParticle.enable_tornado_debris = false;
+							ConfigClient.sandstorm_debris_particle_rate = 0.15D;
+							ConfigClient.sandstorm_dust_particle_rate = 0.4D;
+							ConfigClient.funnel_particle_delay = 5;
+							ConfigClient.ground_debris_particle_delay = 5;
+							ConfigClient.enable_tornado_block_colors = true;
+							ConfigClient.enable_tornado_debris = false;
 							break;
 						case 5:
-							ConfigParticle.sandstorm_debris_particle_rate = 0.25D;
-							ConfigParticle.sandstorm_dust_particle_rate = 0.6D;
-							ConfigParticle.funnel_particle_delay = 2;
-							ConfigParticle.ground_debris_particle_delay = 3;
-							ConfigParticle.enable_tornado_block_colors = true;
-							ConfigParticle.enable_tornado_debris = true;
+							ConfigClient.sandstorm_debris_particle_rate = 0.25D;
+							ConfigClient.sandstorm_dust_particle_rate = 0.6D;
+							ConfigClient.funnel_particle_delay = 2;
+							ConfigClient.ground_debris_particle_delay = 3;
+							ConfigClient.enable_tornado_block_colors = true;
+							ConfigClient.enable_tornado_debris = true;
 								break;
 						case 6:
-							ConfigParticle.sandstorm_debris_particle_rate = 0.5D;
-							ConfigParticle.sandstorm_dust_particle_rate = 1.0D;
-							ConfigParticle.funnel_particle_delay = 0;
-							ConfigParticle.ground_debris_particle_delay = 0;
-							ConfigParticle.enable_tornado_block_colors = true;
-							ConfigParticle.enable_tornado_debris = true;
+							ConfigClient.sandstorm_debris_particle_rate = 0.5D;
+							ConfigClient.sandstorm_dust_particle_rate = 1.0D;
+							ConfigClient.funnel_particle_delay = 0;
+							ConfigClient.ground_debris_particle_delay = 0;
+							ConfigClient.enable_tornado_block_colors = true;
+							ConfigClient.enable_tornado_debris = true;
 							break;
 					}
 					break;
@@ -302,76 +302,76 @@ public class EZConfigParser
 					switch(value)
 					{
 						case 0:
-							ConfigParticle.enable_precipitation = true;
-							ConfigParticle.enable_precipitation_splash = false;
-							ConfigParticle.enable_heavy_precipitation = false;
-							ConfigParticle.enable_vanilla_rain = false;
-							ConfigParticle.precipitation_particle_rate = 0.0D;
-							ConfigParticle.enable_distant_downfall = false;
-							ConfigParticle.distant_downfall_particle_rate = 0.0F;
+							ConfigClient.enable_precipitation = true;
+							ConfigClient.enable_precipitation_splash = false;
+							ConfigClient.enable_heavy_precipitation = false;
+							ConfigClient.enable_vanilla_rain = false;
+							ConfigClient.precipitation_particle_rate = 0.0D;
+							ConfigClient.enable_distant_downfall = false;
+							ConfigClient.distant_downfall_particle_rate = 0.0F;
 							break;
 						case 1:
-							ConfigParticle.enable_precipitation = false;
-							ConfigParticle.enable_precipitation_splash = false;
-							ConfigParticle.enable_heavy_precipitation = false;
-							ConfigParticle.enable_vanilla_rain = true;
-							ConfigParticle.precipitation_particle_rate = 0.05D;
-							ConfigParticle.enable_distant_downfall = false;
-							ConfigParticle.distant_downfall_particle_rate = 0.4F;
+							ConfigClient.enable_precipitation = false;
+							ConfigClient.enable_precipitation_splash = false;
+							ConfigClient.enable_heavy_precipitation = false;
+							ConfigClient.enable_vanilla_rain = true;
+							ConfigClient.precipitation_particle_rate = 0.05D;
+							ConfigClient.enable_distant_downfall = false;
+							ConfigClient.distant_downfall_particle_rate = 0.4F;
 							break;
 						case 2:
-							ConfigParticle.enable_precipitation = true;
-							ConfigParticle.enable_precipitation_splash = false;
-							ConfigParticle.enable_heavy_precipitation = false;
-							ConfigParticle.enable_vanilla_rain = false;
-							ConfigParticle.precipitation_particle_rate = 0.2D;
-							ConfigParticle.enable_distant_downfall = false;
-							ConfigParticle.distant_downfall_particle_rate = 0.2F;
+							ConfigClient.enable_precipitation = true;
+							ConfigClient.enable_precipitation_splash = false;
+							ConfigClient.enable_heavy_precipitation = false;
+							ConfigClient.enable_vanilla_rain = false;
+							ConfigClient.precipitation_particle_rate = 0.2D;
+							ConfigClient.enable_distant_downfall = false;
+							ConfigClient.distant_downfall_particle_rate = 0.2F;
 							break;
 						case 3:
-							ConfigParticle.enable_precipitation = true;
-							ConfigParticle.enable_precipitation_splash = true;
-							ConfigParticle.enable_heavy_precipitation = false;
-							ConfigParticle.enable_vanilla_rain = false;
-							ConfigParticle.precipitation_particle_rate = 0.40D;
-							ConfigParticle.enable_distant_downfall = false;
-							ConfigParticle.distant_downfall_particle_rate = 0.2F;
+							ConfigClient.enable_precipitation = true;
+							ConfigClient.enable_precipitation_splash = true;
+							ConfigClient.enable_heavy_precipitation = false;
+							ConfigClient.enable_vanilla_rain = false;
+							ConfigClient.precipitation_particle_rate = 0.40D;
+							ConfigClient.enable_distant_downfall = false;
+							ConfigClient.distant_downfall_particle_rate = 0.2F;
 							break;
 						case 4:
-							ConfigParticle.enable_precipitation = true;
-							ConfigParticle.enable_precipitation_splash = true;
-							ConfigParticle.enable_heavy_precipitation = true;
-							ConfigParticle.enable_vanilla_rain = false;
-							ConfigParticle.precipitation_particle_rate = 0.65D;
-							ConfigParticle.enable_distant_downfall = true;
-							ConfigParticle.distant_downfall_particle_rate = 0.4F;
+							ConfigClient.enable_precipitation = true;
+							ConfigClient.enable_precipitation_splash = true;
+							ConfigClient.enable_heavy_precipitation = true;
+							ConfigClient.enable_vanilla_rain = false;
+							ConfigClient.precipitation_particle_rate = 0.65D;
+							ConfigClient.enable_distant_downfall = true;
+							ConfigClient.distant_downfall_particle_rate = 0.4F;
 							break;
 						case 5:
-							ConfigParticle.enable_precipitation = true;
-							ConfigParticle.enable_precipitation_splash = true;
-							ConfigParticle.enable_heavy_precipitation = true;
-							ConfigParticle.enable_vanilla_rain = false;
-							ConfigParticle.precipitation_particle_rate = 1.0D;
-							ConfigParticle.enable_distant_downfall = true;
-							ConfigParticle.distant_downfall_particle_rate = 0.6F;
+							ConfigClient.enable_precipitation = true;
+							ConfigClient.enable_precipitation_splash = true;
+							ConfigClient.enable_heavy_precipitation = true;
+							ConfigClient.enable_vanilla_rain = false;
+							ConfigClient.precipitation_particle_rate = 1.0D;
+							ConfigClient.enable_distant_downfall = true;
+							ConfigClient.distant_downfall_particle_rate = 0.6F;
 							break;
 						case 6:
-							ConfigParticle.enable_precipitation = true;
-							ConfigParticle.enable_precipitation_splash = true;
-							ConfigParticle.enable_heavy_precipitation = true;
-							ConfigParticle.enable_vanilla_rain = false;
-							ConfigParticle.precipitation_particle_rate = 1.4D;
-							ConfigParticle.enable_distant_downfall = true;
-							ConfigParticle.distant_downfall_particle_rate = 1.0F;
+							ConfigClient.enable_precipitation = true;
+							ConfigClient.enable_precipitation_splash = true;
+							ConfigClient.enable_heavy_precipitation = true;
+							ConfigClient.enable_vanilla_rain = false;
+							ConfigClient.precipitation_particle_rate = 1.4D;
+							ConfigClient.enable_distant_downfall = true;
+							ConfigClient.distant_downfall_particle_rate = 1.0F;
 							break;
 						case 7:
-							ConfigParticle.enable_precipitation = true;
-							ConfigParticle.enable_precipitation_splash = true;
-							ConfigParticle.enable_heavy_precipitation = true;
-							ConfigParticle.enable_vanilla_rain = false;
-							ConfigParticle.precipitation_particle_rate = 2.0D;
-							ConfigParticle.enable_distant_downfall = true;
-							ConfigParticle.distant_downfall_particle_rate = 2.0F;
+							ConfigClient.enable_precipitation = true;
+							ConfigClient.enable_precipitation_splash = true;
+							ConfigClient.enable_heavy_precipitation = true;
+							ConfigClient.enable_vanilla_rain = false;
+							ConfigClient.precipitation_particle_rate = 2.0D;
+							ConfigClient.enable_distant_downfall = true;
+							ConfigClient.distant_downfall_particle_rate = 2.0F;
 							break;
 					}
 					break;
@@ -379,84 +379,84 @@ public class EZConfigParser
 					switch(value)
 					{
 						case 0:
-							ConfigParticle.enable_falling_leaves = false;
-							ConfigParticle.enable_fire_particle = false;
-							ConfigParticle.enable_waterfall_splash = false;
-							ConfigParticle.enable_wind_particle = false;
-							ConfigParticle.wind_particle_rate = 0.0D;
-							ConfigParticle.ambient_particle_rate = 0.0D;
-							ConfigParticle.fog_mult = 0.0D;
-							ConfigParticle.camera_shake_mult = 0.0D;
+							ConfigClient.enable_falling_leaves = false;
+							ConfigClient.enable_fire_particle = false;
+							ConfigClient.enable_waterfall_splash = false;
+							ConfigClient.enable_wind_particle = false;
+							ConfigClient.wind_particle_rate = 0.0D;
+							ConfigClient.ambient_particle_rate = 0.0D;
+							ConfigClient.fog_mult = 0.0D;
+							ConfigClient.camera_shake_mult = 0.0D;
 							break;
 						case 1:
-							ConfigParticle.enable_falling_leaves = true;
-							ConfigParticle.enable_fire_particle = false;
-							ConfigParticle.enable_waterfall_splash = false;
-							ConfigParticle.enable_wind_particle = false;
-							ConfigParticle.wind_particle_rate = 0.0D;
-							ConfigParticle.ambient_particle_rate = 0.1D;
-							ConfigParticle.fog_mult = 0.0D;
-							ConfigParticle.camera_shake_mult = 0.0D;
+							ConfigClient.enable_falling_leaves = true;
+							ConfigClient.enable_fire_particle = false;
+							ConfigClient.enable_waterfall_splash = false;
+							ConfigClient.enable_wind_particle = false;
+							ConfigClient.wind_particle_rate = 0.0D;
+							ConfigClient.ambient_particle_rate = 0.1D;
+							ConfigClient.fog_mult = 0.0D;
+							ConfigClient.camera_shake_mult = 0.0D;
 							break;
 						case 2:
-							ConfigParticle.enable_falling_leaves = true;
-							ConfigParticle.enable_fire_particle = true;
-							ConfigParticle.enable_waterfall_splash = false;
-							ConfigParticle.enable_wind_particle = false;
-							ConfigParticle.wind_particle_rate = 0.0D;
-							ConfigParticle.ambient_particle_rate = 0.2D;
-							ConfigParticle.fog_mult = 0.0D;
-							ConfigParticle.camera_shake_mult = 0.0D;
+							ConfigClient.enable_falling_leaves = true;
+							ConfigClient.enable_fire_particle = true;
+							ConfigClient.enable_waterfall_splash = false;
+							ConfigClient.enable_wind_particle = false;
+							ConfigClient.wind_particle_rate = 0.0D;
+							ConfigClient.ambient_particle_rate = 0.2D;
+							ConfigClient.fog_mult = 0.0D;
+							ConfigClient.camera_shake_mult = 0.0D;
 							break;
 						case 3:
-							ConfigParticle.enable_falling_leaves = true;
-							ConfigParticle.enable_fire_particle = true;
-							ConfigParticle.enable_waterfall_splash = true;
-							ConfigParticle.enable_wind_particle = true;
-							ConfigParticle.wind_particle_rate = 0.1D;
-							ConfigParticle.ambient_particle_rate = 0.35D;
-							ConfigParticle.fog_mult = 0.15D;
-							ConfigParticle.camera_shake_mult = 0.25D;
+							ConfigClient.enable_falling_leaves = true;
+							ConfigClient.enable_fire_particle = true;
+							ConfigClient.enable_waterfall_splash = true;
+							ConfigClient.enable_wind_particle = true;
+							ConfigClient.wind_particle_rate = 0.1D;
+							ConfigClient.ambient_particle_rate = 0.35D;
+							ConfigClient.fog_mult = 0.15D;
+							ConfigClient.camera_shake_mult = 0.25D;
 							break;
 						case 4:
-							ConfigParticle.enable_falling_leaves = true;
-							ConfigParticle.enable_fire_particle = true;
-							ConfigParticle.enable_waterfall_splash = true;
-							ConfigParticle.enable_wind_particle = true;
-							ConfigParticle.wind_particle_rate = 0.2D;
-							ConfigParticle.ambient_particle_rate = 0.6D;
-							ConfigParticle.fog_mult = 0.25D;
-							ConfigParticle.camera_shake_mult = 0.5D;
+							ConfigClient.enable_falling_leaves = true;
+							ConfigClient.enable_fire_particle = true;
+							ConfigClient.enable_waterfall_splash = true;
+							ConfigClient.enable_wind_particle = true;
+							ConfigClient.wind_particle_rate = 0.2D;
+							ConfigClient.ambient_particle_rate = 0.6D;
+							ConfigClient.fog_mult = 0.25D;
+							ConfigClient.camera_shake_mult = 0.5D;
 							break;
 						case 5:
-							ConfigParticle.enable_falling_leaves = true;
-							ConfigParticle.enable_fire_particle = true;
-							ConfigParticle.enable_waterfall_splash = true;
-							ConfigParticle.enable_wind_particle = true;
-							ConfigParticle.wind_particle_rate = 0.25D;
-							ConfigParticle.ambient_particle_rate = 1.0D;
-							ConfigParticle.fog_mult = 0.6D;
-							ConfigParticle.camera_shake_mult = 1.0D;
+							ConfigClient.enable_falling_leaves = true;
+							ConfigClient.enable_fire_particle = true;
+							ConfigClient.enable_waterfall_splash = true;
+							ConfigClient.enable_wind_particle = true;
+							ConfigClient.wind_particle_rate = 0.25D;
+							ConfigClient.ambient_particle_rate = 1.0D;
+							ConfigClient.fog_mult = 0.6D;
+							ConfigClient.camera_shake_mult = 1.0D;
 							break;
 						case 6:
-							ConfigParticle.enable_falling_leaves = true;
-							ConfigParticle.enable_fire_particle = true;
-							ConfigParticle.enable_waterfall_splash = true;
-							ConfigParticle.enable_wind_particle = true;
-							ConfigParticle.wind_particle_rate = 0.3D;
-							ConfigParticle.ambient_particle_rate = 2.0D;
-							ConfigParticle.fog_mult = 1.0D;
-							ConfigParticle.camera_shake_mult = 1.0D;
+							ConfigClient.enable_falling_leaves = true;
+							ConfigClient.enable_fire_particle = true;
+							ConfigClient.enable_waterfall_splash = true;
+							ConfigClient.enable_wind_particle = true;
+							ConfigClient.wind_particle_rate = 0.3D;
+							ConfigClient.ambient_particle_rate = 2.0D;
+							ConfigClient.fog_mult = 1.0D;
+							ConfigClient.camera_shake_mult = 1.0D;
 							break;
 						case 7:
-							ConfigParticle.enable_falling_leaves = true;
-							ConfigParticle.enable_fire_particle = true;
-							ConfigParticle.enable_waterfall_splash = true;
-							ConfigParticle.enable_wind_particle = true;
-							ConfigParticle.wind_particle_rate = 0.5D;
-							ConfigParticle.ambient_particle_rate = 4.0D;
-							ConfigParticle.fog_mult = 1.0D;
-							ConfigParticle.camera_shake_mult = 1.0D;
+							ConfigClient.enable_falling_leaves = true;
+							ConfigClient.enable_fire_particle = true;
+							ConfigClient.enable_waterfall_splash = true;
+							ConfigClient.enable_wind_particle = true;
+							ConfigClient.wind_particle_rate = 0.5D;
+							ConfigClient.ambient_particle_rate = 4.0D;
+							ConfigClient.fog_mult = 1.0D;
+							ConfigClient.camera_shake_mult = 1.0D;
 							break;
 					}
 					break;
@@ -538,49 +538,49 @@ public class EZConfigParser
 					switch(value)
 					{
 						case 0:
-							ConfigParticle.enable_extended_render_distance = false;
-							ConfigParticle.extended_render_distance = 128.0D;
-							ConfigParticle.max_particles = 3000;
+							ConfigClient.enable_extended_render_distance = false;
+							ConfigClient.extended_render_distance = 128.0D;
+							ConfigClient.max_particles = 3000;
 							break;
 						case 1:
-							ConfigParticle.enable_extended_render_distance = true;
-							ConfigParticle.extended_render_distance = 128.0D;
-							ConfigParticle.max_particles = 3000;
+							ConfigClient.enable_extended_render_distance = true;
+							ConfigClient.extended_render_distance = 128.0D;
+							ConfigClient.max_particles = 3000;
 							break;
 						case 2:
-							ConfigParticle.enable_extended_render_distance = true;
-							ConfigParticle.extended_render_distance = 256.0D;
-							ConfigParticle.max_particles = 4000;
+							ConfigClient.enable_extended_render_distance = true;
+							ConfigClient.extended_render_distance = 256.0D;
+							ConfigClient.max_particles = 4000;
 							break;
 						case 3:
-							ConfigParticle.enable_extended_render_distance = true;
-							ConfigParticle.extended_render_distance = 370.0D;
-							ConfigParticle.max_particles = 5000;
+							ConfigClient.enable_extended_render_distance = true;
+							ConfigClient.extended_render_distance = 370.0D;
+							ConfigClient.max_particles = 5000;
 							break;
 						case 4:
-							ConfigParticle.enable_extended_render_distance = true;
-							ConfigParticle.extended_render_distance = 512.0D;
-							ConfigParticle.max_particles = -1;
+							ConfigClient.enable_extended_render_distance = true;
+							ConfigClient.extended_render_distance = 512.0D;
+							ConfigClient.max_particles = -1;
 							break;
 						case 5:
-							ConfigParticle.enable_extended_render_distance = true;
-							ConfigParticle.extended_render_distance = 750.0D;
-							ConfigParticle.max_particles = -1;
+							ConfigClient.enable_extended_render_distance = true;
+							ConfigClient.extended_render_distance = 750.0D;
+							ConfigClient.max_particles = -1;
 							break;
 						case 6:
-							ConfigParticle.enable_extended_render_distance = true;
-							ConfigParticle.extended_render_distance = 1028.0D;
-							ConfigParticle.max_particles = -1;
+							ConfigClient.enable_extended_render_distance = true;
+							ConfigClient.extended_render_distance = 1028.0D;
+							ConfigClient.max_particles = -1;
 							break;
 						case 7:
-							ConfigParticle.enable_extended_render_distance = true;
-							ConfigParticle.extended_render_distance = 2300.0D;
-							ConfigParticle.max_particles = -1;
+							ConfigClient.enable_extended_render_distance = true;
+							ConfigClient.extended_render_distance = 2300.0D;
+							ConfigClient.max_particles = -1;
 							break;
 					}
 
 				case EZGuiAPI.BA_FANCY_RENDERING:
-					ConfigParticle.enable_legacy_rendering = value == 0;
+					ConfigClient.enable_legacy_rendering = value == 0;
 					break;
 				case EZGuiAPI.BA_RADAR:
 					ConfigMisc.debug_mode_radar = value == 1;

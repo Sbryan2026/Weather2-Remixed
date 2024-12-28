@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.ConfigVolume;
 import net.mrbt0907.weather2.util.Maths;
@@ -72,7 +72,7 @@ public class EntityLightningEX extends EntityLightningBolt
 		{
 			if (world.isRemote)
 			{
-				if (ConfigParticle.enable_sky_lightning)
+				if (ConfigClient.enable_sky_lightning)
 					world.setLastLightningBolt(2);
 			}
 			else
@@ -89,6 +89,6 @@ public class EntityLightningEX extends EntityLightningBolt
 		if (MC.player == null || MC.player.getDistance(this) > ConfigStorm.max_lightning_bolt_distance) return;
 		
 		world.playSound(posX, posY, posZ, SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.WEATHER, 64.0F * ConfigVolume.lightning, 0.8F + rand.nextFloat() * 0.2F, true);
-		world.playSound(posX, posY, posZ, SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.WEATHER, 2.0F, 0.5F + rand.nextFloat() * 0.2F, true);
+		world.playSound(posX, posY, posZ, SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.WEATHER, 2.0F, 0.5F + rand.nextFloat() * 0.2F, false);
 	}
 }

@@ -43,7 +43,7 @@ import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
 import net.mrbt0907.weather2.config.ConfigMisc;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.ConfigVolume;
 import net.mrbt0907.weather2.config.EZConfigParser;
@@ -178,7 +178,7 @@ public class NewSceneEnhancer implements Runnable
 			float max = 0.1F;
 			if (cachedSystem instanceof SandstormObject)
 			{
-				fogDensity = (float) ((1.0D - Math.min(cachedSystemDistance / 300.0D, 1.0D)) * max * ConfigParticle.fog_mult);
+				fogDensity = (float) ((1.0D - Math.min(cachedSystemDistance / 300.0D, 1.0D)) * max * ConfigClient.fog_mult);
 				fogRedTarget = 0.35F;
 				fogGreenTarget = 0.22F;
 				fogBlueTarget = 0.10F;
@@ -186,7 +186,7 @@ public class NewSceneEnhancer implements Runnable
 			}
 			else if (rainTarget != 0.0F)
 			{
-				fogDensity = Math.max((Math.abs(rain) - 0.31F) / 0.69F, 0.0F) * max * (float) ConfigParticle.fog_mult;
+				fogDensity = Math.max((Math.abs(rain) - 0.31F) / 0.69F, 0.0F) * max * (float) ConfigClient.fog_mult;
 				return;
 			}
 		}
@@ -261,7 +261,7 @@ public class NewSceneEnhancer implements Runnable
 			int meta;
 			List<BlockSESnapshot> snapshots = new ArrayList<BlockSESnapshot>();
 			
-			if (ConfigParticle.enable_falling_leaves || ConfigParticle.enable_waterfall_splash || ConfigParticle.enable_fire_particle)
+			if (ConfigClient.enable_falling_leaves || ConfigClient.enable_waterfall_splash || ConfigClient.enable_fire_particle)
 			{
 				for (int x = posX - areaWidth; x < posX + areaWidth; x++)
 					for (int y = posY - areaHeight; y < posY + areaHeight; y++)
@@ -277,9 +277,9 @@ public class NewSceneEnhancer implements Runnable
 							material = state.getMaterial();
 							meta = block.getMetaFromState(state);
 								
-							if (ConfigParticle.enable_falling_leaves && (material.equals(Material.LEAVES) || material.equals(Material.VINE) || material.equals(Material.PLANTS)) && neighborPos != null)
+							if (ConfigClient.enable_falling_leaves && (material.equals(Material.LEAVES) || material.equals(Material.VINE) || material.equals(Material.PLANTS)) && neighborPos != null)
 								snapshots.add(new BlockSESnapshot(state, pos, neighborPos, 0));
-							else if (ConfigParticle.enable_waterfall_splash && material.equals(Material.WATER))
+							else if (ConfigClient.enable_waterfall_splash && material.equals(Material.WATER))
 							{
 								if ((meta & 8) != 0)
 								{
@@ -291,7 +291,7 @@ public class NewSceneEnhancer implements Runnable
 										snapshots.add(new BlockSESnapshot(state, pos, null, 1));
 								}
 							}
-							else if (ConfigParticle.enable_fire_particle && block == Blocks.FIRE)
+							else if (ConfigClient.enable_fire_particle && block == Blocks.FIRE)
 								snapshots.add(new BlockSESnapshot(state, pos, null, 2));
 						}
 				
@@ -337,7 +337,7 @@ public class NewSceneEnhancer implements Runnable
 		{
 			if (!MC.isGamePaused())
 			{
-				if (ConfigParticle.camera_shake_mult > 0.0D)
+				if (ConfigClient.camera_shake_mult > 0.0D)
 				{
 					float tornadoStrength = 0.0F;
 					float windStrength = WeatherUtilEntity.isEntityOutside(MC.player, true) ?  0.1F * Maths.clamp((cachedWindSpeed - 4.0F) * 0.2F, 0.0F, 1.0F) : 0.0F;
@@ -354,7 +354,7 @@ public class NewSceneEnhancer implements Runnable
 					
 					strength = tornadoStrength + windStrength;
 					if (strength > 0.0F)
-						shakeCamera(strength * (float) ConfigParticle.camera_shake_mult);
+						shakeCamera(strength * (float) ConfigClient.camera_shake_mult);
 				}
 				tickFog();
 				tickPrecipitation();
@@ -378,7 +378,7 @@ public class NewSceneEnhancer implements Runnable
 	/**Smoothly adjusts precipitation values based on the rain target*/
 	protected void tickPrecipitation()
 	{
-		float rate = 0.0005F * Math.abs((float) ConfigParticle.rain_change_mult);
+		float rate = 0.0005F * Math.abs((float) ConfigClient.rain_change_mult);
 		
 		if (rainTarget < 0.0F && rain > 0.0F || rainTarget >= 0.0F && rain < 0.0F)
 			rain = -rain;
@@ -392,12 +392,12 @@ public class NewSceneEnhancer implements Runnable
 		if (overcastMult != overcastTargetMult)
 			overcastMult = Maths.adjust(overcastMult, overcastTargetMult, rate);
 	
-		if (!ConfigParticle.enable_vanilla_rain && ConfigParticle.precipitation_particle_rate > 0.0D && rain != 0.0F)
+		if (!ConfigClient.enable_vanilla_rain && ConfigClient.precipitation_particle_rate > 0.0D && rain != 0.0F)
 		{
 			ParticleTexFX particle;
 			BlockPos pos, posPrecip;
 			boolean snowing = rain < 0.0F;
-			int particleCount = (int) Math.abs(rain * 15.0F * ConfigParticle.precipitation_particle_rate),
+			int particleCount = (int) Math.abs(rain * 15.0F * ConfigClient.precipitation_particle_rate),
 				particleCountSplash, particleCountSheet;
 			int spawnArea = 20;
 			
@@ -406,8 +406,8 @@ public class NewSceneEnhancer implements Runnable
 			
 			particleCount += 5;
 			
-			particleCountSheet = ConfigParticle.enable_heavy_precipitation && rain > 0.5F ? (int) (particleCount * 0.2F) : 0;
-			particleCountSplash = ConfigParticle.enable_precipitation_splash ? (int)(particleCount * 4) : 0;
+			particleCountSheet = ConfigClient.enable_heavy_precipitation && rain > 0.5F ? (int) (particleCount * 0.2F) : 0;
+			particleCountSplash = ConfigClient.enable_precipitation_splash ? (int)(particleCount * 4) : 0;
 			
 			if (snowing)
 			{
@@ -567,7 +567,7 @@ public class NewSceneEnhancer implements Runnable
 	
 	protected void tickFog()
 	{
-		float mult = (float) ConfigParticle.fog_change_rate;
+		float mult = (float) ConfigClient.fog_change_rate;
 		fogMult = Maths.adjust(fogMult, fogDensity, (fogMult < 0.1F ? 0.00005F : 0.001F) * mult);
 		
 			if (fogRed >= 0.0F && fogRed != fogRedTarget)
@@ -582,7 +582,7 @@ public class NewSceneEnhancer implements Runnable
 	protected void tickAmbiance()
 	{	
 		List<BlockSESnapshot> snapshots = new ArrayList<BlockSESnapshot>(queue);
-		int particleCount = (int) (160.0D / Maths.clamp(ConfigParticle.ambient_particle_rate, 0.0001D, 159.0D));
+		int particleCount = (int) (160.0D / Maths.clamp(ConfigClient.ambient_particle_rate, 0.0001D, 159.0D));
 		
 		for(BlockSESnapshot snapshot : snapshots)
 		{
@@ -704,7 +704,7 @@ public class NewSceneEnhancer implements Runnable
 				for (Particle entity1 : WeatherUtilParticle.fxLayers[layer][i])
 				{
 					String className = entity1.getClass().getName();
-					if (className.equals("net.minecraft.client.particle.Barrier") || ConfigParticle.enable_vanilla_rain && className.equals("net.minecraft.client.particle.ParticleRain"))
+					if (className.equals("net.minecraft.client.particle.Barrier") || ConfigClient.enable_vanilla_rain && className.equals("net.minecraft.client.particle.ParticleRain"))
 						continue;
 	
 					if ((WeatherUtilBlock.getPrecipitationHeightSafe(MC.world, new BlockPos(MathHelper.floor(CoroUtilEntOrParticle.getPosX(entity1)), 0, MathHelper.floor(CoroUtilEntOrParticle.getPosZ(entity1)))).getY() - 1 < (int)CoroUtilEntOrParticle.getPosY(entity1) + 1) || (entity1 instanceof ParticleTexFX))
@@ -746,7 +746,7 @@ public class NewSceneEnhancer implements Runnable
 		
 		WeatherUtilSound.tick();
 		
-		if (!ConfigParticle.enable_vanilla_rain)
+		if (!ConfigClient.enable_vanilla_rain)
 		{
 			BlockPos playerPos = MC.player.getPosition(), groundPos = MC.world.getPrecipitationHeight(playerPos);
 			if (MC.world.rand.nextInt(3) == 0 && playerPos.distanceSq(groundPos) < 16.0D && rain > 0.0D)
@@ -875,7 +875,7 @@ public class NewSceneEnhancer implements Runnable
 					tickThread();
 					ticksThreadExisted++;
 					errorsThreaded = 0;
-					Thread.sleep(ConfigParticle.scene_enhancer_thread_delay);
+					Thread.sleep(ConfigClient.scene_enhancer_thread_delay);
 				}
 				catch (Throwable e)
 				{

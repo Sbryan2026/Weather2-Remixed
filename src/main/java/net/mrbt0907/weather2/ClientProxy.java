@@ -31,7 +31,7 @@ import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
 import net.mrbt0907.weather2.client.gui.GuiWeather;
 import net.mrbt0907.weather2.client.rendering.ParticleManagerEX;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.entity.EntityIceBall;
 import net.mrbt0907.weather2.entity.EntityLightningEX;
 import net.mrbt0907.weather2.entity.EntityMovingBlock;
@@ -85,7 +85,7 @@ public class ClientProxy extends CommonProxy
 		MinecraftForge.EVENT_BUS.register(guiWeather);
 		if (WeatherUtil.isAprilFoolsDay())
 		{
-			ConfigParticle.particle_renderer = "2";
+			ConfigClient.particle_renderer = "2";
 			ConfigManager.save("Weather2 Remastered - Client");
 			
 		}

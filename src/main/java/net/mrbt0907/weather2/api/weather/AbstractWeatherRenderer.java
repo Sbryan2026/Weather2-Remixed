@@ -19,7 +19,7 @@ import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 
 @SideOnly(Side.CLIENT)
@@ -88,7 +88,7 @@ public abstract class AbstractWeatherRenderer
 					{
 						Weather2.warn("Particle renderer's onTick() has failed to run correctly. Disabling particle renderer...");
 						e.printStackTrace();
-						ConfigParticle.particle_renderer = "-1";
+						ConfigClient.particle_renderer = "-1";
 						WeatherAPI.refreshRenders(false);
 						attempts = -1;
 					}
@@ -101,10 +101,10 @@ public abstract class AbstractWeatherRenderer
 				renderDebugInfo.clear();
 				renderDebugInfo.add("Renderer: " + String.valueOf(WeatherAPI.getParticleRendererId()));
 				renderDebugInfo.add("Delta: " + delta + "si");
-				if (ConfigParticle.max_particles > 0)
+				if (ConfigClient.max_particles > 0)
 				{
 					renderDebugInfo.add("Particle Count: " + this.particles.size() + "/" + particleLimit);
-					renderDebugInfo.add("Global Particle Count: " + ClientTickHandler.weatherManager.getParticleCount() + "/" + ConfigParticle.max_particles);
+					renderDebugInfo.add("Global Particle Count: " + ClientTickHandler.weatherManager.getParticleCount() + "/" + ConfigClient.max_particles);
 				}
 				else
 				{
@@ -133,7 +133,7 @@ public abstract class AbstractWeatherRenderer
 						{
 							Weather2.warn("Particle renderer's onTick() has failed to run correctly. Disabling particle renderer...");
 							e.printStackTrace();
-							ConfigParticle.particle_renderer = "-1";
+							ConfigClient.particle_renderer = "-1";
 							WeatherAPI.refreshRenders(false);
 							attempts = -1;
 						}
@@ -197,7 +197,7 @@ public abstract class AbstractWeatherRenderer
 		if (ConfigCoroUtil.optimizedCloudRendering)
 			entityfx.setMaxAge(400);
 		
-		entityfx.particleScale = (float) (entityfx.particleScale * ConfigParticle.particle_scale_mult);
+		entityfx.particleScale = (float) (entityfx.particleScale * ConfigClient.particle_scale_mult);
 		ExtendedRenderer.rotEffRenderer.addEffect(entityfx);
 		particleBehaviorFog.particles.add(entityfx);
 		particles.add(entityfx);
@@ -232,7 +232,7 @@ public abstract class AbstractWeatherRenderer
 				{
 					Weather2.warn("Particle renderer's onParticleLimitRefresh() has failed to run correctly. Disabling particle renderer...");
 					e.printStackTrace();
-					ConfigParticle.particle_renderer = "-1";
+					ConfigClient.particle_renderer = "-1";
 					WeatherAPI.refreshRenders(false);
 					attempts = -1;
 				}

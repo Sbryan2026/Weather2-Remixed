@@ -46,7 +46,7 @@ public class Weather2
 		MinecraftForge.EVENT_BUS.register(new EventHandlerForge());
 		ConfigModEX.register(new ConfigMisc());
 		ConfigModEX.register(new ConfigVolume());
-		ConfigModEX.register(new ConfigParticle());
+		ConfigModEX.register(new ConfigClient());
 		ConfigModEX.register(new ConfigFront());
 		ConfigModEX.register(new ConfigStorm());
 		ConfigModEX.register(new ConfigGrab());

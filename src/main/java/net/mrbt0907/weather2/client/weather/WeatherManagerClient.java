@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.ConfigVolume;
 import net.mrbt0907.weather2.entity.EntityLightningEX;
@@ -196,7 +196,7 @@ public class WeatherManagerClient extends WeatherManager
 					ent.setEntityId(mainNBT.getInteger("entityID"));
 					world.addWeatherEffect(ent);
 				}
-				else if (ConfigParticle.enable_sky_lightning)
+				else if (ConfigClient.enable_sky_lightning)
 				{
 					int x = mainNBT.getInteger("posX"), y = mainNBT.getInteger("posY"), z = mainNBT.getInteger("posZ");
 					if (MC.player != null && Maths.distanceSq(MC.player.posX, MC.player.posY, MC.player.posZ, x, y, z) <= ConfigStorm.max_lightning_bolt_distance)
@@ -290,7 +290,7 @@ public class WeatherManagerClient extends WeatherManager
 		
 		if (systems == 0) systems = 1;
 		
-		particleLimit = ConfigParticle.max_particles > 0 ? ConfigParticle.max_particles / systems : Integer.MAX_VALUE;
+		particleLimit = ConfigClient.max_particles > 0 ? ConfigClient.max_particles / systems : Integer.MAX_VALUE;
 		this.systems.forEach((uuid, system) ->
 		{
 			if (system instanceof StormObject && ((StormObject)system).particleRenderer != null)

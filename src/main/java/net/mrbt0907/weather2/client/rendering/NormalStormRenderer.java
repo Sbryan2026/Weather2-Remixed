@@ -21,7 +21,7 @@ import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
@@ -66,14 +66,14 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		IBlockState state = ConfigCoroUtil.optimizedCloudRendering ? Blocks.AIR.getDefaultState() : ChunkUtils.getBlockState(manager.getWorld(), (int) storm.pos_funnel_base.posX, (int) storm.pos_funnel_base.posY - 1, (int) storm.pos_funnel_base.posZ);
 		Material material = state.getMaterial();
 		double maxRenderDistance = NewSceneEnhancer.instance().renderDistance + 64.0D;
-		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigParticle.particle_scale_mult, storm.getLayerHeight() * 0.01F);
-		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.008F, 0.35F) * (float) ConfigParticle.particle_scale_mult, storm.getLayerHeight() * 0.0060F);
-		float sizeOtherMult = Math.min(Math.max(storm.size * 0.003F, 0.45F) * (float) ConfigParticle.particle_scale_mult, storm.getLayerHeight() * 0.035F);
+		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigClient.particle_scale_mult, storm.getLayerHeight() * 0.01F);
+		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.008F, 0.35F) * (float) ConfigClient.particle_scale_mult, storm.getLayerHeight() * 0.0060F);
+		float sizeOtherMult = Math.min(Math.max(storm.size * 0.003F, 0.45F) * (float) ConfigClient.particle_scale_mult, storm.getLayerHeight() * 0.035F);
 		float heightMult = storm.getLayerHeight() * 0.0053F;
 		float rotationMult = Math.max(heightMult * 0.55F, 1.0F);
 		float r = -1.0F, g = -1.0F, b = -1.0F;
 		
-		if (ConfigParticle.enable_tornado_block_colors)
+		if (ConfigClient.enable_tornado_block_colors)
 		{
 			if (!ConfigCoroUtil.optimizedCloudRendering && state.getBlock().equals(Blocks.AIR))
 			{
@@ -153,7 +153,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		}
 		else
 		{
-			if (manager.getWorld().getTotalWorldTime() % (delay + ConfigParticle.cloud_particle_delay) == 0) {
+			if (manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.cloud_particle_delay) == 0) {
 				for (int i = 0; i < loopSize && shouldSpawn(0); i++)
 				{
 					if (listParticlesCloud.size() < (storm.size + extraSpawning) / 1F)
@@ -195,9 +195,9 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		}
 		
 		//ground effects
-		if (ConfigParticle.enable_tornado_debris && !ConfigCoroUtil.optimizedCloudRendering && storm.stormType == StormType.LAND.ordinal() && storm.stage > Stage.SEVERE.getStage() && r >= 0.0F && !material.isLiquid())
+		if (ConfigClient.enable_tornado_debris && !ConfigCoroUtil.optimizedCloudRendering && storm.stormType == StormType.LAND.ordinal() && storm.stage > Stage.SEVERE.getStage() && r >= 0.0F && !material.isLiquid())
 		{
-			if (manager.getWorld().getTotalWorldTime() % (delay + ConfigParticle.ground_debris_particle_delay) == 0)
+			if (manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.ground_debris_particle_delay) == 0)
 			{
 				for (int i = 0; i < 16 && shouldSpawn(2); i++)
 				{
@@ -244,7 +244,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		//spawn funnel
 		if (storm.isDeadly() && storm.stormType == 0 || storm.isSpout)
 		{
-			if (manager.getWorld().getTotalWorldTime() % (delay + ConfigParticle.funnel_particle_delay) == 0)
+			if (manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.funnel_particle_delay) == 0)
 			{
 				for (int i = 0; i < loopSize && shouldSpawn(1); i++)
 				{
@@ -295,9 +295,9 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 				}
 			}
 		}
-		if (ConfigParticle.enable_distant_downfall && storm.ticks % 20 == 0 && ConfigParticle.distant_downfall_particle_rate > 0.0F && listParticlesRain.size() < 1000 && storm.stage > Stage.THUNDER.getStage() && storm.isRaining() && storm.temperature > 0.0F)
+		if (ConfigClient.enable_distant_downfall && storm.ticks % 20 == 0 && ConfigClient.distant_downfall_particle_rate > 0.0F && listParticlesRain.size() < 1000 && storm.stage > Stage.THUNDER.getStage() && storm.isRaining() && storm.temperature > 0.0F)
 		{
-			int particleCount = (int)Math.min(Math.ceil(storm.rain * storm.stage * ConfigParticle.distant_downfall_particle_rate * 0.005F), 50.0F);
+			int particleCount = (int)Math.min(Math.ceil(storm.rain * storm.stage * ConfigClient.distant_downfall_particle_rate * 0.005F), 50.0F);
 			
 			for (int i = 0; i < particleCount && shouldSpawn(3); i++)
 			{
@@ -337,7 +337,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 				 storm.spinEntity(ent);
 			}
 		}
-		if (storm.getStage() > Stage.THUNDER.getStage()&& manager.getWorld().getTotalWorldTime() % (delay + ConfigParticle.cloud_particle_delay) == 0) {
+		if (storm.getStage() > Stage.THUNDER.getStage()&& manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.cloud_particle_delay) == 0) {
 			for (int i = 0; i < loopSize && shouldSpawn(4); i++)
 			{
 				if (listParticlesMeso.size() < (storm.size + extraSpawning) / 1F)
@@ -471,7 +471,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 					}
 					
 					ent.rotationPitch = (float) (90.0F - (90.0f * Math.min(ent.getPosY() / (storm.getLayerHeight() + ent.getScale() * 0.75F), 1.0F)));
-					if (ConfigParticle.enable_extended_render_distance)
+					if (ConfigClient.enable_extended_render_distance)
 						ent.setScale(1000.0F * sizeCloudMult);
 					
 					if (curSpeed < speed * 20D)

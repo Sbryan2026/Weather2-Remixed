@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.api.weather.WeatherEnum;
 import net.mrbt0907.weather2.client.entity.particle.ParticleSandstorm;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigSand;
 import net.mrbt0907.weather2.registry.BlockRegistry;
 import net.mrbt0907.weather2.util.CachedNBTTagCompound;
@@ -395,7 +395,7 @@ public class SandstormObject extends WeatherObject
     	 */
     	float sandstormScale = getSandstormScale();
 
-		double sandstormParticleRateDust = ConfigParticle.sandstorm_dust_particle_rate;
+		double sandstormParticleRateDust = ConfigClient.sandstorm_dust_particle_rate;
     	if (size > 0/*isFrontGrowing || sandstormScale > 0.5F*/) {
 	    	for (int heightLayer = 0; heightLayer < heightLayers && spawnedThisTick < 500; heightLayer++) {
 	    		//youd think this should be angle - 90 to angle + 90, but minecraft / bad math
@@ -775,7 +775,7 @@ public class SandstormObject extends WeatherObject
 
 	public boolean canSpawnParticle()
 	{
-		return ConfigParticle.max_particles < 0 || ClientTickHandler.weatherManager.getParticleCount() < ConfigParticle.max_particles;
+		return ConfigClient.max_particles < 0 || ClientTickHandler.weatherManager.getParticleCount() < ConfigClient.max_particles;
 	}
 
 }

@@ -24,7 +24,7 @@ import net.mrbt0907.weather2.api.weather.IWeatherRain;
 import net.mrbt0907.weather2.api.weather.IWeatherStaged;
 import net.mrbt0907.weather2.config.ConfigFront;
 import net.mrbt0907.weather2.config.ConfigMisc;
-import net.mrbt0907.weather2.config.ConfigParticle;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigSand;
 import net.mrbt0907.weather2.config.ConfigSimulation;
 import net.mrbt0907.weather2.config.ConfigStorm;
@@ -221,7 +221,7 @@ public class WeatherManagerServer extends WeatherManager
 
 		//tick partial cloud cover variation0
 		if (ticks % 200 == 0)
-			cloudIntensity = ConfigMisc.overcast_mode && isRaining ? 1.0F : cloudIntensity + (float) Maths.clamp(Maths.random(ConfigParticle.cloud_coverage_change_amount) - Maths.random(ConfigParticle.cloud_coverage_change_amount), ConfigParticle.min_cloud_coverage_perc * 0.01D, ConfigParticle.max_cloud_coverage_perc * 0.01D);
+			cloudIntensity = ConfigMisc.overcast_mode && isRaining ? 1.0F : cloudIntensity + (float) Maths.clamp(Maths.random(ConfigClient.cloud_coverage_change_amount) - Maths.random(ConfigClient.cloud_coverage_change_amount), ConfigClient.min_cloud_coverage_perc * 0.01D, ConfigClient.max_cloud_coverage_perc * 0.01D);
 				//force full cloudIntensity if server side raining
 				//note: storms also revert to clouded storms for same condition
 	}
@@ -588,11 +588,11 @@ public class WeatherManagerServer extends WeatherManager
 					ticksStormFormed = world.getTotalWorldTime() + ConfigStorm.storm_spawn_delay;
 				return (!ConfigStorm.disable_tornados || !ConfigStorm.disable_cyclones) && ticksStormFormed < world.getTotalWorldTime() && systems.size() < ConfigStorm.max_weather_objects;
 			case 2:
-				if (true) return false;
-				ticks = ticksSandstormFormed - world.getTotalWorldTime();
+				/*ticks = ticksSandstormFormed - world.getTotalWorldTime();
 				if (ticks > ConfigSand.sandstorm_spawn_delay)
 					ticksSandstormFormed = world.getTotalWorldTime() + ConfigSand.sandstorm_spawn_delay;
-				return !ConfigSand.disable_sandstorms && ticksSandstormFormed < world.getTotalWorldTime() && systems.size() < ConfigStorm.max_weather_objects;
+				return !ConfigSand.disable_sandstorms && ticksSandstormFormed < world.getTotalWorldTime() && systems.size() < ConfigStorm.max_weather_objects;*/
+				return false;
 			default:
 				return false;
 		}
