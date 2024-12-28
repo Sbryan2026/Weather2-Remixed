@@ -83,8 +83,12 @@ public class ConfigStorm implements IConfigEX
 	public static boolean enable_spawn_per_player = false;
 	@Enforce
 	@IntegerRange(min=0, max=100)
-	@Comment("Each storm has a x chance to be a storm instead of a cloud. Goes from 0 to 100")
-	public static int storm_spawn_chance = 30;
+	@Comment("Minimum chance of any cloud to become a storm. Range is 0 to 100")
+	public static int storm_spawn_chance_min = 20;
+	@Enforce
+	@IntegerRange(min=0, max=100)
+	@Comment("Maximum chance of any cloud to become a storm. Range is 0 to 100.")
+	public static int storm_spawn_chance_max = 40;
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("The time in ticks it takes for all weather to spawn")

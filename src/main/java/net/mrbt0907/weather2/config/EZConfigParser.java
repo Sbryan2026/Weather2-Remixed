@@ -62,7 +62,8 @@ public class EZConfigParser
 						case 0:
 							ConfigFront.max_front_objects = 3;
 							ConfigStorm.max_weather_objects = 30;
-							ConfigStorm.storm_spawn_chance = 5;
+							ConfigStorm.storm_spawn_chance_min = 2;
+							ConfigStorm.storm_spawn_chance_max = 5;
 							ConfigStorm.storm_spawn_delay = 2000;
 							ConfigSand.sandstorm_spawn_1_in_x = 300;
 							ConfigSand.sandstorm_spawn_delay = 8000;
@@ -70,7 +71,8 @@ public class EZConfigParser
 						case 1:
 							ConfigFront.max_front_objects = 3;
 							ConfigStorm.max_weather_objects = 30;
-							ConfigStorm.storm_spawn_chance = 10;
+							ConfigStorm.storm_spawn_chance_min = 5;
+							ConfigStorm.storm_spawn_chance_max = 10;
 							ConfigStorm.storm_spawn_delay = 1250;
 							ConfigSand.sandstorm_spawn_1_in_x = 200;
 							ConfigSand.sandstorm_spawn_delay = 8000;
@@ -78,7 +80,8 @@ public class EZConfigParser
 						case 2:
 							ConfigFront.max_front_objects = 3;
 							ConfigStorm.max_weather_objects = 30;
-							ConfigStorm.storm_spawn_chance = 15;
+							ConfigStorm.storm_spawn_chance_min = 10;
+							ConfigStorm.storm_spawn_chance_max = 15;
 							ConfigStorm.storm_spawn_delay = 1000;
 							ConfigSand.sandstorm_spawn_1_in_x = 100;
 							ConfigSand.sandstorm_spawn_delay = 4000;
@@ -86,7 +89,8 @@ public class EZConfigParser
 						case 3:
 							ConfigFront.max_front_objects = 3;
 							ConfigStorm.max_weather_objects = 30;
-							ConfigStorm.storm_spawn_chance = 30;
+							ConfigStorm.storm_spawn_chance_min = 20;
+							ConfigStorm.storm_spawn_chance_max = 30;
 							ConfigStorm.storm_spawn_delay = 750;
 							ConfigSand.sandstorm_spawn_1_in_x = 60;
 							ConfigSand.sandstorm_spawn_delay = 2000;
@@ -94,7 +98,8 @@ public class EZConfigParser
 						case 4:
 							ConfigFront.max_front_objects = 4;
 							ConfigStorm.max_weather_objects = 40;
-							ConfigStorm.storm_spawn_chance = 35;
+							ConfigStorm.storm_spawn_chance_min = 35;
+							ConfigStorm.storm_spawn_chance_max = 40;
 							ConfigStorm.storm_spawn_delay = 650;
 							ConfigSand.sandstorm_spawn_1_in_x = 40;
 							ConfigSand.sandstorm_spawn_delay = 1500;
@@ -102,7 +107,8 @@ public class EZConfigParser
 						case 5:
 							ConfigFront.max_front_objects = 5;
 							ConfigStorm.max_weather_objects = 50;
-							ConfigStorm.storm_spawn_chance = 50;
+							ConfigStorm.storm_spawn_chance_min = 40;
+							ConfigStorm.storm_spawn_chance_max = 50;
 							ConfigStorm.storm_spawn_delay = 500;
 							ConfigSand.sandstorm_spawn_1_in_x = 25;
 							ConfigSand.sandstorm_spawn_delay = 1200;
@@ -110,7 +116,8 @@ public class EZConfigParser
 						case 6:
 							ConfigFront.max_front_objects = 5;
 							ConfigStorm.max_weather_objects = 100;
-							ConfigStorm.storm_spawn_chance = 100;
+							ConfigStorm.storm_spawn_chance_min = 100;
+							ConfigStorm.storm_spawn_chance_max = 100;
 							ConfigStorm.storm_spawn_delay = 200;
 							ConfigStorm.storms_aim_at_player = true;
 							ConfigStorm.storm_aim_accuracy_in_angle = 0;

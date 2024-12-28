@@ -51,6 +51,7 @@ public class WeatherManagerServer extends WeatherManager
 	private long ticksFrontFormed = 0L;
 	private long ticksSandstormFormed = 0L;
 	private long ticksStormFormed = 0L;
+	public static int stormChanceToday = 10;
 	
 	public WeatherManagerServer(World world)
 	{
@@ -75,6 +76,8 @@ public class WeatherManagerServer extends WeatherManager
 			FrontObject front;
 			WeatherObject system;
 			
+			//Get storm chance for today
+			if(world.getWorldTime() % 24000 == 1) stormChanceToday = Maths.random(ConfigStorm.storm_spawn_chance_min, ConfigStorm.storm_spawn_chance_max);
 			List<FrontObject> fronts = new ArrayList<FrontObject>(this.fronts.values());
 			List<WeatherObject> systems = getWeatherObjects();
 			WeatherObject spawn = null;
@@ -278,7 +281,8 @@ public class WeatherManagerServer extends WeatherManager
 		mainNBT.setFloat("ticksSandstormFormed", ticksSandstormFormed);
 		mainNBT.setFloat("ticksStormFormed", ticksStormFormed);
 		mainNBT.setTag("windMan", windManager.writeToNBT(new NBTTagCompound()));
-		
+		mainNBT.setInteger("stormChanceToday", stormChanceToday);
+
 		String saveFolder = CoroUtilFile.getWorldSaveFolderPath() + CoroUtilFile.getWorldFolderName() + "weather2" + File.separator;
 		
 		try
@@ -340,7 +344,9 @@ public class WeatherManagerServer extends WeatherManager
 			ticksSandstormFormed = mainNBT.getLong("ticksSandstormFormed");
 		if (mainNBT.hasKey("ticksStormFormed"))
 			ticksStormFormed = mainNBT.getLong("ticksStormFormed");
-		
+		if(mainNBT.hasKey("stormChanceToday"))
+			stormChanceToday = mainNBT.getInteger("stormChanceToday");
+
 		windManager.readFromNBT(mainNBT.getCompoundTag("windMan"));
 		NBTTagCompound volcanosNBT = mainNBT.getCompoundTag("volcanoData");
 		

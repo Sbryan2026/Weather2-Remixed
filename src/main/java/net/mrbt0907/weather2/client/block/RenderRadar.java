@@ -19,12 +19,14 @@ import net.mrbt0907.weather2.block.tile.TileRadar;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
+import net.mrbt0907.weather2.config.ConfigFront;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.registry.ParticleRegistry;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.util.WeatherUtil;
+import net.mrbt0907.weather2.weather.WeatherManagerServer;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 
 import org.lwjgl.opengl.GL11;
@@ -76,6 +78,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 				renderLivingLabel("\u00A7" + " Server Weather: " + (wm.weatherID == 2 ? "Thunder" : wm.weatherID == 1 ? "Rain" : "Clear"), x, y + 2.1F, z, 1, 10, 10, playerViewY, 1.0F);
 				renderLivingLabel("\u00A7" + " Precipitation Strength: " + Math.round(precipStr * 100.0F) + "%", x, y + 2.2F, z, 1, 10, 10, playerViewY, 1.0F);
 				renderLivingLabel("\u00A7" + " Overcast Strength: " + overcast, x, y + 2.3F, z, 1, 10, 10, playerViewY, 1.0F);
+				renderLivingLabel("\u00A7" + " Today's Storm Probability: " + WeatherManagerServer.stormChanceToday + "%", x, y+1.7F, z, 1, 10, 10, playerViewY, 1.0F);
 				renderLivingLabel("\u00A7" + " -------------------------", x, y + 2.4F, z, 1, 10, 10, playerViewY, 1.0F);
 				if (radar.system != null && radar.system instanceof StormObject)
 				{
@@ -119,7 +122,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 			if (radar.showRating)
 			{
 				FontRenderer font = Minecraft.getMinecraft().getRenderManager().getFontRenderer();
-				renderLivingLabel(so.typeName, x, y + (so.type == 0 ? 1.54F : 1.5F), z, 1, font.getStringWidth(so.typeName), 5, playerViewY, radar.renderAlpha);
+				renderLivingLabel(so.type == 0 && !ConfigFront.ShowFrontsOnRadar ? "" : so.typeName, x, y + (so.type == 0 ? 1.54F : 1.5F), z, 1, font.getStringWidth(so.typeName), 5, playerViewY, radar.renderAlpha);
 			}
 			
 			if (so.type == 1 || so.type == 2)
@@ -179,7 +182,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 				}
 				
 			}
-			else if (so.type == 0)
+			else if (so.type == 0 && ConfigFront.ShowFrontsOnRadar)
 			{
 				int type = so.name.toLowerCase().contains("stationary") ? 0 : so.name.toLowerCase().contains("warm") ? 2 : so.name.toLowerCase().contains("cold") ? 1 : 3;
 				renderIconNew(x, y + 1.12F, z, (int)(64 * radar.renderRange), (int)(64 * radar.renderRange), 90.0F, 0.0F, so.angle, radar.renderAlpha, type == 0 ? ParticleRegistry.radarIconStationaryFront : type == 1 ? ParticleRegistry.radarIconColdFront : type == 2 ? ParticleRegistry.radarIconWarmFront : ParticleRegistry.radarIconOccludedFront);
@@ -188,7 +191,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 				else
 					renderLivingLabel(TextFormatting.BOLD + "" + TextFormatting.DARK_RED + "|", x, y + 1.22F, z, 1, 5, 5, playerViewY, radar.renderAlpha);
 			}
-			else
+			else if (so.type > 0)
 			{
 				renderIconNew(x, y + 1.4F, z, 16, 16, 0.0F, playerViewY, 0.0F, radar.renderAlpha, ParticleRegistry.radarIconSandstorm);
 				if (!so.isDying)

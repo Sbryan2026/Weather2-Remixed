@@ -28,6 +28,7 @@ import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.util.WeatherUtil;
 import net.mrbt0907.weather2.weather.WeatherManager;
+import net.mrbt0907.weather2.weather.WeatherManagerServer;
 
 public class FrontObject implements IWeatherDetectable
 {
@@ -244,7 +245,7 @@ public class FrontObject implements IWeatherDetectable
 			else
 				storm.pos = new Vec3(pos.posX + Maths.random(-size, size), storm.getLayerHeight(), pos.posZ + Maths.random(-size, size));
 			
-			if (layer == 0 && Maths.chance(ConfigStorm.storm_spawn_chance * 0.01D))
+			if (layer == 0 && Maths.chance(WeatherManagerServer.stormChanceToday * 0.01D))
 				storm.initRealStorm();
 			
 			addWeatherObject(storm);
