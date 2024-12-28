@@ -210,18 +210,17 @@ public class NewSceneEnhancer implements Runnable
 				MC.world.getWorldInfo().setThundering(false);
 				return;
 			}
-
-			overcastTarget = ((stage == 0 ? 0.0F :stage == 1 ? 0.35F : stage == 2 ? 0.6F : 1.0F) - (float) Maths.clamp((cachedSystemDistance - size) / cachedSystem.size, 0.0F, 1.0F));
 			
 			if (cachedSystem != null && cachedSystem instanceof StormObject)
 			{
 				StormObject storm = (StormObject) cachedSystem;
+				overcastTarget = ((stage == 0 ? 0.0F :stage == 1 ? 0.35F : stage == 2 ? 0.56F : stage == 3 ? 0.72F : storm.isViolent ? 1.35F : 1.0F) - (float) Maths.clamp((cachedSystemDistance - size) / cachedSystem.size, 0.0F, 1.0F));
 				overcastTargetMult = (storm.isViolent ? 1.0F : stage >= 2 ? 0.4F : 0.0F);
 			}
 
 			if (system.hasDownfall())
 			{
-				rainTarget = Math.min((system.getDownfall() - IWeatherRain.MINIMUM_DRIZZLE) * overcast * 0.0034F, 1.0F);
+				rainTarget = Math.min((system.getDownfall() - IWeatherRain.MINIMUM_DRIZZLE) * overcast * 0.0045F, 1.0F);
 				
 				if (WeatherUtil.getTemperature(MC.world, MC.player.getPosition()) < 0.0F)
 					rainTarget = -rainTarget;

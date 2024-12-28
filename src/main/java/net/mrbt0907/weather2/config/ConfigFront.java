@@ -9,6 +9,9 @@ import java.io.File;
 
 public class ConfigFront implements IConfigEX
 {
+	@Permission(0)
+	@Comment("Show fronts on Radar")
+	public static boolean ShowFrontsOnRadar = true;
 	@Enforce
 	@IntegerRange(min=0)
 	@Name("Max Fronts")
