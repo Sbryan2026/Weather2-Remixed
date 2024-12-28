@@ -20,8 +20,6 @@ import net.mrbt0907.weather2.util.WorldUtil;
 
 public class EntityLightningEX extends EntityLightningBolt
 {
-	@SideOnly(Side.CLIENT)
-	private static final net.minecraft.client.Minecraft MC = net.minecraft.client.Minecraft.getMinecraft();
 	private static final IBlockState FIRE = Blocks.FIRE.getDefaultState();
     public int fireLifeTime;
 	public int fireChance;
@@ -73,8 +71,8 @@ public class EntityLightningEX extends EntityLightningBolt
 		{
 			if (world.isRemote)
 			{
-				if (ConfigClient.enable_sky_lightning && MC.player.getDistance(this) < ConfigStorm.max_lightning_bolt_distance)
-					world.setLastLightningBolt(2);
+				if (ConfigClient.enable_sky_lightning)
+					onLightSky();
 			}
 			else
 				WorldUtil.getNearestEntities(world, posX, posY, posZ, 3.0D).forEach(entity -> {
@@ -85,8 +83,16 @@ public class EntityLightningEX extends EntityLightningBolt
 	}
 	
 	@SideOnly(Side.CLIENT)
+	protected void onLightSky()
+	{
+		if (net.minecraft.client.Minecraft.getMinecraft().player.getDistance(this) < ConfigStorm.max_lightning_bolt_distance)
+			world.setLastLightningBolt(2);
+	}
+	
+	@SideOnly(Side.CLIENT)
 	protected void onSoundTick()
 	{
+		net.minecraft.client.Minecraft MC = net.minecraft.client.Minecraft.getMinecraft();
 		if (MC.player == null) return;
 		double distance = MC.player.getDistance(this);
 		if (distance < ConfigStorm.max_lightning_bolt_distance)
