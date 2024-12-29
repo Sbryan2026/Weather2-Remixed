@@ -22,10 +22,6 @@ public class ParticleRegistry
 	public static TextureAtlasSprite distant_downfall;
 	public static TextureAtlasSprite tornado256;
 	
-	public static TextureAtlasSprite cloud256_hp;
-	public static TextureAtlasSprite cloud256_meso_hp;
-	public static TextureAtlasSprite tornado256_hp;
-	
 	public static TextureAtlasSprite radarIconReflectivityF;
 	public static TextureAtlasSprite radarIconReflectivityE;
 	public static TextureAtlasSprite radarIconReflectivityD;
@@ -53,10 +49,8 @@ public class ParticleRegistry
 		MeshBufferManagerFoliage.cleanup();
 
 		cloud256 = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":particles/cloud256"));
-		cloud256_hp = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":particles/cloud256_hp"));
 		cloud256_light = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":particles/cloud256_light"));
 		cloud256_meso = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":particles/cloud256_meso"));
-		cloud256_meso_hp = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":particles/cloud256_meso_hp"));
 		cloud_legacy = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":particles/cloud_legacy"));
 		cloud256_fire = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":particles/cloud256_fire"));
 		cloud32 = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID  + ":particles/cloud32"));
@@ -65,7 +59,6 @@ public class ParticleRegistry
 		rainSplash = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID  + ":particles/rain_splash"));
 		distant_downfall = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID  + ":particles/distant_downfall"));
 		tornado256 = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":particles/tornado256"));
-		tornado256_hp = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":particles/tornado256_hp"));
 		radarIconCloud = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":radar/radar_icon_cloud"));
 		radarIconRain = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":radar/radar_icon_rain"));
 		radarIconSnow = event.getMap().registerSprite(new ResourceLocation(Weather2.OLD_MODID + ":radar/radar_icon_snow"));

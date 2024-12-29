@@ -11,9 +11,9 @@ import java.io.File;
 public class ConfigStorm implements IConfigEX
 {
 	@Permission(0)
-	@Comment("Overcast threshold for making the clouds green.")
+	@Comment("Green/Blue multiplier for coloring clouds. 1.0 = fully red, 0.0 = fully blue")
 	@FloatRange(min=0.0F, max=1.0F)
-	public static float overcast_green_threshold = 0.55F;
+	public static float overcast_greenblue_mult = 0.40F;
 	@Permission(0)
 	@Comment("Whether or not to use the Enhanced Fujita Scale for tornados.")
     public static boolean enable_ef_scale = false;
