@@ -67,7 +67,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		Material material = state.getMaterial();
 		int layerHeight = storm.getLayerHeight() + 64;
 		double maxRenderDistance = NewSceneEnhancer.instance().renderDistance + 64.0D;
-		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.009F);
+		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.01F);
 		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.008F, 0.35F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.0055F);
 		float sizeOtherMult = Math.min(Math.max(storm.size * 0.003F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.03F);
 		float heightMult = layerHeight * 0.0053F;
@@ -185,7 +185,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 												particle.setColor(1F, 1F, 1F);
 										}									
 								}
-								particle.rotationPitch = Maths.random(70.0F, 110.0F);
+								particle.rotationPitch = Maths.random(80.0F, 100.0F);
 								particle.setScale(1250.0F * sizeCloudMult);
 								listParticlesCloud.add(particle);
 							}
