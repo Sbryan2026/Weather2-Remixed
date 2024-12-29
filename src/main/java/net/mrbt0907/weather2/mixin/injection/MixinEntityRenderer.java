@@ -7,16 +7,23 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.mrbt0907.weather2.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.mixin.MixinWorldReciever;
+import net.mrbt0907.weather2.util.Maths;
+import net.mrbt0907.weather2.util.WeatherUtilEntity;
+import net.mrbt0907.weather2.weather.storm.StormObject;
 
 @Pseudo
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntityRenderer
 {
+	private static final Minecraft MC = Minecraft.getMinecraft();
 	/** Overriding this pushes the skybox further back when Extended Render Distance is enabled */
 	@Shadow
     private float farPlaneDistance;
@@ -36,6 +43,35 @@ public abstract class MixinEntityRenderer
         if (clipDistance < 173.0f)
             clipDistance = 173.0f;
 	}
+	
+	/** Injecting into orientCamera gives us the perfect spot to shake the perspective */
+	@Inject(method = "orientCamera(F)V", at = @At("RETURN"))
+	private void orientCamera(float partialTicks, CallbackInfo callback)
+    {
+		if (!MC.isGamePaused())
+		{
+			if (ConfigClient.camera_shake_mult > 0.0D)
+			{
+				NewSceneEnhancer scene = NewSceneEnhancer.instance();
+				float tornadoStrength = 0.0F;
+				float windStrength = WeatherUtilEntity.isEntityOutside(MC.player, true) ?  0.1F * Maths.clamp((scene.cachedWindSpeed - 4.0F) * 0.2F, 0.0F, 1.0F) : 0.0F;
+				float strength;
+				
+				if (scene.cachedSystem != null && scene.cachedSystem instanceof StormObject)
+				{
+					StormObject storm = (StormObject) scene.cachedSystem;
+					if (storm.type.equals(Type.TORNADO))
+						tornadoStrength = (1.0F - (float) Math.min(((scene.cachedFunnelDistance - storm.funnelSize) / (storm.funnelSize + 64.0F)), 1.0F)) * Math.min(storm.stage * 0.1F, 1.0F);
+				}
+				
+				strength = (tornadoStrength + windStrength) * 0.025F * ConfigClient.camera_shake_mult;
+				if (strength > 0.0F)
+				{
+					GlStateManager.translate(Maths.random(-strength, strength), Maths.random(-strength, strength), Maths.random(-strength, strength));
+				}
+			}
+		}
+    }
 	
 	/** Injecting into renderRainSnow removes the need to create a different EntityRenderer as we can directly hook into the method.<br><br>
 	 * When Proxy Render Override is enabled, it solves:<br>

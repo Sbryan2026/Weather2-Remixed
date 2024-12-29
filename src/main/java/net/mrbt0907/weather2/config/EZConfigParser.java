@@ -393,7 +393,7 @@ public class EZConfigParser
 							ConfigClient.wind_particle_rate = 0.0D;
 							ConfigClient.ambient_particle_rate = 0.0D;
 							ConfigClient.fog_mult = 0.0D;
-							ConfigClient.camera_shake_mult = 0.0D;
+							ConfigClient.camera_shake_mult = 0.0F;
 							break;
 						case 1:
 							ConfigClient.enable_falling_leaves = true;
@@ -403,7 +403,7 @@ public class EZConfigParser
 							ConfigClient.wind_particle_rate = 0.0D;
 							ConfigClient.ambient_particle_rate = 0.1D;
 							ConfigClient.fog_mult = 0.0D;
-							ConfigClient.camera_shake_mult = 0.0D;
+							ConfigClient.camera_shake_mult = 0.0F;
 							break;
 						case 2:
 							ConfigClient.enable_falling_leaves = true;
@@ -413,7 +413,7 @@ public class EZConfigParser
 							ConfigClient.wind_particle_rate = 0.0D;
 							ConfigClient.ambient_particle_rate = 0.2D;
 							ConfigClient.fog_mult = 0.0D;
-							ConfigClient.camera_shake_mult = 0.0D;
+							ConfigClient.camera_shake_mult = 0.0F;
 							break;
 						case 3:
 							ConfigClient.enable_falling_leaves = true;
@@ -423,7 +423,7 @@ public class EZConfigParser
 							ConfigClient.wind_particle_rate = 0.1D;
 							ConfigClient.ambient_particle_rate = 0.35D;
 							ConfigClient.fog_mult = 0.15D;
-							ConfigClient.camera_shake_mult = 0.25D;
+							ConfigClient.camera_shake_mult = 0.25F;
 							break;
 						case 4:
 							ConfigClient.enable_falling_leaves = true;
@@ -433,7 +433,7 @@ public class EZConfigParser
 							ConfigClient.wind_particle_rate = 0.2D;
 							ConfigClient.ambient_particle_rate = 0.6D;
 							ConfigClient.fog_mult = 0.25D;
-							ConfigClient.camera_shake_mult = 0.5D;
+							ConfigClient.camera_shake_mult = 0.5F;
 							break;
 						case 5:
 							ConfigClient.enable_falling_leaves = true;
@@ -443,7 +443,7 @@ public class EZConfigParser
 							ConfigClient.wind_particle_rate = 0.25D;
 							ConfigClient.ambient_particle_rate = 1.0D;
 							ConfigClient.fog_mult = 0.6D;
-							ConfigClient.camera_shake_mult = 1.0D;
+							ConfigClient.camera_shake_mult = 1.0F;
 							break;
 						case 6:
 							ConfigClient.enable_falling_leaves = true;
@@ -453,7 +453,7 @@ public class EZConfigParser
 							ConfigClient.wind_particle_rate = 0.3D;
 							ConfigClient.ambient_particle_rate = 2.0D;
 							ConfigClient.fog_mult = 1.0D;
-							ConfigClient.camera_shake_mult = 1.0D;
+							ConfigClient.camera_shake_mult = 1.0F;
 							break;
 						case 7:
 							ConfigClient.enable_falling_leaves = true;
@@ -463,7 +463,7 @@ public class EZConfigParser
 							ConfigClient.wind_particle_rate = 0.5D;
 							ConfigClient.ambient_particle_rate = 4.0D;
 							ConfigClient.fog_mult = 1.0D;
-							ConfigClient.camera_shake_mult = 1.0D;
+							ConfigClient.camera_shake_mult = 1.0F;
 							break;
 					}
 					break;

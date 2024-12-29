@@ -125,9 +125,9 @@ public class ConfigClient implements IConfigEX
 	@Comment("Fog change rate that adjusts how fast fog changes states")
 	public static double fog_change_rate = 1.0D;
 	@Permission(0)
-	@DoubleRange(min=0.0D)
+	@FloatRange(min=0.0F)
 	@Comment("Camera shake multiplier that adjusts how intense camera shaking can be")
-	public static double camera_shake_mult = 1.0D;
+	public static float camera_shake_mult = 1.0F;
 	@Permission(0)
 	@IntegerRange(min=1)
 	@Comment("How many ticks between cloud particle spawning")

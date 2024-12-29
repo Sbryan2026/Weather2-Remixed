@@ -77,12 +77,12 @@ public class NewSceneEnhancer implements Runnable
 	//----- Local Variables -----\\
 	public final Minecraft MC;
 	/**The cached result of a weather object if it exists*/
-	protected volatile WeatherObject cachedSystem;
+	public volatile WeatherObject cachedSystem;
 	/**The cached result of a weather object's distance to the player*/
-	protected volatile double cachedSystemDistance = -1.0F;
+	public volatile double cachedSystemDistance = -1.0F;
 	/**The cached result of a storm object's funnel distance to the player*/
-	protected volatile double cachedFunnelDistance = -1.0F;
-	protected volatile float cachedWindSpeed, cachedWindDirection;
+	public volatile double cachedFunnelDistance = -1.0F;
+	public volatile float cachedWindSpeed, cachedWindDirection;
 	protected long ticksExisted, ticksThreadExisted;
 	/**Used to detect if the client is in the world to initialize the scene enhancer*/
 	protected volatile boolean inGame;
@@ -312,25 +312,6 @@ public class NewSceneEnhancer implements Runnable
 		{
 			if (!MC.isGamePaused())
 			{
-				if (ConfigClient.camera_shake_mult > 0.0D)
-				{
-					float tornadoStrength = 0.0F;
-					float windStrength = WeatherUtilEntity.isEntityOutside(MC.player, true) ?  0.1F * Maths.clamp((cachedWindSpeed - 4.0F) * 0.2F, 0.0F, 1.0F) : 0.0F;
-					float strength;
-					
-					if (cachedSystem != null && cachedSystem instanceof StormObject)
-					{
-						StormObject storm = (StormObject) cachedSystem;
-						if (storm.type.equals(Type.TORNADO))
-						{
-							tornadoStrength = (1.0F - (float) Math.min(((cachedFunnelDistance - storm.funnelSize) / (storm.funnelSize + 64.0F)), 1.0F)) * Math.min(storm.stage * 0.1F, 1.0F);
-						}
-					}
-					
-					strength = tornadoStrength + windStrength;
-					if (strength > 0.0F)
-						shakeCamera(strength * (float) ConfigClient.camera_shake_mult);
-				}
 				tickFog();
 				tickPrecipitation();
 				tickAmbiance();
@@ -773,10 +754,6 @@ public class NewSceneEnhancer implements Runnable
 	}
 	
 	//----- Utility -----\\
-	public void shakeCamera(float magnitude)
-	{
-		MC.player.rotationYaw += Maths.random(-magnitude, magnitude); MC.player.rotationPitch += Maths.random(-magnitude, magnitude);
-	}
 	
 	public void spawnParticle(Particle particle, boolean isNormalEffect)
 	{
