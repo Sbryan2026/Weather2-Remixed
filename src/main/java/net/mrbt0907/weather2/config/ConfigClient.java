@@ -54,6 +54,9 @@ public class ConfigClient implements IConfigEX
 	@Comment("Enables dust particles to kick up in high wind situations")
     public static boolean enable_wind_particle = true;
 	@Permission(0)
+	@Comment("Enables the ability to see cloud particles on normal clouds")
+    public static boolean enable_cloud_rendering = true;
+	@Permission(0)
 	@DoubleRange(min=0.0D)
 	@Comment("Particle rates for rain, downfall, and ground splash particle types")
 	public static double precipitation_particle_rate = 0.65D;

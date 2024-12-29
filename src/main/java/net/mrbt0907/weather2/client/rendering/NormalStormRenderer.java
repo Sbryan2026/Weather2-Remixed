@@ -118,82 +118,83 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		Vec3 playerAdjPos = new Vec3(entP.posX, storm.pos.posY, entP.posZ);
 		
 		//spawn clouds
-		if (ConfigCoroUtil.optimizedCloudRendering)
-		{
-			boolean isStorm = storm.stage >= Stage.RAIN.getStage();
-			int height = layerHeight + (isStorm ? -5 : 0);
-			int size = (int) (storm.size * 1.2D);
-			float finalBright = isStorm ? 0.5F : 0.75F;
-			Vec3 tryPos;
-			ExtendedEntityRotFX particle;
-			
-			for (int i = 0; i < loopSize && shouldSpawn(0); i++)
+		if (ConfigClient.enable_cloud_rendering ? true : storm.isStorm())
+			if (ConfigCoroUtil.optimizedCloudRendering)
 			{
-				tryPos = new Vec3(storm.pos.posX + Maths.random(size), height, storm.pos.posZ + Maths.random(size));
-				//position doesnt matter, set by renderer while its invisible still
-				if (WeatherUtil.isAprilFoolsDay())
-					particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, ParticleRegistry.chicken);
-				else
-					particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0);
-					
+				boolean isStorm = storm.stage >= Stage.RAIN.getStage();
+				int height = layerHeight + (isStorm ? -5 : 0);
+				int size = (int) (storm.size * 1.2D);
+				float finalBright = isStorm ? 0.5F : 0.75F;
+				Vec3 tryPos;
+				ExtendedEntityRotFX particle;
 				
-				if (particle == null) break;
-				//offset starting rotation for even distribution except for middle one
-				if (i != 0)
-				{
-					double rotPos = (i - 1);
-					float radStart = (float) ((360D / 8D) * rotPos);
-					particle.rotationAroundCenter = radStart;
-				}
-
-				particle.setColor(finalBright, finalBright, finalBright);
-				particle.setScale(400.0F * sizeCloudMult);
-				particle.setMaxAge(120);
-				listParticlesCloud.add(particle);
-			}
-		}
-		else
-		{
-			if (manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.cloud_particle_delay) == 0) {
 				for (int i = 0; i < loopSize && shouldSpawn(0); i++)
 				{
-					if (listParticlesCloud.size() < (storm.size + extraSpawning) / 1F)
-					{
+					tryPos = new Vec3(storm.pos.posX + Maths.random(size), height, storm.pos.posZ + Maths.random(size));
+					//position doesnt matter, set by renderer while its invisible still
+					if (WeatherUtil.isAprilFoolsDay())
+						particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, ParticleRegistry.chicken);
+					else
+						particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0);
 						
-						double spawnRad = storm.size * 1.2D;
-						Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad), layerHeight + (rand.nextDouble() * 40.0F) + (storm.stage >= Stage.RAIN.getStage() ? 30.0F : 60.0D), storm.pos.posZ + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad));
-						if (tryPos.distanceSq(playerAdjPos) < maxRenderDistance) {
-							if (storm.pos.distanceSq(tryPos) > 200.0D || storm.stormType == 0)
-							if (storm.getAvoidAngleIfTerrainAtOrAheadOfPosition(storm.getAngle(), tryPos) == 0) {
-								ExtendedEntityRotFX particle;
-								if (WeatherUtil.isAprilFoolsDay()) {
-									particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, ParticleRegistry.chicken);
-									if (particle == null) break;
-									particle.setColor(1F, 1F, 1F);
+					
+					if (particle == null) break;
+					//offset starting rotation for even distribution except for middle one
+					if (i != 0)
+					{
+						double rotPos = (i - 1);
+						float radStart = (float) ((360D / 8D) * rotPos);
+						particle.rotationAroundCenter = radStart;
+					}
+	
+					particle.setColor(finalBright, finalBright, finalBright);
+					particle.setScale(400.0F * sizeCloudMult);
+					particle.setMaxAge(120);
+					listParticlesCloud.add(particle);
+				}
+			}
+			else
+			{
+				if (manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.cloud_particle_delay) == 0) {
+					for (int i = 0; i < loopSize && shouldSpawn(0); i++)
+					{
+						if (listParticlesCloud.size() < (storm.size + extraSpawning) / 1F)
+						{
+							
+							double spawnRad = storm.size * 1.2D;
+							Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad), layerHeight + (rand.nextDouble() * 40.0F) + (storm.stage >= Stage.RAIN.getStage() ? 30.0F : 60.0D), storm.pos.posZ + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad));
+							if (tryPos.distanceSq(playerAdjPos) < maxRenderDistance) {
+								if (storm.pos.distanceSq(tryPos) > 200.0D || storm.stormType == 0)
+								if (storm.getAvoidAngleIfTerrainAtOrAheadOfPosition(storm.getAngle(), tryPos) == 0) {
+									ExtendedEntityRotFX particle;
+									if (WeatherUtil.isAprilFoolsDay()) {
+										particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, ParticleRegistry.chicken);
+										if (particle == null) break;
+										particle.setColor(1F, 1F, 1F);
+									}
+									else
+									{
+										float finalBright = Math.min(0.8F, 0.6F + (rand.nextFloat() * 0.2F)) + (storm.stage >= Stage.RAIN.getStage() ? -0.3F : 0.0F);
+										particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, (storm.stage <= Stage.RAIN.getStage() ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_light : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256));
+										if (particle == null) break;
+											particle.setColor(finalBright, finalBright, finalBright);
+										
+										if (storm.isSevere())
+											if (storm.isFirenado)
+											{
+													particle.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
+													particle.setColor(1F, 1F, 1F);
+											}									
+									}
+									particle.rotationPitch = Maths.random(80.0F, 100.0F);
+									particle.setScale(1250.0F * sizeCloudMult);
+									listParticlesCloud.add(particle);
 								}
-								else
-								{
-									float finalBright = Math.min(0.8F, 0.6F + (rand.nextFloat() * 0.2F)) + (storm.stage >= Stage.RAIN.getStage() ? -0.3F : 0.0F);
-									particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, (storm.stage <= Stage.RAIN.getStage() ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_light : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256));
-									if (particle == null) break;
-										particle.setColor(finalBright, finalBright, finalBright);
-									
-									if (storm.isSevere())
-										if (storm.isFirenado)
-										{
-												particle.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
-												particle.setColor(1F, 1F, 1F);
-										}									
-								}
-								particle.rotationPitch = Maths.random(80.0F, 100.0F);
-								particle.setScale(1250.0F * sizeCloudMult);
-								listParticlesCloud.add(particle);
 							}
 						}
 					}
 				}
 			}
-		}
 		
 		//ground effects
 		if (ConfigClient.enable_tornado_debris && !ConfigCoroUtil.optimizedCloudRendering && storm.stormType == StormType.LAND.ordinal() && storm.stage > Stage.SEVERE.getStage() && r >= 0.0F && !material.isLiquid())
