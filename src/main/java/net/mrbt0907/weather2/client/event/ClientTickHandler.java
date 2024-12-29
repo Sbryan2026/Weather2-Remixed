@@ -20,7 +20,6 @@ import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
 import net.mrbt0907.weather2.client.gui.GuiEZConfig;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
-import net.mrbt0907.weather2.config.ClientConfigData;
 import net.mrbt0907.weather2.config.ConfigFoliage;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.EZConfigParser;
@@ -34,7 +33,6 @@ public class ClientTickHandler
 	public static World lastWorld;
 	public static WeatherManagerClient weatherManager;
 	public static FoliageEnhancerShader foliageEnhancer;
-	public static ClientConfigData clientConfigData;
 
 	public boolean hasOpenedConfig = false;
 	public GuiButton configButton;
@@ -58,7 +56,6 @@ public class ClientTickHandler
 			(new Thread(foliageEnhancer, "Weather2 Foliage Enhancer")).start();
 		}
 		
-		clientConfigData = new ClientConfigData();
     	op = ConfigManager.getPermissionLevel() > 3;
 	}
 

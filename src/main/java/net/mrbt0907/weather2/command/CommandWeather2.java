@@ -277,6 +277,11 @@ public class CommandWeather2 extends CommandBase
 						break;
 					}
 					
+					if (ConfigMisc.overcast_mode && !world.isRaining())
+					{
+						say(sender, "create.fail.b");
+						return;
+					}
 					if (size > 1)
 					{
 						int stage = -1;

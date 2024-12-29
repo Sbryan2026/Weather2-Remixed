@@ -24,7 +24,7 @@ import modconfig.ConfigMod;
 
 public class EZConfigParser
 {
-	public static final String version = "2.5";
+	public static final String version = "2.6";
 	public static final Map<String, Integer> CLIENT_DEFAULTS = new HashMap<String, Integer>();
 	public static final Map<String, Integer> SERVER_DEFAULTS = new HashMap<String, Integer>();
 	private static List<Integer> weatherList = new ArrayList<Integer>();
