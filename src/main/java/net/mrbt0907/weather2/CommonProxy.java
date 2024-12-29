@@ -19,12 +19,12 @@ public class CommonProxy
 	public void preInit()
 	{
 		StormNames.init();
+		SoundRegistry.init();
+		EntityRegistry.init();
 	}
 	
 	public void init()
 	{
-		SoundRegistry.init();
-		EntityRegistry.init();
 	}
 	
 	public void postInit()

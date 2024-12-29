@@ -54,6 +54,8 @@ public class ClientProxy extends CommonProxy
 	public void preInit()
 	{
 		super.preInit();
+		initEntities();
+		initTileEntities();
 		MinecraftForge.EVENT_BUS.register(SoundHandler.class);
 		ShaderListenerRegistry.addListener(new IShaderListener()
 		{
@@ -73,8 +75,6 @@ public class ClientProxy extends CommonProxy
 	public void init()
 	{
 		super.init();
-		initEntities();
-		initTileEntities();
 	}
 	
 	@Override
