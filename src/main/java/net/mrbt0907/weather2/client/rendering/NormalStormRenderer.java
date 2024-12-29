@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer;
+import net.mrbt0907.weather2.api.weather.IWeatherRain;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
@@ -174,8 +175,9 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 									}
 									else
 									{
+										
 										float finalBright = Math.min(0.8F, 0.6F + (rand.nextFloat() * 0.2F)) + (storm.stage >= Stage.RAIN.getStage() ? -0.3F : 0.0F);
-										particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, (storm.stage <= Stage.RAIN.getStage() ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_light : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256));
+										particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, (NewSceneEnhancer.instance().overcast > ConfigStorm.overcast_green_threshold ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_hp : storm.stage <= Stage.RAIN.getStage() ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_light : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256));
 										if (particle == null) break;
 											particle.setColor(finalBright, finalBright, finalBright);
 										
@@ -184,7 +186,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 											{
 													particle.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
 													particle.setColor(1F, 1F, 1F);
-											}									
+											}
 									}
 									particle.rotationPitch = Maths.random(80.0F, 100.0F);
 									particle.setScale(1250.0F * sizeCloudMult);
@@ -259,7 +261,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 							if (WeatherUtil.isAprilFoolsDay())
 								particle = spawnParticle(tryPos.posX, storm.pos_funnel_base.posY, tryPos.posZ, 2);
 							else
-								particle = spawnParticle(tryPos.posX, storm.pos_funnel_base.posY, tryPos.posZ, 2, net.mrbt0907.weather2.registry.ParticleRegistry.tornado256);
+								particle = spawnParticle(tryPos.posX, storm.pos_funnel_base.posY, tryPos.posZ, 2, NewSceneEnhancer.instance().overcast > ConfigStorm.overcast_green_threshold ? net.mrbt0907.weather2.registry.ParticleRegistry.tornado256_hp : net.mrbt0907.weather2.registry.ParticleRegistry.tornado256);
 						else
 							particle = spawnParticle(tryPos.posX, storm.pos_funnel_base.posY, tryPos.posZ, 2, net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
 						if (particle == null) break;
@@ -358,7 +360,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 							else
 							{
 								float finalBright = Math.min(0.8F, 0.6F + (rand.nextFloat() * 0.2F) -0.3F);
-								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
+								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, NewSceneEnhancer.instance().overcast > ConfigStorm.overcast_green_threshold ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso_hp : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
 								if (particle == null) break;
 									particle.setColor(finalBright, finalBright, finalBright);
 										if (storm.isFirenado)
@@ -423,7 +425,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 					ent.rotationYaw = (float)(Maths.fastATan2(var18, var16) * 180.0D / Math.PI) - 90.0F;
 					ent.rotationPitch = -30F - (ent.getEntityId() % 10); //meso clouds
 					ent.setScale((storm.stormType == StormType.WATER.ordinal() ? 400.0F : 900.0F) * sizeCloudMult);
-					ent.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
+					ent.setParticleTexture(NewSceneEnhancer.instance().overcast > ConfigStorm.overcast_green_threshold ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso_hp : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
 				if (curSpeed < speed * 20D)
 				{
 					ent.setMotionX(ent.getMotionX() + -Maths.fastSin(Math.toRadians(angle)) * speed);
