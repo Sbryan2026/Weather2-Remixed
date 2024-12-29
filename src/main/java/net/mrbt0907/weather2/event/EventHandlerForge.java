@@ -28,7 +28,6 @@ import net.mrbt0907.weather2.client.rendering.April24StormRenderer;
 import net.mrbt0907.weather2.client.rendering.LegacyStormRenderer;
 import net.mrbt0907.weather2.config.ConfigFoliage;
 import net.mrbt0907.weather2.config.ConfigMisc;
-import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.entity.AI.EntityAITakeCover;
 import net.mrbt0907.weather2.registry.ParticleRegistry;
@@ -365,7 +364,7 @@ public class EventHandlerForge
 		if (ConfigMisc.toaster_pc_mode) return;
 		NewSceneEnhancer scene = NewSceneEnhancer.instance();
 		
-		if (ConfigClient.enable_extended_render_distance || scene.shouldChangeFog())
+		if (scene.shouldChangeFog())
 		{
 			GlStateManager.setFog(GlStateManager.FogMode.EXP);
 			GlStateManager.setFogDensity(scene.fogMult);

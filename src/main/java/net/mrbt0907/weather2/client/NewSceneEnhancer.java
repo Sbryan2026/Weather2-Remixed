@@ -54,7 +54,6 @@ import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.WeatherUtil;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
-import net.mrbt0907.weather2.util.WeatherUtilEntity;
 import net.mrbt0907.weather2.util.WeatherUtilParticle;
 import net.mrbt0907.weather2.util.Maths.Vec;
 import net.mrbt0907.weather2.util.Maths.Vec3;
@@ -703,7 +702,7 @@ public class NewSceneEnhancer implements Runnable
 			if (MC.world.rand.nextInt(3) == 0 && playerPos.distanceSq(groundPos) < 16.0D && rain > 0.0D)
 			{
 				int type = rain > 0.6F ? 2 : rain > 0.3F ? 1 : 0; 
-				SoundHandler.playStaticSound(type == 0 ? SoundRegistry.rainLight : SoundEvents.WEATHER_RAIN, SoundCategory.WEATHER, 1, type == 0 ? 1.0F : 0.1F + (rain * 0.3F), 1.0F - (rain * 0.1F));
+				SoundHandler.playStaticSound(type == 0 ? SoundRegistry.rainLight : SoundEvents.WEATHER_RAIN, SoundCategory.WEATHER, 1, type == 0 ? 1.0F : 0.1F + (rain * ConfigVolume.rain), 1.0F - (rain * 0.1F));
 			}
 		}
 		StormObject storm;
