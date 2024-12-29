@@ -749,7 +749,7 @@ public class NewSceneEnhancer implements Runnable
 					}
 				}
 			}
-			else if (wo.pos.distanceSq(pos) - wo.size + 100.0D <= 0.0D)
+			else if (wo instanceof SandstormObject && wo.pos.distanceSq(pos) - wo.size + 100.0D <= 0.0D)
 			{
 				SoundHandler.playMovingSound(wo, SoundRegistry.sandstorm, SoundCategory.WEATHER, 2, ConfigVolume.cyclone, 1.0F, wo.size + 100.0F);
 				success++;
