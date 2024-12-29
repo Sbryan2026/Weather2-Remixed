@@ -132,9 +132,9 @@ public class ConfigStorm implements IConfigEX
     public static boolean storm_deflector_removes_sandstorms = true;
 	@Hidden
 	@Enforce
-	@DoubleRange(min=0.0D)
+	@FloatRange(min=0.0F)
 	@Comment("Minimum amount of visual rain shown when its raining globally during overcast mode")
-    public static double min_overcast_rain = 0.01D;
+    public static float min_overcast_rain = 0.01F;
 	@Enforce
 	@IntegerRange(min=1)
 	@Comment("A storm in overcast mode has a 1 in x chance to start raining")

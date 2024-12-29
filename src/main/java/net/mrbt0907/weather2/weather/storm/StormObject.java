@@ -1225,25 +1225,29 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 	@Override
 	public float getDownfall(Vec3 pos)
 	{
-		return getDownfall();
+		float distance = Math.max((float) Maths.distanceSq(pos.posX, pos.posZ, this.pos.posX, this.pos.posZ) - size * 0.75F, 0.0F);
+		float mult = 1.0F - Math.min(distance / (size * 0.25F), 1.0F);
+		return getDownfall() * mult;
 	}
 
 	@Override
 	public float getDownfall(BlockPos pos)
 	{
-		return getDownfall();
+		float distance = Math.max((float) pos.getDistance((int)this.pos.posX, pos.getY(), (int)this.pos.posZ) - size * 0.75F, 0.0F);
+		float mult = 1.0F - Math.min(distance / (size * 0.25F), 1.0F);
+		return getDownfall() * mult;
 	}
 
 	@Override
 	public boolean hasDownfall(Vec3 pos)
 	{
-		return hasDownfall() && this.pos.distanceSq(pos.posX, this.pos.posY, pos.posZ) <= size;
+		return hasDownfall() && this.pos.distanceSq(pos.posX, this.pos.posY, pos.posZ) <= size && world.canSeeSky(pos.toBlockPos());
 	}
 
 	@Override
 	public boolean hasDownfall(BlockPos pos)
 	{
-		return hasDownfall() && this.pos.distanceSq((double) pos.getX(), this.pos.posY, (double) pos.getZ()) <= size;
+		return hasDownfall() && this.pos.distanceSq((double) pos.getX(), this.pos.posY, (double) pos.getZ()) <= size && world.canSeeSky(pos);
 	}
 
 	@Override

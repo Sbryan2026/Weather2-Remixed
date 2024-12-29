@@ -3,7 +3,6 @@ package net.mrbt0907.weather2.client.weather;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.particle.Particle;
@@ -15,6 +14,8 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.Weather2;
+import net.mrbt0907.weather2.api.weather.IWeatherRain;
+import net.mrbt0907.weather2.api.weather.IWeatherStaged;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.config.ConfigClient;
@@ -23,6 +24,7 @@ import net.mrbt0907.weather2.config.ConfigVolume;
 import net.mrbt0907.weather2.entity.EntityLightningEX;
 import net.mrbt0907.weather2.registry.SoundRegistry;
 import net.mrbt0907.weather2.util.Maths;
+import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.weather.WeatherManager;
 import net.mrbt0907.weather2.weather.storm.FrontObject;
 import net.mrbt0907.weather2.weather.storm.StormObject;
@@ -269,6 +271,44 @@ public class WeatherManagerClient extends WeatherManager
 			default:
 				Weather2.error("Server sent an invalid network packet");
 		}
+	}
+	
+	public float getRainTargetValue(Vec3 position)
+	{
+		float rainTarget = -Float.MAX_VALUE, rain;
+		List<WeatherObject> systems = new ArrayList<WeatherObject>(this.systems.values());
+		
+		for (WeatherObject system : systems)
+		{
+			if (system instanceof IWeatherRain)
+			{
+				rain = ((IWeatherRain)system).getDownfall(position) - IWeatherRain.MINIMUM_DRIZZLE;
+				if (rain > rainTarget)
+					rainTarget = rain;
+			}
+		}
+		return Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 1.0F);
+	}
+	
+	public float getOvercastTargetValue(Vec3 position)
+	{
+		float overcastTarget = -Float.MAX_VALUE, overcast;
+		List<WeatherObject> systems = new ArrayList<WeatherObject>(this.systems.values());
+		
+		for (WeatherObject system : systems)
+		{
+			if (system instanceof IWeatherStaged)
+			{
+				float distance = (float) Maths.distanceSq(position.posX, position.posZ, system.pos.posX, system.pos.posZ);
+				float distanceMult = 1.0F - Math.min(Math.max(distance - system.size, 0.0F) / (system.size * 0.25F), 1.0F);
+				float stageMult = 0.25F + Math.min(((IWeatherStaged)system).getStage() * 0.25F, 0.5F) + (system instanceof StormObject && ((StormObject)system).isViolent ? 0.25F : 0.0F);
+				overcast = stageMult * distanceMult;
+				if (overcast > overcastTarget)
+					overcastTarget = overcast;
+			}
+		}
+		
+		return Maths.clamp(overcastTarget, 0.0F, 1.0F);
 	}
 	
 	public void addWeatherParticle(Particle particle)
