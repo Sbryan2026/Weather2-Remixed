@@ -376,7 +376,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		
 		if (stage > Stage.RAIN.getStage() && Maths.random(0, ConfigStorm.lightning_bolt_1_in_x - (int)(ConfigStorm.lightning_bolt_1_in_x * lightning)) == 0)
 		{
-			Vec3 pos = this.pos.copy().addVector(Maths.random(-size, size), 0, Maths.random(-size, size));
+			Vec3 pos = this.pos.copy().addVector(Maths.random(-size * 1.25D, size * 1.25D), 0, Maths.random(-size * 1.25D, size * 1.25D));
 			BlockPos blockPos = pos.toBlockPos();
 			if (world.isBlockLoaded(blockPos))
 				createLightning(pos.posX, (double) world.getPrecipitationHeight(blockPos).getY(), pos.posZ, true);
