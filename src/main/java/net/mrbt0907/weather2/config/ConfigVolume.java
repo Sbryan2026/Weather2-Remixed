@@ -23,7 +23,7 @@ public class ConfigVolume implements IConfigEX
 	@Permission(0)
 	@FloatRange(min=0.0F, max=1.0F)
 	@Comment("How loud wind sounds are ingame. 1.0 is full volume, higher is louder, and lower is softer")
-	public static float wind = 0.05F;
+	public static float wind = 0.24F;
 	@Permission(0)
 	@FloatRange(min=0.0F, max=1.0F)
 	@Comment("How loud leaves are ingame. 1.0 is full volume, higher is louder, and lower is softer")
