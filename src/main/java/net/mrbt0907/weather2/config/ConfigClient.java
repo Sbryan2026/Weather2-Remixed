@@ -144,6 +144,22 @@ public class ConfigClient implements IConfigEX
 	@Permission(0)
 	@Comment("Should sky lightning flash in the sky? Does not affect normal lightning bolts")
 	public static boolean enable_sky_lightning = true;
+	@Permission(0)
+	@Comment("Height multiplier for Meso Cyclones. Valid range is 0.75 to 1.0 where 0.80 is default")
+	@FloatRange(min=0.75F, max=1.0F)
+	public static float meso_height = 0.80F;
+	@Permission(0)
+	@Comment("Green/Blue multiplier for coloring funnels. 1.0 = fully red, 0.0 = fully blue")
+	@FloatRange(min=0.0F, max=1.0F)
+	public static float funnel_greenblue_mult = 0.45F;
+	@Permission(0)
+	@Comment("Green/Blue multiplier for coloring mesocyclones. 1.0 = fully red, 0.0 = fully blue")
+	@FloatRange(min=0.0F, max=1.0F)
+	public static float meso_greenblue_mult = 0.42F;
+	@Permission(0)
+	@Comment("Green/Blue multiplier for coloring clouds. 1.0 = fully red, 0.0 = fully blue")
+	@FloatRange(min=0.0F, max=1.0F)
+	public static float cloud_greenblue_mult = 0.40F;
 
     @Override
     public String getName() {
