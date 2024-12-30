@@ -1,6 +1,0 @@
-{
-  "parent": "weather2:block/rain_sensor",
-  "textures": {
-    "all": "weather2:blocks/rain_sensor"
-  }
-}

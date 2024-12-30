@@ -1,6 +1,0 @@
-{
-  "parent": "weather2:block/humidity_sensor",
-  "textures": {
-    "all": "weather2:blocks/humidity_sensor"
-  }
-}
