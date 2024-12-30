@@ -16,7 +16,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer;
+import net.mrbt0907.weather2.api.weather.IWeatherRain;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
@@ -175,17 +177,21 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 									}
 									else
 									{
-										float finalBright = Math.min(0.8F, 0.6F + (rand.nextFloat() * 0.2F)) + (storm.stage >= Stage.RAIN.getStage() ? -0.3F : 0.0F);
+										
+										float finalRed = Math.min(0.8F, 0.6F + (rand.nextFloat() * 0.2F)) + (storm.stage >= Stage.RAIN.getStage() ? -0.3F : 0.0F);
+										float finalGreen = finalRed;
+										float finalBlue = finalRed;
+										if (!storm.isFirenado && !WeatherUtil.isAprilFoolsDay()) finalRed = Maths.clamp(finalRed -= NewSceneEnhancer.instance().overcast, (finalGreen + finalBlue)* ConfigStorm.cloud_greenblue_mult, 1.0F);
 										particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, (storm.stage <= Stage.RAIN.getStage() ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_light : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256));
 										if (particle == null) break;
-											particle.setColor(finalBright, finalBright, finalBright);
+											particle.setColor(finalRed, finalGreen, finalBlue);
 										
 										if (storm.isSevere())
 											if (storm.isFirenado)
 											{
 													particle.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
 													particle.setColor(1F, 1F, 1F);
-											}									
+											}
 									}
 									particle.rotationPitch = Maths.random(80.0F, 100.0F);
 									particle.setScale(1250.0F * sizeCloudMult);
@@ -269,8 +275,11 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 						particle.setMaxAge(120 + ((storm.stage-1) * 10) + rand.nextInt(100));
 						particle.rotationYaw = rand.nextInt(360);
 							
-						float finalBright = Math.min(0.6F, 0.4F + (rand.nextFloat() * 0.2F));
-							
+						float finalRed = Math.min(0.6F, 0.4F + (rand.nextFloat() * 0.2F));
+						float finalGreen = finalRed;
+						float finalBlue = finalRed;
+						if (!storm.isFirenado && !WeatherUtil.isAprilFoolsDay()) finalRed = Maths.clamp(finalRed -= NewSceneEnhancer.instance().overcast, (finalGreen + finalBlue)* ConfigStorm.funnel_greenblue_mult, 1.0F);
+
 						//highwind aka spout in this current code location
 						if (storm.stage == Stage.SEVERE.getStage())
 							particle.setScale(100.0F * sizeFunnelMult * heightMult);
@@ -280,11 +289,11 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 						if (r >= 0.0F)
 						{
 							particle.setColor(r, g, b);
-							particle.setFinalColor(0.0F, finalBright, finalBright, finalBright);
+							particle.setFinalColor(0.0F, finalRed, finalGreen, finalBlue);
 							particle.setColorFade(0.75F);
 						}
 						else
-							particle.setColor(finalBright, finalBright, finalBright);
+							particle.setColor(finalRed, finalGreen, finalBlue);
 						
 						if (storm.isFirenado)
 						{
@@ -346,7 +355,8 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 				if (listParticlesMeso.size() < (storm.size + extraSpawning) / 1F)
 				{		
 					double stormRad = storm.size * 1.2D;
-					Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad), layerHeight + (rand.nextDouble() * 40.0F), storm.pos.posZ + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad));
+					double defMesoHeight = layerHeight + (rand.nextDouble() * 40.0F);
+					Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad), storm.stormType == StormType.WATER.ordinal() ? defMesoHeight : defMesoHeight * ConfigStorm.meso_height , storm.pos.posZ + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad));
 					if (tryPos.distanceSq(playerAdjPos) < maxRenderDistance) {
 						if (storm.stormType == 1 && storm.pos.distanceSq(tryPos) > 350.0D || storm.stormType == 0)
 						if (storm.getAvoidAngleIfTerrainAtOrAheadOfPosition(storm.getAngle(), tryPos) == 0) {
@@ -358,10 +368,13 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 							}
 							else
 							{
-								float finalBright = Math.min(0.8F, 0.6F + (rand.nextFloat() * 0.2F) -0.3F);
+								float finalRed = Math.min(0.8F, 0.6F + (rand.nextFloat() * 0.2F) -0.3F);
+								float finalGreen = finalRed;
+								float finalBlue = finalRed;
+								if (!storm.isFirenado && !WeatherUtil.isAprilFoolsDay()) finalRed = Maths.clamp(finalRed -= NewSceneEnhancer.instance().overcast, (finalGreen + finalBlue)* ConfigStorm.meso_greenblue_mult, 1.0F);
 								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
 								if (particle == null) break;
-									particle.setColor(finalBright, finalBright, finalBright);
+									particle.setColor(finalRed, finalGreen, finalBlue);
 										if (storm.isFirenado)
 										{
 												particle.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
