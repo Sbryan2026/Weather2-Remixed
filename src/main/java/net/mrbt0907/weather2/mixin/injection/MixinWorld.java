@@ -1,19 +1,43 @@
 package net.mrbt0907.weather2.mixin.injection;
 
+import java.util.List;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.config.ConfigMisc;
+import net.mrbt0907.weather2.entity.EntityMovingBlock;
 import net.mrbt0907.weather2.weather.WeatherManager;
 
 @Mixin(World.class)
-public class MixinWorld
+public abstract class MixinWorld
 {
+	@Shadow
+	protected List<Entity> unloadedEntityList;
+	
+	@Inject(method = "updateEntities()V", at = @At("HEAD"))
+	public void updateEntities(CallbackInfo callback)
+	{
+		for (int i = 0; i < unloadedEntityList.size(); ++i)
+		{
+			Entity entity = unloadedEntityList.get(i);
+			if (entity instanceof EntityMovingBlock && ((EntityMovingBlock)entity).tileEntityNBT == null)
+			{
+				((World)(Object)this).removeEntityDangerously(entity);
+				unloadedEntityList.remove(i);
+				i--;
+			}
+		}
+	}
+	
 	/** Injecting into isRaining allows other objects in Minecraft to detect whether it is raining all over or if any storm is raining */
 	@Inject(method = "isRaining()Z", at = @At("RETURN"), cancellable=true)
 	private void isRaining(CallbackInfoReturnable<Boolean> callback)
@@ -36,4 +60,7 @@ public class MixinWorld
 			callback.setReturnValue(manager != null && manager.hasDownfall(position));
 		}
 	}
+	
+	@Shadow
+	public abstract void removeEntity(Entity entityIn);
 }

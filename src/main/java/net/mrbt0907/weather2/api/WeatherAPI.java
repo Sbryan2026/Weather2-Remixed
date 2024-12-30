@@ -170,7 +170,7 @@ public class WeatherAPI
 	
 	@SideOnly(Side.CLIENT)
 	/**Gets the current particle renderer for use with storms. Can return null*/
-	public static net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer getParticleRenderer(StormObject storm)
+	public static net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer getParticleRenderer(WeatherObject storm)
 	{
 		if (currentParticleRenderer == null || storm == null)
 		{
@@ -181,7 +181,7 @@ public class WeatherAPI
 		
 		try
 		{
-			return renderer == null ? null : (AbstractWeatherRenderer) renderer.getConstructor(StormObject.class).newInstance(storm);
+			return renderer == null ? null : (AbstractWeatherRenderer) renderer.getConstructor(WeatherObject.class).newInstance(storm);
 		}
 		catch (Exception e)
 		{
@@ -276,10 +276,10 @@ public class WeatherAPI
     	event.entityList.parse(ConfigGrab.entity_blacklist_entries);
     	
     	Set<ResourceLocation> blockEntries =  Block.REGISTRY.getKeys(), entityEntries = ForgeRegistries.ENTITIES.getKeys();
-    	ConfigList list = processGrabList(blockEntries, event.grabList, ConfigGrab.grab_list_partial_matches, 0);
+    	ConfigList list = processGrabList(blockEntries, event.grabList, ConfigGrab.grab_list_partial_match, 0);
     	grabList.clear();
     	grabList.addAll(list);
-    	list = processGrabList(blockEntries, event.replaceList, ConfigGrab.replace_list_partial_matches, 1);
+    	list = processGrabList(blockEntries, event.replaceList, ConfigGrab.replace_list_partial_match, 1);
     	replaceList.clear();
     	replaceList.addAll(list);
     	list = processGrabList(blockEntries, event.windResistanceList, ConfigGrab.wind_resistance_partial_matches, 2);
@@ -301,7 +301,7 @@ public class WeatherAPI
     	}
     	windResistanceList.clear();
     	windResistanceList.addAll(list);
-    	list = processGrabList(entityEntries, event.entityList, ConfigGrab.entity_blacklist_partial_matches, 0);
+    	list = processGrabList(entityEntries, event.entityList, ConfigGrab.entity_blacklist_partial_match, 0);
     	
     	entityList.clear();
     	entityList.addAll(list);
@@ -311,11 +311,13 @@ public class WeatherAPI
 	
 	private static ConfigList processGrabList(Set<ResourceLocation> entries, ConfigList cfg, boolean partialMatches, int type)
 	{
+		Weather2.info("--------------- " + type);
 		ConfigList list = new ConfigList();
     	String keyA, keyB, keyC;
     	List<String> keys;
     	List<Object> values;
     	boolean usePartialMatch = false;
+    	int meta;
     	
     	if (cfg.isReplaceOnly())
     		list.setReplaceOnly();
@@ -324,6 +326,15 @@ public class WeatherAPI
     	{
     		if (type > 0 && entry.getValue().length == 0) continue;
     		keyA = entry.getKey();
+    		if (keyA.contains("#"))
+    		{
+    			try {meta = Integer.parseInt(keyA.replaceAll(".*\\#", ""));}
+    			catch (Exception e) {meta = -1;}
+    			keyA = keyA.replaceAll("\\#.*", "");
+    		}
+    		else
+    			meta = -1;
+    		
     		if (keyA.contains(":"))
     			keyB = keyA;
     		else
@@ -331,6 +342,7 @@ public class WeatherAPI
     			keyB = "minecraft:" + keyA;
     			usePartialMatch = partialMatches;
     		}
+    		
     		keys = new ArrayList<String>();
     		values = new ArrayList<Object>();
     		for(ResourceLocation block : entries)
@@ -338,7 +350,7 @@ public class WeatherAPI
     			keyC = block.toString();
     			
     			if (keyC.equals(keyB) || usePartialMatch && keyC.toLowerCase().contains(keyA.toLowerCase()))
-    				keys.add(keyC);
+    				keys.add(keyC + (meta > -1 ? "#" + meta : ""));
     		}
 
     		for(Object str : entry.getValue())
@@ -350,6 +362,15 @@ public class WeatherAPI
     	    			{
     	    				usePartialMatch = false;
     		    			keyA = (String) str;
+    		    			
+    		    			if (keyA.contains("#"))
+    		        		{
+    		        			try {meta = Integer.parseInt(keyA.replaceAll(".*\\#", ""));}
+    		        			catch (Exception e) {meta = -1;}
+    		        			keyA = keyA.replaceAll("\\#.*", "");
+    		        		}
+    		        		else
+    		        			meta = -1;
     		    			
     		    			if (keyA.contains(":"))
     		    	    		keyB = keyA;
@@ -364,7 +385,7 @@ public class WeatherAPI
     		    	    		keyC = block.toString();
     		    	    			
     		    	    		if (keyC.equals(keyB) || usePartialMatch && keyC.toLowerCase().contains(keyA.toLowerCase()))
-    		    	    			values.add(keyC);
+    		        				values.add(keyC + (meta > -1 ? "#" + meta : ""));
     		    	    	}
     	    			}
     					break;
@@ -389,7 +410,9 @@ public class WeatherAPI
     		if (type > 0 && values.size() == 0) continue;
     		
     		for (String key : keys)
+    		{
     			list.add(key, values.toArray());
+    		}
     	}
     	
     	return list;

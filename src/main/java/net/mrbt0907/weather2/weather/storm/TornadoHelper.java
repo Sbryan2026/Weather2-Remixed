@@ -123,7 +123,7 @@ public class TornadoHelper
 						storms++;
 				}
 					
-				maxGrabs = ConfigGrab.max_grabbed_blocks_per_tick < 0 ? Integer.MAX_VALUE : storms < 2 ? ConfigGrab.max_grabbed_blocks_per_tick : (ConfigGrab.max_grabbed_blocks_per_tick / storms);
+				maxGrabs = ConfigGrab.max_grabbed_blocks < 0 ? Integer.MAX_VALUE : storms < 2 ? ConfigGrab.max_grabbed_blocks : (ConfigGrab.max_grabbed_blocks / storms);
 				maxReplaces = ConfigGrab.max_replaced_blocks_per_tick < 0 ? Integer.MAX_VALUE : storms < 2 ? ConfigGrab.max_replaced_blocks_per_tick : (ConfigGrab.max_replaced_blocks_per_tick / storms);
 			}
 		}
@@ -279,7 +279,7 @@ public class TornadoHelper
 			
 			if (shouldReplace)
 			{
-				if ((ConfigGrab.replace_list_strength_matches && WeatherUtilBlock.checkResistance(storm, id) || !ConfigGrab.replace_list_strength_matches))
+				if ((ConfigGrab.replace_list_strength_match && WeatherUtilBlock.checkResistance(storm, id) || !ConfigGrab.replace_list_strength_match))
 				{
 					putToCache(world, 1, true);
 					snapshots.add(new BlockReplaceSnapshot(storm, Block.getBlockFromName((String) list[Maths.random(0, list.length - 1)]).getDefaultState(), state, pos));

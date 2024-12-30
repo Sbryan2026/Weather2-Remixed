@@ -30,6 +30,7 @@ import net.mrbt0907.weather2.util.WeatherUtilBlock;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 import net.mrbt0907.weather2.weather.storm.StormObject.StormType;
+import net.mrbt0907.weather2.weather.storm.WeatherObject;
 
 public class NormalStormRenderer extends AbstractWeatherRenderer
 {
@@ -47,7 +48,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 	
 	public int particleLimitCloud, particleLimitFunnel, particleLimitGround, particleLimitRain, particleLimitMeso;
 	
-	public NormalStormRenderer(StormObject system)
+	public NormalStormRenderer(WeatherObject system)
 	{
 		super(system);
 		listParticlesCloud = new ArrayList<EntityRotFX>();

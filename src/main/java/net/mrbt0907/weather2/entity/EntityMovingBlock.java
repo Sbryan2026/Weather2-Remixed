@@ -38,6 +38,7 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 	public Class<? extends TileEntity> tileClass;
 	public NBTTagCompound tileEntityNBT;
 	public Material material;
+	public StormObject storm;
 	public int metadata;
 	//mode 0 = use gravity
 	public int mode;
@@ -63,6 +64,7 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 		block = state.getBlock();
 		metadata = state.getBlock().getMetaFromState(state);
 		material = state.getMaterial();
+		this.storm = storm;
 		if (block.hasTileEntity(state))
 		{
 			TileEntity tile = world.getTileEntity(new BlockPos(x, y, z));
@@ -383,8 +385,17 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 	}
 
 	@Override
+	public void setDead()
+    {
+		super.setDead();
+		if (!world.isRemote && storm != null)
+			storm.flyingBlocks = Math.max(storm.flyingBlocks - 1, 0);
+    }
+	
+	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount)
 	{
+		setDead();
 		return false;
 	}
 	

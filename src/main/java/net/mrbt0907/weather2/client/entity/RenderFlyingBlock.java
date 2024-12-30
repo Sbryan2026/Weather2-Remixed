@@ -61,7 +61,7 @@ public class RenderFlyingBlock extends Render<Entity>
 		
 		EnumBlockRenderType renderType = state.getRenderType();
 		World world = entity.world;
-		int age = entity.ticksExisted * 5;
+		float age = (entity.ticksExisted * 5.0F) + partialTicks;
 
 		if (renderType == EnumBlockRenderType.MODEL)
 		{

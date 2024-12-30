@@ -133,10 +133,9 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 	/**Where the top block under the storm is at*/
 	public int currentTopYBlock = -1;
 	
-	public TornadoHelper tornadoHelper = new TornadoHelper(this);
-	
 	public int updateLCG = (new Random()).nextInt();
 	public Vec3 pos_funnel_base = new Vec3(pos.posX, pos.posY, pos.posZ);
+	public int flyingBlocks;
 	
 	public StormObject(FrontObject front)
 	{
@@ -247,16 +246,15 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 				tickClient();
 				
 				if (isDeadly())
-					tornadoHelper.tick(manager.getWorld());
+					NewTornadoHelper.tick(this, world);
 
 				tickMovementClient();
 			}
 		}
 		else
 		{
-			
 			if (isDeadly())
-				tornadoHelper.tick(manager.getWorld());
+				NewTornadoHelper.tick(this, world);
 
 			tickMovement();
 			tickWeatherEvents();
@@ -1066,7 +1064,8 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		if (obj instanceof Entity)
 		{
 			long lastPullTime = ent.getEntityData().getLong("lastPullTime");
-			if (lastPullTime == worldTime) pullY = 0;
+			if (lastPullTime == worldTime)
+				pullY = 0;
 			ent.getEntityData().setLong("lastPullTime", worldTime);
 		}
 		
@@ -1089,10 +1088,6 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 	@Override
 	public void cleanup() {
 		super.cleanup();
-		if (tornadoHelper != null)
-			tornadoHelper.cleanup();
-		
-		tornadoHelper = null;
 	}
 	
 	@SideOnly(Side.CLIENT)

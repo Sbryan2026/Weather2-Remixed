@@ -197,8 +197,6 @@ public class WeatherManagerServer extends WeatherManager
 					}
 				}
 			}
-			
-			TornadoHelper.tickProcess(world);
 		}
 	}
 

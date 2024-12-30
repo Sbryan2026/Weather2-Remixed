@@ -17,6 +17,7 @@ import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.registry.ParticleRegistry;
 import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
+import net.mrbt0907.weather2.weather.storm.NewTornadoHelper;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 
@@ -66,8 +67,8 @@ public class LegacyStormRenderer extends AbstractWeatherRenderer
 			if (manager.getWorld().getTotalWorldTime() % (ConfigClient.funnel_particle_delay + 1L) == 0L)
 				for (int i = 0; i < itCount; i++)
 				{
-					double tryX2 = storm.pos_funnel_base.posX + Maths.random(storm.tornadoHelper.getTornadoBaseSize() * 2) - storm.tornadoHelper.getTornadoBaseSize();
-					double tryZ2 = storm.pos_funnel_base.posZ + Maths.random(storm.tornadoHelper.getTornadoBaseSize() * 2) - storm.tornadoHelper.getTornadoBaseSize();
+					double tryX2 = storm.pos_funnel_base.posX + Maths.random(NewTornadoHelper.getTornadoBaseSize(storm) * 2) - NewTornadoHelper.getTornadoBaseSize(storm);
+					double tryZ2 = storm.pos_funnel_base.posZ + Maths.random(NewTornadoHelper.getTornadoBaseSize(storm) * 2) - NewTornadoHelper.getTornadoBaseSize(storm);
 					Block blockID = ChunkUtils.getBlockState(manager.getWorld(), (int)tryX2, (int)storm.pos_funnel_base.posY - 1, (int)tryZ2).getBlock();
 					Block blockIDUp = ChunkUtils.getBlockState(manager.getWorld(), (int)tryX2, (int)storm.pos_funnel_base.posY, (int)tryZ2).getBlock();
 					Block blockIDDown = ChunkUtils.getBlockState(manager.getWorld(), (int)tryX2, (int)storm.pos_funnel_base.posY - 2, (int)tryZ2).getBlock();
