@@ -39,7 +39,6 @@ import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
 import net.mrbt0907.weather2.util.WeatherUtilEntity;
 import net.mrbt0907.weather2.weather.storm.StormObject;
-import net.mrbt0907.weather2.weather.storm.TornadoHelper;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 import net.mrbt0907.weather2.weather.storm.FrontObject;
 import net.mrbt0907.weather2.weather.storm.SandstormObject;

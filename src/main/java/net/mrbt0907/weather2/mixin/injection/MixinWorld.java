@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.entity.EntityMovingBlock;

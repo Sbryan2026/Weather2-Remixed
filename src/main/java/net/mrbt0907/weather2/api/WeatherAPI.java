@@ -29,7 +29,6 @@ import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.EZConfigParser;
 import net.mrbt0907.weather2.util.ConfigList;
 import net.mrbt0907.weather2.weather.WeatherManager;
-import net.mrbt0907.weather2.weather.storm.StormObject;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
 import net.mrbt0907.weather2.util.Maths.Vec3;
 
