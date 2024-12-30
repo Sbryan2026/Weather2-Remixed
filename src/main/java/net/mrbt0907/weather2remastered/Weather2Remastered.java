@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 @Mod("weather2remastered")
 public class Weather2Remastered
 {
-	public static final String MODID = "weather2remaster";
+	public static final String MODID = "weather2remastered";
 	public static final ItemGroup TAB = new ItemGroup(MODID) {@Override public ItemStack makeIcon(){return new ItemStack(BlockRegistry.tornado_sensor);}};
 	private static final Logger LOG = LogManager.getLogger();
 	
