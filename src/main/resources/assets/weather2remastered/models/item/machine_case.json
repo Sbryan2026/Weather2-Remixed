@@ -1,6 +1,6 @@
 {
-  "parent": "weather2:block/machine_case",
+  "parent": "weather2remastered:block/machine_case",
   "textures": {
-    "all": "weather2:blocks/machine_case"
+    "all": "weather2remastered:blocks/machine_case"
   }
 }

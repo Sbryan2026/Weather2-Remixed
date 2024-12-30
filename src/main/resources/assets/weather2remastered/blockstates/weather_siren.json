@@ -1,5 +1,5 @@
 {
 	"variants": {
-		"": { "model": "weather2:block/weather_siren" } 
+		"": { "model": "weather2remastered:block/weather_siren" } 
 	}
 }

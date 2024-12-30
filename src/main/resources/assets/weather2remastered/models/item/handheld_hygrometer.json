@@ -1,6 +1,6 @@
 {
 	"parent": "item/handheld",
 	"textures": {
-		"layer0": "weather2:items/handheld_hygrometer"
+		"layer0": "weather2remastered:items/handheld_hygrometer"
 	}
 }

@@ -1,5 +1,5 @@
 {
-  "parent": "weather2:block/tornado_siren_manual",
+  "parent": "weather2remastered:block/tornado_siren_manual",
   "display": {
     "thirdperson": {
       "rotation": [
