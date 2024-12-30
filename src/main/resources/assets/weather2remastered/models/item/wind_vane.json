@@ -1,5 +1,5 @@
 {
-  "parent": "weather2:block/wind_vane",
+  "parent": "weather2remastered:block/wind_vane",
   "display": {
     "thirdperson": {
       "rotation": [

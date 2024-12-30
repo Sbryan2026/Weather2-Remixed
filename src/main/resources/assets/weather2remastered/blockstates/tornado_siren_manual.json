@@ -2,21 +2,21 @@
   "forge_marker": 1,
   "defaults": {
     "textures": {
-      "all": "weather2:blocks/tornado_siren"
+      "all": "weather2remastered:blocks/tornado_siren"
     },
-    "model": "weather2:tornado_siren",
+    "model": "weather2remastered:tornado_siren",
     "uvlock": true
   },
   "variants": {
     "enabled": {
       "true": {
         "textures": {
-          "all": "weather2:blocks/tornado_siren_manual_on"
+          "all": "weather2remastered:blocks/tornado_siren_manual_on"
         }
       },
       "false": {
         "textures": {
-          "all": "weather2:blocks/tornado_siren_manual"
+          "all": "weather2remastered:blocks/tornado_siren_manual"
         }
       }
     },

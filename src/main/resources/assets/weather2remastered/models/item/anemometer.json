@@ -1,5 +1,5 @@
 {
-  "parent": "weather2:block/anemometer",
+  "parent": "weather2remastered:block/anemometer",
   "display": {
     "thirdperson": {
       "rotation": [

@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "weather2:tornado_siren"
+      "model": "weather2remastered:tornado_siren"
     }
   }
 }

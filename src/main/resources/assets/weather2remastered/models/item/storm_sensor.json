@@ -1,6 +1,6 @@
 {
-	"parent": "weather2:block/storm_sensor",
+	"parent": "weather2remastered:block/storm_sensor",
 	"textures": {
-		"all": "weather2:blocks/storm_sensor"
+		"all": "weather2remastered:blocks/storm_sensor"
 	}
 }
