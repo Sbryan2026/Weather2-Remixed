@@ -354,7 +354,8 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 				if (listParticlesMeso.size() < (storm.size + extraSpawning) / 1F)
 				{		
 					double stormRad = storm.size * 1.2D;
-					Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad), layerHeight + (rand.nextDouble() * 40.0F), storm.pos.posZ + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad));
+					double defMesoHeight = layerHeight + (rand.nextDouble() * 40.0F);
+					Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad), storm.stormType == StormType.WATER.ordinal() ? defMesoHeight : defMesoHeight * ConfigStorm.meso_height , storm.pos.posZ + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad));
 					if (tryPos.distanceSq(playerAdjPos) < maxRenderDistance) {
 						if (storm.stormType == 1 && storm.pos.distanceSq(tryPos) > 350.0D || storm.stormType == 0)
 						if (storm.getAvoidAngleIfTerrainAtOrAheadOfPosition(storm.getAngle(), tryPos) == 0) {

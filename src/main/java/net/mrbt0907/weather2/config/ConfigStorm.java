@@ -23,6 +23,10 @@ public class ConfigStorm implements IConfigEX
 	@FloatRange(min=0.0F, max=1.0F)
 	public static float funnel_greenblue_mult = 0.45F;
 	@Permission(0)
+	@Comment("Height multiplier for Meso Cyclones. Valid range is 0.75 to 1.0 where 0.80 is default")
+	@FloatRange(min=0.75F, max=1.0F)
+	public static float meso_height = 0.80F;
+	@Permission(0)
 	@Comment("Whether or not to use the Enhanced Fujita Scale for tornados.")
     public static boolean enable_ef_scale = false;
 	@Enforce
