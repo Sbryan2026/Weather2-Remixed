@@ -65,6 +65,7 @@ public class ConfigList
 		{
 			if (!id.contains(":"))
 				id = "minecraft:" + id;
+			Weather2.info("REMOVING: " + id);
 			map.remove(id);
 		}
 		
@@ -137,7 +138,7 @@ public class ConfigList
 	 *<br>- <b>"!"</b>  Remove this id from the list.
 	 *<br>- <b>":"</b>  Modid prefix. If no modid is present and partialMatches is set to true, will grab all entires that contain this name, otherwise will default to "minecraft:".
 	 *<br>- <b>"="</b>  Adds a replacement block to the block in front. Can be stacked any amount of times. Unused if id is 0 or 2.
-	 *<br>- <b>"#"</b>  Metadata of the block <i><b>(NOT IMPLEMENTED YET)</i></b>.
+	 *<br>- <b>"#"</b>  Metadata of the block.
 	 *<br>- <b>","</b> and/or <b>" "</b>  Separates each entry in the string.*/
 	public void parse(String str)
 	{
@@ -159,7 +160,7 @@ public class ConfigList
 					
 					if (id.contains("!"))
 					{
-						remove(id);
+						remove(id.replaceAll("\\!", ""));
 						id = "";
 						break;
 					}
@@ -167,7 +168,7 @@ public class ConfigList
 				else
 				{
 					values.add(items[i]);
-					remove(id);
+					remove(id.replaceAll("\\!", "").replaceAll("\\#.*", ""));
 				}
 			}
 			

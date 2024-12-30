@@ -310,7 +310,6 @@ public class WeatherAPI
 	
 	private static ConfigList processGrabList(Set<ResourceLocation> entries, ConfigList cfg, boolean partialMatches, int type)
 	{
-		Weather2.info("--------------- " + type);
 		ConfigList list = new ConfigList();
     	String keyA, keyB, keyC;
     	List<String> keys;
