@@ -55,3 +55,17 @@ mandatory=true
 versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"
+
+[[mods]]
+modId="configex"
+version="2.0.0"
+displayName="ConfigEX"
+authors="ProfessorFartsalot, Mrbt0907"
+description='''Hehe weather go brrrr'''
+
+[[dependencies.configex]]
+modId="forge" #mandatory
+mandatory=true #mandatory
+versionRange="${forge_version_range}" #mandatory
+ordering="NONE"
+side="BOTH"
