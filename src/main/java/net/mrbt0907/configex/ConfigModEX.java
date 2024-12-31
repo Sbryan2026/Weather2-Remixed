@@ -1,21 +1,21 @@
 package net.mrbt0907.configex;
 
-import java.io.File;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.mrbt0907.configex.command.CommandConfigEX;
+import net.mrbt0907.configex.config.ActualConfigMain;
 import net.mrbt0907.configex.config.ConfigMaster;
+import net.mrbt0907.configex.network.NetworkHandler;
 
 @Mod("configex")
 public class ConfigModEX {
@@ -25,11 +25,14 @@ public class ConfigModEX {
 	private static final Logger LOGGER = LogManager.getLogger();
 	public static boolean enableDebug = false;
 	
-	public ConfigModEX() {
-	    enableDebug = false;
+	public ConfigModEX()
+	{
+	    enableDebug = true;
 	    FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
 		IEventBus MOD_BUS = context.getModEventBus();
-		ConfigMaster.preInit();
+		NetworkHandler.preInit();
+		ConfigManager.register(new ActualConfigMain());
+		//ConfigMaster.preInit();
 		MOD_BUS.addListener(this::init);
 		MOD_BUS.addListener(this::initClient);
 		MOD_BUS.addListener(this::postInit);
@@ -51,18 +54,9 @@ public class ConfigModEX {
 
 	}
 	
-	public void onServerStarting(FMLServerStartingEvent event)
+	public void onServerStarting(FMLServerStartedEvent event)
 	{
-		LOGGER.info("HELLO from server starting, got game folder at" + getGameFolder());
-	}
-
-	public static String getGameFolder()
-	{
-		Minecraft mc = Minecraft.getInstance();
-		if (mc.hasSingleplayerServer())
-			return mc.gameDirectory.getPath() + File.separator;
-		else
-			return new File(".").getAbsolutePath() + File.separator;
+		NetworkHandler.sendClientPacket(0, new CompoundNBT(), (Object[])null);
 	}
 	
 	public static void info(Object message)

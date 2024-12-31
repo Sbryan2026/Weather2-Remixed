@@ -11,10 +11,15 @@ public class ConfigAnnotations {
 	@Target(ElementType.FIELD)
 	public static @interface Ignore {}
 	
-	/**Forces all clients to use the server's value instead of their own<br>This also hides the variable from client settings in a multiplayer game*/
+	/**Adds this config to the client config, which is ignored by the server*/
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
-	public static @interface Enforce {}
+	public static @interface ClientSide {}
+	
+	/**Adds this config to the world's config, effectively enforcing this value on clients*/
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public static @interface ServerSide {}
 	
 	/**Gives the variable a human readable name in the config*/
 	@Retention(RetentionPolicy.RUNTIME)

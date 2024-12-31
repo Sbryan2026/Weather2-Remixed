@@ -8,10 +8,12 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.MessageArgument;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.mrbt0907.configex.ConfigModEX;
+import net.mrbt0907.configex.network.NetworkHandler;
 
 public class CommandConfigEX {
 	@SubscribeEvent
@@ -28,6 +30,7 @@ public class CommandConfigEX {
 
 	static int confEX(CommandContext<CommandSource> cmdContext) throws CommandSyntaxException {
 		ITextComponent messageVal = MessageArgument.getMessage(cmdContext, "message");
+		NetworkHandler.sendClientPacket(0, new CompoundNBT(), (Object[])null);
 		ConfigModEX.info(messageVal.toString());
 		return 1;
 	}
