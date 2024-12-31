@@ -39,9 +39,11 @@ public class ItemRegistry
 	public static final Item itemWeatherRecipe = new Item(new Item.Properties().tab(Weather2Remastered.TAB));
 	public static final Item itemPocketSand = new Item(new Item.Properties().tab(Weather2Remastered.TAB));
 	
+	private static boolean isInitialized = false;
 	@SubscribeEvent
 	public static void onBlockRegistry(RegistryEvent.Register<Item> event)
 	{
+		if (isInitialized) return;
 		Weather2Remastered.debug("Registering items...");
 		addItem(event, "sand_layer_placeable", itemSandLayer);
 		addItem(event, "weather_item", itemWeatherRecipe);
@@ -66,6 +68,7 @@ public class ItemRegistry
 		addItem(event, "lcd_1", itemLCD1);
 		BLOCKS.forEach(block -> event.getRegistry().register(block)); BLOCKS.clear();
 		Weather2Remastered.debug("Finished registering items");
+		isInitialized = true;
 	}
 	
 	public static void addBlock(Block block, boolean inCreativeTab)
