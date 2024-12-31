@@ -26,7 +26,7 @@ public class ConfigModEX {
 	public static boolean enableDebug = false;
 	
 	public ConfigModEX() {
-	    enableDebug = true;
+	    enableDebug = false;
 	    FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
 		IEventBus MOD_BUS = context.getModEventBus();
 		ConfigMaster.preInit();
