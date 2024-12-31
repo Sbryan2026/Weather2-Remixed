@@ -43,7 +43,7 @@ public class ConfigGrab implements IConfigEX
 	@Comment("Should storms grab blocks based on wind resistance? Will follow grab lists if enabled.")
 	public static boolean grab_list_strength_match = true;
 	@Enforce
-	@Comment("See config file for examples. A list of blocks to be grabbed by storms. Use commas and/or spaces to separate each entry. Do not use quotation marks. \"!\" Will remove entries set by other mods. Accepted formats - modid:name, name")
+	@Comment("See config file for examples. A list of blocks to be grabbed by storms. Use commas and/or spaces to separate each entry. Do not use quotation marks. \"!\" Will remove entries set by other mods. \"#\" Will specify a block with a specific metadata value. Accepted formats - modid:name, name")
 	public static String grab_list_entries = "planks, minecraft:leaves, cobblestone";
 	@Enforce
 	@Comment("Should similar entries from both lists be used?")
@@ -61,7 +61,7 @@ public class ConfigGrab implements IConfigEX
 	@Comment("Should storms replace blocks based on wind resistance? Will follow grab lists if enabled.")
 	public static boolean replace_list_strength_match = true;
 	@Enforce
-	@Comment("See config file for examples. A list of blocks to be replaced by storms. Use commas and/or spaces to separate each entry. Do not use quotation marks. \"!\" Will remove entries set by other mods. Use = without spaces to indicate the replacement block. Accepted formats - modid:name=modid:replacement, name=replacement, modid:name=replacement, name=modid:replacement")
+	@Comment("See config file for examples. A list of blocks to be replaced by storms. Use commas and/or spaces to separate each entry. Do not use quotation marks. \"!\" Will remove entries set by other mods. \"#\" Will specify a block with a specific metadata value.  Use = without spaces to indicate the replacement block. Accepted formats - modid:name=modid:replacement, name=replacement, modid:name=replacement, name=modid:replacement")
 	public static String replace_list_entries = "leaves=minecraft:air, leaves2=minecraft:air, minecraft:grass=dirt, minecraft:red_flower=minecraft:air, minecraft:double_plant=minecraft:air, minecraft:tallgrass=minecraft:air";
 	@Enforce
 	@Comment("Should the entity grab list also find similarly named entities?")
@@ -73,7 +73,7 @@ public class ConfigGrab implements IConfigEX
 	@Comment("Should the wind resistance list also find similarly named items?")
 	public static boolean wind_resistance_partial_matches = false;
 	@Enforce
-	@Comment("See config file for examples. A list of blocks to register wind resistances to. The numbers are measured in MPH. 65=EF0, 92=EF1, 119=EF2, 146=EF3, 173=EF4, 200=EF5, and so on. Use commas and/or spaces to separate each entry. Do not use quotation marks. \"!\" Will remove entries set by other mods. Use \"=\" without spaces to indicate the wind resistance of the block. Accepted formats - modid:name=number, name=number")
+	@Comment("See config file for examples. A list of blocks to register wind resistances to. The numbers are measured in MPH. 65=EF0, 92=EF1, 119=EF2, 146=EF3, 173=EF4, 200=EF5, and so on. Use commas and/or spaces to separate each entry. Do not use quotation marks. \"!\" Will remove entries set by other mods. \"#\" Will specify a block with a specific metadata value. Use \"=\" without spaces to indicate the wind resistance of the block. Accepted formats - modid:name=number, name=number")
 	public static String wind_resistance_entries = "obsidian=227, iron_bar=146";
 	@Enforce
 	@Comment("Experimental idea, places the WIP repairing block where a tornado\ndoes damage instead of removing the block, causes tornado damage to self repair, recommend setting Storm_Tornado_rarityOfBreakOnFall to 0 to avoid duplicated blocks")

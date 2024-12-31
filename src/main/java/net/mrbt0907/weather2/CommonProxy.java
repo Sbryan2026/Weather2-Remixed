@@ -6,19 +6,19 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.mrbt0907.weather2.api.WeatherAPI;
-import net.mrbt0907.weather2.client.weather.StormNames;
 import net.mrbt0907.weather2.registry.BlockRegistry;
 import net.mrbt0907.weather2.registry.EntityRegistry;
 import net.mrbt0907.weather2.registry.ItemRegistry;
 import net.mrbt0907.weather2.registry.RecipeRegistry;
 import net.mrbt0907.weather2.registry.SoundRegistry;
+import net.mrbt0907.weather2.registry.StormNames;
 
 @Mod.EventBusSubscriber(modid = Weather2.MODID)
 public class CommonProxy
 {
 	public void preInit()
 	{
-		StormNames.init();
+		StormNames.refreshNameList();
 		SoundRegistry.init();
 		EntityRegistry.init();
 	}
