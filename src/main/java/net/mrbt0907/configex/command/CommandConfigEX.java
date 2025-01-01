@@ -128,6 +128,38 @@ public class CommandConfigEX
 			return 0;
 		}
 		
+		switch (field.type)
+		{
+			case 1:
+				try {field.set(Integer.parseInt(value), !ConfigManager.IS_REMOTE);}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid integer")); return 0;}
+				break;
+			case 2:
+				try {field.set(Short.parseShort(value), !ConfigManager.IS_REMOTE);}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid short")); return 0;}
+				break;
+			case 3:
+				try {field.set(Long.parseLong(value), !ConfigManager.IS_REMOTE);}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid long")); return 0;}
+				break;
+			case 4:
+				try {field.set(Float.parseFloat(value), !ConfigManager.IS_REMOTE);}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid float")); return 0;}
+				break;
+			case 5:
+				try {field.set(Double.parseDouble(value), !ConfigManager.IS_REMOTE);}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid double")); return 0;}
+				break;
+			case 6:
+				try {field.set(String.valueOf(value), !ConfigManager.IS_REMOTE);}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid string")); return 0;}
+				break;
+			case 7:
+				try {field.set(Boolean.parseBoolean(value), !ConfigManager.IS_REMOTE);}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid boolean")); return 0;}
+				break;
+		}
+		
 		field.set(Boolean.parseBoolean(value), !ConfigManager.IS_REMOTE).markDirty();
 		ConfigManager.sync();
 		field.save();

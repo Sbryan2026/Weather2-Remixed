@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.block.*;
 
-@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD, modid=Weather2Remastered.MODID)
 public class BlockRegistry
 {
 	//public static final Block wire = new BlockSensor();
@@ -47,11 +47,9 @@ public class BlockRegistry
 	public static final Block weather_constructor = new BlockWeatherConstructor();
 	public static final Block weather_deflector = new BlockWeatherDeflector();
 	public static final Block sand_layer = new BlockSandLayer();
-	private static boolean isInitialized = false;
 	@SubscribeEvent
 	public static void onBlockRegistry(RegistryEvent.Register<Block> event)
 	{
-		if(isInitialized) return;
 		Weather2Remastered.debug("Registering blocks...");
 		addBlock(event, "tornado_sensor", tornado_sensor);
 		addBlock(event, "tornado_siren", emergency_siren);
@@ -74,7 +72,6 @@ public class BlockRegistry
 		addBlock(event, "barometer_sensor", barometerSensor);
 		addBlock(event, "radio_transmitter", radio);
 		Weather2Remastered.debug("Finished registering blocks");
-		isInitialized = true;
 	}
 	
 	public static void addBlock(RegistryEvent.Register<Block> event, String registryName, Block block)

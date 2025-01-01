@@ -17,11 +17,10 @@ import net.mrbt0907.configex.config.ConfigMaster;
 import net.mrbt0907.configex.event.EventsForge;
 import net.mrbt0907.configex.network.NetworkHandler;
 
-@Mod("configex")
-public class ConfigModEX {
+@Mod(ConfigModEX.MODID)
+public class ConfigModEX
+{
 	public static final String MODID = "configex";
-	public static final String MOD = "Config Manager - Expanded";
-	public static final String VERSION = "2.0";
 	private static final Logger LOGGER = LogManager.getLogger();
 	public static boolean enableDebug = false;
 	

@@ -12,12 +12,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.mrbt0907.configex.ConfigManager;
+import net.mrbt0907.weather2remastered.config.*;
 import net.mrbt0907.weather2remastered.registry.BlockRegistry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("weather2remastered")
+@Mod(Weather2Remastered.MODID)
 public class Weather2Remastered
 {
 	public static final String MODID = "weather2remastered";
@@ -28,6 +30,18 @@ public class Weather2Remastered
 	{
 		FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
 		IEventBus MOD_BUS = context.getModEventBus();
+		ConfigManager.register(new ConfigMisc());
+		ConfigManager.register(new ConfigVolume());
+		ConfigManager.register(new ConfigGraphics());
+		ConfigManager.register(new ConfigFront());
+		ConfigManager.register(new ConfigStorm());
+		ConfigManager.register(new ConfigGrab());
+		ConfigManager.register(new ConfigSeason());
+		ConfigManager.register(new ConfigSimulation());
+		ConfigManager.register(new ConfigWind());
+		ConfigManager.register(new ConfigSand());
+		ConfigManager.register(new ConfigSnow());
+		ConfigManager.register(new ConfigFoliage());
 		MOD_BUS.addListener(this::init);
 		MOD_BUS.addListener(this::initClient);
 		MOD_BUS.addListener(this::postInit);

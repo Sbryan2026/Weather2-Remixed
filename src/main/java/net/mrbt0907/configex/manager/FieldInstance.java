@@ -67,7 +67,7 @@ public class FieldInstance
 		registryName = ConfigManager.formatRegistryName(field.getName());
 		
 		Comment comment = field.getDeclaredAnnotation(Comment.class);
-		String[] declaredComment = comment == null ? null : comment.value();
+		String[] declaredComment = comment == null ? new String[0] : comment.value();
 		this.comment = new String[declaredComment.length + 1];
 		for (int i = 0; i < declaredComment.length; i++)
 			this.comment[i] = declaredComment[i];
