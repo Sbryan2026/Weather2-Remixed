@@ -1,102 +1,141 @@
 package net.mrbt0907.configex.manager;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig.Type;
+import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.configex.api.ConfigAnnotations.*;
 import net.mrbt0907.configex.api.IConfigEX;
-import net.mrbt0907.configex.config.ConfigMaster;
-import net.mrbt0907.weather2remastered.Weather2Remastered;
+import net.mrbt0907.configex.api.IConfigEX.Phase;
 
 public class ConfigInstance
 {
+	private final Map<String, FieldInstance> fields = new LinkedHashMap<String, FieldInstance>();
 	public final IConfigEX instance;
 	public final String name;
 	public final String registryName;
 	public final String description;
 	public final String saveLocation;
-	public final ForgeConfigSpec configuration;
-	private static final List<ConfigValue<?>> values = new ArrayList<>();
+	public final ForgeConfigSpec clientCFG;
+	public final ForgeConfigSpec commonCFG;
+	public final ForgeConfigSpec serverCFG;
 	
 	public ConfigInstance(IConfigEX instance)
 	{
 		this.instance = instance;
 		name = instance.getName();
-		registryName = instance.getName();
+		registryName = ConfigManager.formatRegistryName(name);
 		description = instance.getDescription();
 		saveLocation = instance.getSaveLocation();
-		configuration = build();
+		clientCFG = build(Type.CLIENT);
+		commonCFG = build(Type.COMMON);
+		serverCFG = build(Type.SERVER);
 	}
 	
-	public ForgeConfigSpec build()
+	public FieldInstance get(String registryName)
 	{
-		ForgeConfigSpec configuration;
+		return fields.get(registryName);
+	}
+	
+	public void ids(List<ResourceLocation> variables)
+	{
+		fields.forEach((registryName, field) -> variables.add(new ResourceLocation(this.registryName, registryName)));	
+	}
+	
+	public void readNBT(CompoundNBT nbt, int permissionLevel)
+	{
+		if (nbt.contains(registryName))
+		{
+			int variables = 0;
+			CompoundNBT nbtFields = nbt.getCompound(registryName);
+			FieldInstance field;
+			
+			instance.onConfigChanged(Phase.START, variables);
+			for (String key : nbtFields.getAllKeys())
+			{
+				if (fields.containsKey(key))
+				{
+					field = fields.get(key);
+					if (field.permission > permissionLevel) continue;
+					Object oldValue = field.get();
+					field.readNBT(nbtFields);
+					Object newValue = field.get(); 
+					if (newValue != oldValue)
+					{
+						instance.onValueChanged(key, oldValue, newValue);
+						variables++;
+					}
+				}
+			}
+			instance.onConfigChanged(Phase.END, variables);
+		}
+	}
+	
+	public void writeNBT(CompoundNBT nbt, boolean fullNBT)
+	{
+		CompoundNBT nbtFields = new CompoundNBT();
+		for (FieldInstance field : fields.values())
+		{
+			if (fullNBT || field.isDirty)
+			{
+				if (!fullNBT)
+					field.isDirty = false;
+				field.writeNBT(nbtFields);
+			}
+		}
+		nbt.put(registryName, nbtFields);
+	}
+	
+	private ForgeConfigSpec build(Type side)
+	{
+		ForgeConfigSpec configuration = null;
 		Builder builder = new Builder();
-		boolean client = false, common = false, server = false;
 		Class<? extends IConfigEX> clazz = instance.getClass();
 		Field[] fields = clazz.getDeclaredFields();
+		boolean register = false;
 		
-		if (description != null)
-			builder.comment(description);
 		builder.push(name != null ? name : "main");
-		
 		for (Field field : fields)
 		{
 			if (field.isAnnotationPresent(Ignore.class)) continue;
-			boolean clientSided = field.isAnnotationPresent(ClientSide.class);
-			boolean serverSided = field.isAnnotationPresent(ServerSide.class);
-			client = client || clientSided;
-			common = common || !clientSided && !serverSided;
-			server = server || serverSided;
-			Name name = field.getDeclaredAnnotation(Name.class);
-			Comment comment = field.getDeclaredAnnotation(Comment.class);
-			boolean hidden = field.isAnnotationPresent(Hidden.class);
-			boolean requiresWorldReload = field.isAnnotationPresent(RequiresWorldReload.class);
-			//boolean requiresRestart = field.isAnnotationPresent(RequiresRestart.class);
-			Object defaultValue = null;
-			try
-			{
-				defaultValue = field.get(instance);
-			}
-			catch (Exception e)
-			{
-				Weather2Remastered.fatal(e);
-			}
-			byte type = (byte) (defaultValue instanceof Integer ? 1 : defaultValue instanceof Short ? 2 : defaultValue instanceof Long ? 3 : defaultValue instanceof Float ? 4 : defaultValue instanceof Double ? 5 : defaultValue instanceof String ? 6 : defaultValue instanceof Boolean ? 7 : 0);
-			
-			if (comment != null)
-				builder.comment(comment.value());
-			if (requiresWorldReload)
-				builder.worldRestart();
-			
-			switch (type)
-			{
-				case 1: values.add(builder.define(name == null ? field.getName() : name.value(), (int) defaultValue)); break;
-				case 2: values.add(builder.define(name == null ? field.getName() : name.value(), (short) defaultValue)); break;
-				case 3: values.add(builder.define(name == null ? field.getName() : name.value(), (long) defaultValue)); break;
-				case 4: values.add(builder.define(name == null ? field.getName() : name.value(), (float) defaultValue)); break;
-				case 5: values.add(builder.define(name == null ? field.getName() : name.value(), (double) defaultValue)); break;
-				case 6: values.add(builder.define(name == null ? field.getName() : name.value(), (String) defaultValue)); break;
-				case 7: values.add(builder.define(name == null ? field.getName() : name.value(), (boolean) defaultValue)); break;
-			}
-			
+			Type configType = field.isAnnotationPresent(ClientSide.class) ? Type.CLIENT : field.isAnnotationPresent(ServerSide.class) ? Type.SERVER : Type.COMMON;
+			if (!configType.equals(side)) continue;
+			register = true;
+			FieldInstance instance = new FieldInstance(builder, configuration, this.instance, field);
+			this.fields.put(instance.registryName, instance);
 		}
 		builder.pop();
 		configuration = builder.build();
 		
-		ModLoadingContext context = ModLoadingContext.get();
-		if (client)
-			context.registerConfig(Type.CLIENT, ConfigMaster.SPEC, saveLocation + "-client.toml");
-		if (common)
-			context.registerConfig(Type.COMMON, ConfigMaster.SPEC, saveLocation + "-common.toml");
-		if (server)
-			context.registerConfig(Type.SERVER, ConfigMaster.SPEC, saveLocation + "-server.toml");
+		if (register)
+		{
+			ModLoadingContext context = ModLoadingContext.get();
+			switch (side)
+			{
+				case CLIENT: context.registerConfig(Type.CLIENT, configuration, saveLocation + "-client.toml"); break;
+				case COMMON: context.registerConfig(Type.COMMON, configuration, saveLocation + "-common.toml"); break;
+				case SERVER: context.registerConfig(Type.SERVER, configuration, saveLocation + "-server.toml"); break;
+			}
+		}
 		return configuration;
+	}
+	
+	public void load()
+	{
+		instance.onConfigChanged(Phase.START, 0);
+		for (FieldInstance field : this.fields.values())
+		{
+			field.set(field.getSavedValue(), !ConfigManager.IS_REMOTE);
+			instance.onValueChanged(field.registryName, field.defaultValue, field.get());
+		}
+		instance.onConfigChanged(Phase.END, this.fields.size());
 	}
 }

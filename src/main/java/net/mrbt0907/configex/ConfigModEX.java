@@ -13,8 +13,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.mrbt0907.configex.command.CommandConfigEX;
-import net.mrbt0907.configex.config.ActualConfigMain;
 import net.mrbt0907.configex.config.ConfigMaster;
+import net.mrbt0907.configex.event.EventsForge;
 import net.mrbt0907.configex.network.NetworkHandler;
 
 @Mod("configex")
@@ -30,12 +30,13 @@ public class ConfigModEX {
 	    enableDebug = true;
 	    FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
 		IEventBus MOD_BUS = context.getModEventBus();
-		NetworkHandler.preInit();
-		ConfigManager.register(new ActualConfigMain());
-		//ConfigMaster.preInit();
 		MOD_BUS.addListener(this::init);
 		MOD_BUS.addListener(this::initClient);
 		MOD_BUS.addListener(this::postInit);
+		MOD_BUS.register(EventsForge.class);
+		ConfigManager.register(new ConfigMaster());
+		NetworkHandler.preInit();
+		//ConfigMaster.preInit();
 		MinecraftForge.EVENT_BUS.addListener(this::onServerStarting);
 	}
 	
@@ -66,21 +67,21 @@ public class ConfigModEX {
 	
 	public static void debug(Object message)
 	{
-		boolean isDebug = ConfigMaster.debug_mode.get() || enableDebug;	
+		boolean isDebug = enableDebug;	
 		if (isDebug)
 			LOGGER.info("[DEBUG] " + message);
 	}
 	
 	public static void warn(Object message)
 	{
-		boolean isDebug = ConfigMaster.debug_mode.get() || enableDebug;
+		boolean isDebug = enableDebug;
 		if (isDebug)
 			LOGGER.warn(message);
 	}
 
 	public static void error(Object message)
 	{
-		boolean isDebug = ConfigMaster.debug_mode.get() || enableDebug;
+		boolean isDebug = enableDebug;
 		if (isDebug)
 		{
 			Throwable exception;

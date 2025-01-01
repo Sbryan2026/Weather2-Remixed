@@ -16,7 +16,7 @@ public class ConfigAnnotations {
 	@Target(ElementType.FIELD)
 	public static @interface ClientSide {}
 	
-	/**Adds this config to the world's config, effectively enforcing this value on clients*/
+	/**Adds this config to the world's config, which is ignored by all clients*/
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
 	public static @interface ServerSide {}
@@ -59,11 +59,6 @@ public class ConfigAnnotations {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
 	public static @interface RequiresWorldReload {}
-	
-	/**Notifies players that this variable only changes when the game is restarted*/
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	public static @interface RequiresRestart {}
 	
 	/**Limits the range of the variable to a specified minimum and maximum integer value*/
 	@Retention(RetentionPolicy.RUNTIME)

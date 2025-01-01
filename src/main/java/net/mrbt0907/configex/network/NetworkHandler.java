@@ -5,6 +5,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.configex.ConfigModEX;
 
 import java.util.function.BiConsumer;
@@ -32,10 +33,13 @@ public class NetworkHandler
 	@OnlyIn(Dist.CLIENT)
 	public static void onClientMessage(int index, CompoundNBT nbt)
 	{
-		net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+		//net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
 		
 		switch(index)
-		{	
+		{
+			case 0:
+				ConfigManager.readNBT(nbt, 4);
+				break;
 			default:
 				ConfigModEX.warn("Network Handler recieved an invalid packet with index of " + index + ". Skipping...");
 		}
@@ -45,7 +49,9 @@ public class NetworkHandler
 	{
 		switch(index)
 		{
-			
+			case 0:
+				ConfigManager.readNBT(nbt, player.server.isSingleplayer() ? 4 : player.server.getProfilePermissions(player.getGameProfile()));
+				break;
 			default:
 				ConfigModEX.warn("Network Handler recieved an invalid packet with index of " + index + ". Skipping...");
 		}

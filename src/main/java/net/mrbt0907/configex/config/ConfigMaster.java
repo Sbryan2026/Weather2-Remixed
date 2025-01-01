@@ -1,28 +1,47 @@
 package net.mrbt0907.configex.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig.Type;
+import net.mrbt0907.configex.ConfigModEX;
+import net.mrbt0907.configex.api.IConfigEX;
+import net.mrbt0907.configex.api.ConfigAnnotations.Comment;
+import net.mrbt0907.configex.api.ConfigAnnotations.Hidden;
+import net.mrbt0907.configex.api.ConfigAnnotations.Name;
+import net.mrbt0907.weather2remastered.Weather2Remastered;
 
-public final class ConfigMaster {
-	public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-	public static final ForgeConfigSpec SPEC;
-	public static final ForgeConfigSpec.ConfigValue<Boolean> debug_mode;
-	private static final String CFG_NAME = "ConfigEX - Master";
-	static  {
-		BUILDER.push(CFG_NAME);
-		debug_mode = BUILDER.comment("Enable debug mode? Default value is \'false\'.").define("Enable Debug", false);
-		BUILDER.pop();
-		SPEC = BUILDER.build();
+public class ConfigMaster implements IConfigEX
+{
+	@Hidden
+	@Name("Enable Debug Mode")
+	@Comment("Enables the displaying of various debugging information in the console")
+	public static boolean debug_mode = false;
+	
+	@Override
+	public String getName()
+	{
+		return "ConfigEX - Master";
 	}
-	public String getName() {
-		return CFG_NAME;
-	}
+
+	@Override
 	public String getDescription()
 	{
 		return "This is the master config file for the config mod.";
 	}
-	public static void preInit() {
-		ModLoadingContext.get().registerConfig(Type.COMMON, ConfigMaster.SPEC, "configex/Master.toml");		
+
+	@Override
+	public String getSaveLocation()
+	{
+		return ConfigModEX.MODID + "/master";
 	}
+
+	@Override
+	public void onConfigChanged(Phase phase, int variables)
+	{
+		Weather2Remastered.info("onConfigChanged: " + phase + ", " + variables);
+	}
+
+	@Override
+	public void onValueChanged(String variable, Object oldValue, Object newValue)
+	{
+		Weather2Remastered.info("onValueChanged [" + variable + "]: " + oldValue + ", " + newValue);
+	}
+
 }
