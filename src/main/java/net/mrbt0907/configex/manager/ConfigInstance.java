@@ -65,9 +65,9 @@ public class ConfigInstance
 				{
 					field = fields.get(key);
 					if (field.permission > permissionLevel) continue;
-					Object oldValue = field.get();
+					Object oldValue = field.getActualValue();
 					field.readNBT(nbtFields);
-					Object newValue = field.get(); 
+					Object newValue = field.getActualValue(); 
 					if (newValue != oldValue)
 					{
 						instance.onValueChanged(key, oldValue, newValue);
@@ -133,8 +133,9 @@ public class ConfigInstance
 		instance.onConfigChanged(Phase.START, 0);
 		for (FieldInstance field : this.fields.values())
 		{
+			Object oldValue = field.getActualValue();
 			field.set(field.getSavedValue(), !ConfigManager.IS_REMOTE);
-			instance.onValueChanged(field.registryName, field.defaultValue, field.get());
+			instance.onValueChanged(field.registryName, oldValue, field.getActualValue());
 		}
 		instance.onConfigChanged(Phase.END, this.fields.size());
 	}

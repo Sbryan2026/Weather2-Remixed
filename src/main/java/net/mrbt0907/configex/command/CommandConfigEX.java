@@ -14,6 +14,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.configex.ConfigModEX;
+import net.mrbt0907.configex.api.IConfigEX.Phase;
 import net.mrbt0907.configex.manager.ConfigInstance;
 import net.mrbt0907.configex.manager.FieldInstance;
 
@@ -88,7 +89,9 @@ public class CommandConfigEX
 			return 0;
 		}
 		
+		config.instance.onConfigChanged(Phase.START, 0);
 		field.set(field.defaultValue, !ConfigManager.IS_REMOTE).markDirty();
+		config.instance.onConfigChanged(Phase.END, 1);
 		ConfigManager.sync();
 		field.save();
 		source.sendSuccess(new StringTextComponent("Changed variable " + registryName.toString() + " to \"" + field.defaultValue + "\""), true);
@@ -128,40 +131,44 @@ public class CommandConfigEX
 			return 0;
 		}
 		
+		Object oldValue = field.getActualValue();
+		config.instance.onConfigChanged(Phase.START, 0);
 		switch (field.type)
 		{
 			case 1:
 				try {field.set(Integer.parseInt(value), !ConfigManager.IS_REMOTE);}
-				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid integer")); return 0;}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid integer")); config.instance.onConfigChanged(Phase.END, 0); return 0;}
 				break;
 			case 2:
 				try {field.set(Short.parseShort(value), !ConfigManager.IS_REMOTE);}
-				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid short")); return 0;}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid short")); config.instance.onConfigChanged(Phase.END, 0); return 0;}
 				break;
 			case 3:
 				try {field.set(Long.parseLong(value), !ConfigManager.IS_REMOTE);}
-				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid long")); return 0;}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid long")); config.instance.onConfigChanged(Phase.END, 0); return 0;}
 				break;
 			case 4:
 				try {field.set(Float.parseFloat(value), !ConfigManager.IS_REMOTE);}
-				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid float")); return 0;}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid float")); config.instance.onConfigChanged(Phase.END, 0); return 0;}
 				break;
 			case 5:
 				try {field.set(Double.parseDouble(value), !ConfigManager.IS_REMOTE);}
-				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid double")); return 0;}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid double")); config.instance.onConfigChanged(Phase.END, 0); return 0;}
 				break;
 			case 6:
 				try {field.set(String.valueOf(value), !ConfigManager.IS_REMOTE);}
-				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid string")); return 0;}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid string")); config.instance.onConfigChanged(Phase.END, 0); return 0;}
 				break;
 			case 7:
 				try {field.set(Boolean.parseBoolean(value), !ConfigManager.IS_REMOTE);}
-				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid boolean")); return 0;}
+				catch (Exception e) {source.sendFailure(new StringTextComponent("Value \"" + value + "\" cannot be assigned to config variable " + registryName.toString() + " as it is not a valid boolean")); config.instance.onConfigChanged(Phase.END, 0); return 0;}
 				break;
 		}
-		
+		config.instance.onValueChanged(registryName.getPath(), oldValue, field.getActualValue());
+		config.instance.onConfigChanged(Phase.END, 1);
 		field.set(Boolean.parseBoolean(value), !ConfigManager.IS_REMOTE).markDirty();
-		ConfigManager.sync();
+		if (!ConfigManager.IS_REMOTE)
+			ConfigManager.sync();
 		field.save();
 		source.sendSuccess(new StringTextComponent("Changed variable " + registryName.toString() + " to \"" + field.get() + "\""), true);
 		return 1;
