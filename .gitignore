@@ -26,3 +26,6 @@ forge*changelog.txt
 /setup.bat
 /build.bat
 /references/
+/run-server
+/run-data
+src/generated/resources/.cache/cache
