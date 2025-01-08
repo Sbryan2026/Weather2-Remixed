@@ -44,11 +44,11 @@ public class ConfigStorm implements IConfigEX
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How much water builds up in storms. Higher values = heavier rain faster")
-	public static int humidity_buildup_rate = 1;
+	public static int humidity_buildup_rate = 3;
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How much water is lost in a storm when it rains. Higher values = shorter rain time")
-	public static int humidity_spend_rate = 3;
+	public static int humidity_spend_rate = 2;
 	@Enforce
 	@DoubleRange(min=0.0D)
 	@Comment("Maybe the rate that a storm changes their temps to match another biome's temperature?")
@@ -231,7 +231,10 @@ public class ConfigStorm implements IConfigEX
 	@DoubleRange(min=0.0D)
 	@Comment("How fast storms may progress at a maximum. Higher values = faster development")
 	public static double storm_lifespan_max = 0.04D;
-	
+	@Enforce
+	@FloatRange(min=0.0F)
+	@Comment("How much rain can storms have at maximum. Higher values = more rain")
+	public static float max_rain_buildup = 1500.0F;
     @Override
     public String getName()
     {

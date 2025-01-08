@@ -593,6 +593,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 					if (!isDying)
 					{
 						rain += ConfigStorm.humidity_buildup_rate * WeatherUtil.getHumidity(world, pos.toBlockPos());
+						if (rain > ConfigStorm.max_rain_buildup) rain = ConfigStorm.max_rain_buildup;
 						if (hailRate > 0.0F && hailRate < 200.0F)
 							hail += hailRate * WeatherUtil.getHumidity(world, pos.toBlockPos()) * 2.5F;
 					}

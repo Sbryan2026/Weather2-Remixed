@@ -72,7 +72,7 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 				WeatherManagerClient wm = ClientTickHandler.weatherManager;
 				float precipStr = Math.abs(scene.rain);
 				String overcast = Math.round(scene.overcast * 100.0F) + "%";
-				renderLivingLabel("\u00A7" + " Fog Strength: " + Math.round(scene.fogMult * 300.0F) + "%", x, y + 1.8F, z, 1, 10, 10, playerViewY, 1.0F);
+				renderLivingLabel("\u00A7" + " Fog Strength: " + Maths.clamp(Math.round(scene.fogDensity * 400.0F), 0, 100) + "%", x, y + 1.8F, z, 1, 10, 10, playerViewY, 1.0F);
 				renderLivingLabel("\u00A7" + " Vanilla Weather Time: " + wm.weatherRainTime, x, y + 1.9F, z, 1, 10, 10, playerViewY, 1.0F);
 				renderLivingLabel("\u00A7" + " Client Weather: " + (player.world.isThundering() ? "Thundering" : precipStr >= 0.5F ? "Heavy Rain" : precipStr >= 0.15F ? "Light Rain" : precipStr > 0.01F ? "Drizzle" : "Clear"), x, y + 2.0F, z, 1, 10, 10, playerViewY, 1.0F);
 				renderLivingLabel("\u00A7" + " Server Weather: " + (wm.weatherID == 2 ? "Thunder" : wm.weatherID == 1 ? "Rain" : "Clear"), x, y + 2.1F, z, 1, 10, 10, playerViewY, 1.0F);
