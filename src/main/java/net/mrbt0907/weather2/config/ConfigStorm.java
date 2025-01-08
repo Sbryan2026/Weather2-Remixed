@@ -233,7 +233,7 @@ public class ConfigStorm implements IConfigEX
 	public static double storm_lifespan_max = 0.04D;
 	@Enforce
 	@FloatRange(min=0.0F)
-	@Comment("How much rain can storms have at maximum. Higher values = more rain")
+	@Comment("How much rain can storms have at maximum. Higher values = longer rain")
 	public static float max_rain_buildup = 1500.0F;
     @Override
     public String getName()
