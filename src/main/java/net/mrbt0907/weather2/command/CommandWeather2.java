@@ -118,7 +118,7 @@ public class CommandWeather2 extends CommandBase
 				switch(args[0])
 				{
 					case "create":
-						return getListOfStringsMatchingLastWord(args, new String[] {"alwaysprogress", "ishailing", "isviolent", "isnatural", "isfirenado", "neverdissipate", "dontconvert", "revives=#", "direction=<#/north/south/east/west>", "speed=#", "size=#", "name=<Word>"});
+						return getListOfStringsMatchingLastWord(args, new String[] {"alwaysprogress", "ishailing", "norain", "isviolent", "isnatural", "isfirenado", "neverdissipate", "dontconvert", "revives=#", "direction=<#/north/south/east/west>", "speed=#", "size=#", "name=<Word>"});
 					default:
 						return Collections.emptyList();
 				}
@@ -447,6 +447,12 @@ public class CommandWeather2 extends CommandBase
 												isHailing = true;
 												flags += ", Storm Is Hailing";
 											}
+										case "norain":
+										{
+											isRaining = false;
+											flags +=", No Rain";
+											break;
+										}
 										default:
 											if (flag.matches("revives\\=\\d+"))
 											{
@@ -510,7 +516,9 @@ public class CommandWeather2 extends CommandBase
 								so.stage = isRandom ? so.rollDiceOnMaxIntensity() : stage;
 								so.stageMax = so.stage;
 								so.intensity = so.stage - 0.99F;
+								so.shouldBuildHumidity = isRaining;
 								so.rain = isRaining ? (isNatural ? 50.0F : isHailing ? 200.0F : so.stage * 50.0F) + 1.0F : 0.0F;
+								System.out.println(isRaining);
 								so.hail = isHailing ? isNatural ? 0.0F : 100.0F : 0.0F;
 								so.hailRate = isHailing ? Math.min((float) ConfigStorm.hail_max_buildup_rate, 1.0F) : 0.0F;
 								so.sizeRate = sizeMultiplier;
