@@ -61,27 +61,32 @@ public class TileWeatherConstructor extends TileEntity implements ITickable
 	public void setStormSettings()
 	{
 		if (lastTickStormObject != null)
+			System.out.println(stage);
 			switch(stage)
 			{
 				case 1:
+					lastTickStormObject.rain = 0.0F;
 					lastTickStormObject.stormType = StormObject.StormType.LAND.ordinal();
 					lastTickStormObject.stage = Stage.NORMAL.getStage();
 					lastTickStormObject.intensity = 0.01F;
 					lastTickStormObject.updateType();
 					break;
 				case 2:
+					lastTickStormObject.rain = 100.0F;
 					lastTickStormObject.stormType = StormObject.StormType.LAND.ordinal();
 					lastTickStormObject.stage = Stage.RAIN.getStage();
 					lastTickStormObject.intensity = 0.99F;
 					lastTickStormObject.updateType();
 					break;
 				case 3:
+					lastTickStormObject.rain = 200.0F;
 					lastTickStormObject.stormType = StormObject.StormType.LAND.ordinal();
 					lastTickStormObject.stage = Stage.THUNDER.getStage();
 					lastTickStormObject.intensity = 1.99F;
 					lastTickStormObject.updateType();
 					break;
 				case 4:
+					lastTickStormObject.rain = 300.0F;
 					lastTickStormObject.stormType = StormObject.StormType.LAND.ordinal();
 					lastTickStormObject.stage = Stage.SEVERE.getStage();
 					lastTickStormObject.intensity = 2.99F;
@@ -89,6 +94,7 @@ public class TileWeatherConstructor extends TileEntity implements ITickable
 					lastTickStormObject.updateType();
 					break;
 				case 5:
+					lastTickStormObject.rain = ConfigStorm.max_rain_buildup;
 					lastTickStormObject.stormType = StormObject.StormType.LAND.ordinal();
 					lastTickStormObject.stage = Stage.SEVERE.getStage();
 					lastTickStormObject.intensity = 2.99F;
@@ -129,7 +135,6 @@ public class TileWeatherConstructor extends TileEntity implements ITickable
 					so.overrideAngle = true;
 					so.shouldConvert = false;
 					so.shouldBuildHumidity = false;
-					so.rain = 150;
 					so.temperature = 40;
 					so.stageMax = 5;
 					

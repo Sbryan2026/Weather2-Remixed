@@ -174,7 +174,7 @@ public class NewSceneEnhancer implements Runnable
 	{
 		if (cachedSystem != null)
 		{
-			float max = 0.28F;
+			float max = 0.29F;
 			if (cachedSystem instanceof SandstormObject)
 			{
 				fogDensity = (float) ((1.0D - Math.min(cachedSystemDistance / 300.0D, 1.0D)) * max * ConfigClient.fog_mult);
@@ -185,7 +185,7 @@ public class NewSceneEnhancer implements Runnable
 			}
 			else if (rainTarget != 0.0F)
 			{
-				fogDensity = Maths.clamp(Math.max((Math.abs(rain)) / 0.69F, 0.0F) * max * (float) ConfigClient.fog_mult, 0.0F, max);
+				fogDensity = Maths.clamp(Math.max((Math.abs(rain + 0.125F)) / 0.69F, 0.0F) * max * (float) ConfigClient.fog_mult, 0.0F, max);
 				return;
 			}
 		}
