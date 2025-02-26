@@ -146,10 +146,11 @@ public class WeatherManagerClient extends WeatherManager
 			{
 				UUID uuidA = mainNBT.getUniqueId("weatherObject"), uuidB = mainNBT.getUniqueId("frontObject");
 				FrontObject front = getFront(uuidB);
+				WeatherObject system = systems.get(uuidA);
 				
 				if (front != null)
 					front.removeWeatherObject(uuidA);
-				else
+				else if (system != null)
 					removeWeatherObject(uuidA);
 
 				refreshParticleLimit();
