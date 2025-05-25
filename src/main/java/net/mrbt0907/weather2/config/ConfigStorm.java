@@ -31,12 +31,20 @@ public class ConfigStorm implements IConfigEX
 	public static int lightning_bolt_1_in_x = 200;
 	@Enforce
 	@IntegerRange(min=0)
-	@Comment("How big can storms expand up to? Allows funnels to grow larger depending on size.")
-	public static int max_storm_size = 1000;
+	@Comment("How big can storms expand up to? Allows storms to grow larger depending on size.")
+	public static int max_storm_size = 2000;
 	@Enforce
 	@IntegerRange(min=0)
-	@Comment("How small can storms expand up to? Allows funnels to grow smaller depending on size.")
-	public static int min_storm_size = 400;
+	@Comment("How small can storms expand up to? Allows storms to grow smaller depending on size.")
+	public static int min_storm_size = 700;
+	@Enforce
+	@IntegerRange(min=0)
+	@Comment("How big can tornadoes expand up to? Allows funnels to grow larger depending on size.")
+	public static int max_funnel_size = 900;
+	@Enforce
+	@IntegerRange(min=0)
+	@Comment("How small can tornadoes expand up to? Allows funnels to grow larger depending on size.")
+	public static int min_funnel_size = 300;
 	@Enforce
 	@IntegerRange(min=1)
 	@Comment("Tick delay for storms. Higher values means storms have slower development. DO NOT PUT 0")
@@ -154,15 +162,15 @@ public class ConfigStorm implements IConfigEX
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How high should storms and clouds in the upper layer spawn at?")
-	public static int cloud_layer_2_height = 250;
+	public static int cloud_layer_2_height = 300;
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How high should storms and clouds in the middle layer spawn at?")
-	public static int cloud_layer_1_height = 200;
+	public static int cloud_layer_1_height = 250;
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How high should storms and clouds in the lower layer spawn at?")
-	public static int cloud_layer_0_height = 155;
+	public static int cloud_layer_0_height = 200;
 	@Enforce
 	@Comment("For a third layer of passive non storm progressing clouds")
 	public static boolean enable_cloud_layer_2 = false;
@@ -172,7 +180,7 @@ public class ConfigStorm implements IConfigEX
 	@Enforce
 	@DoubleRange(min=0.0D)
 	@Comment("How large can a storm's damage path be? Higher values will impact preformance.")
-	public static double max_storm_damage_size = 300.0D;
+	public static double max_storm_damage_size = 350.0D;
 	@Enforce
 	@IntegerRange(min=0, max=359)
 	@Comment("Accuracy of tornado aimed at player in degrees.\nHigher values means less accuracy up to 360 degrees")

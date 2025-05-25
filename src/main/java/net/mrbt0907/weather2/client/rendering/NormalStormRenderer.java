@@ -1,5 +1,6 @@
 package net.mrbt0907.weather2.client.rendering;
 
+import java.awt.Window.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,6 +23,7 @@ import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
 import net.mrbt0907.weather2.config.ConfigClient;
+import net.mrbt0907.weather2.config.ConfigGrab;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
@@ -41,6 +43,8 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 	listParticlesFunnel,
 	/**List of mesocyclone particles that any supercell generates*/
 	listParticlesMeso,
+	/**List of mesocytclone base particles that any supercell generates*/
+	listParticlesMesoAlt,
 	/**List of ground particles that a storm generates*/
 	listParticlesGround,
 	/**List of custom rain particles that a storm generates*/
@@ -56,6 +60,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		listParticlesRain = new ArrayList<EntityRotFX>();
 		listParticlesFunnel = new ArrayList<EntityRotFX>();
 		listParticlesMeso = new ArrayList<EntityRotFX>();
+		listParticlesMesoAlt = new ArrayList<EntityRotFX>();
 	}
 
 	@Override
@@ -71,7 +76,8 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.01F);
 		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.008F, 0.35F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.0055F);
 		float sizeOtherMult = Math.min(Math.max(storm.size * 0.003F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.03F);
-		float heightMult = layerHeight * 0.0053F;
+		float heightMult = layerHeight * 0.0055F;
+		if (Maths.random(0, 10) >= 5) heightMult = layerHeight * Maths.random(0.0054F, 0.0100F);
 		float rotationMult = Math.max(heightMult * 0.55F, 1.0F);
 		float r = -1.0F, g = -1.0F, b = -1.0F;
 		
@@ -192,7 +198,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 											}
 									}
 									particle.rotationPitch = Maths.random(80.0F, 100.0F);
-									particle.setScale(1250.0F * sizeCloudMult);
+									particle.setScale(2250.0F * sizeCloudMult);
 									listParticlesCloud.add(particle);
 								}
 							}
@@ -206,13 +212,12 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		{
 			if (manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.ground_debris_particle_delay) == 0)
 			{
-				for (int i = 0; i < 16 && shouldSpawn(2); i++)
+				for (int i = 0; i < Math.round(((float) storm.stage / storm.stageMax) * 32) && shouldSpawn(2); i++)
 				{
-					double spawnRad = storm.funnelSize;
-						
+					double spawnRad = storm.funnelSize * 2.125D;
 					Vec3 tryPos = new Vec3(storm.pos_funnel_base.posX + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad), storm.pos_funnel_base.posY, storm.pos_funnel_base.posZ + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad));
 					double distance = tryPos.distanceSq(playerAdjPos);
-					if (distance < maxRenderDistance && distance < 64.0D)
+					if (distance < maxRenderDistance && distance < 320.0D)
 					{
 						int groundY = WeatherUtilBlock.getPrecipitationHeightSafe(manager.getWorld(), new BlockPos((int)tryPos.posX, 0, (int)tryPos.posZ)).getY();
 						ExtendedEntityRotFX particle;
@@ -229,8 +234,28 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 						particle.setTicksFadeInMax(8);
 						particle.setTicksFadeOutMax(80);
 						particle.setGravity(0.25F);
-						particle.setMaxAge(160);
-						particle.setScale(7.0F);
+						particle.setMaxAge(80);
+						particle.setScale(Maths.random(3.0F, 25.0F));
+						particle.rotationYaw = rand.nextInt(360);
+						particle.rotationPitch = 30.0F + rand.nextInt(60);
+						particle.setMotionY(0.9D);
+						listParticlesGround.add(particle);
+					}
+					if (distance < maxRenderDistance && distance < 2048.0D && Maths.random(0, 9) > 7) {
+						int groundY = WeatherUtilBlock.getPrecipitationHeightSafe(manager.getWorld(), new BlockPos((int)tryPos.posX, 0, (int)tryPos.posZ)).getY();
+						ExtendedEntityRotFX particle;
+						if (WeatherUtil.isAprilFoolsDay())
+							particle = spawnParticle(tryPos.posX, groundY, tryPos.posZ, 1, ParticleRegistry.potato);
+						else
+						{
+							particle = spawnParticle(tryPos.posX, groundY, tryPos.posZ, 1, ParticleRegistry.cloud256);
+						}
+						particle.setColor(r, g, b);
+						particle.setTicksFadeInMax(8);
+						particle.setTicksFadeOutMax(80);
+						particle.setGravity(0.25F);
+						particle.setMaxAge(50);
+						particle.setScale(Maths.random(230.0F, (storm.stage / storm.stageMax) * 625.0F));
 						particle.rotationYaw = rand.nextInt(360);
 						particle.rotationPitch = 30.0F + rand.nextInt(60);
 						particle.setMotionY(0.9D);
@@ -248,7 +273,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		if (storm.stage >= Stage.TORNADO.getStage() + 1) 
 			spawnRad *= 48.25D;
 		
-		//spawn funnel
+		//spawn funnel - tornado
 		if (storm.isDeadly() && storm.stormType == 0 || storm.isSpout)
 		{
 			if (manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.funnel_particle_delay) == 0)
@@ -306,6 +331,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 				}
 			}
 		}
+		// Distant downfall
 		if (ConfigClient.enable_distant_downfall && storm.ticks % 20 == 0 && ConfigClient.distant_downfall_particle_rate > 0.0F && listParticlesRain.size() < 1000 && storm.stage > Stage.THUNDER.getStage() && storm.isRaining() && storm.temperature > 0.0F)
 		{
 			int particleCount = (int)Math.min(Math.ceil(storm.rain * storm.stage * ConfigClient.distant_downfall_particle_rate * 0.005F), 50.0F);
@@ -351,38 +377,51 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		if (storm.getStage() > Stage.THUNDER.getStage()&& manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.cloud_particle_delay) == 0) {
 			for (int i = 0; i < loopSize && shouldSpawn(4); i++)
 			{
-				if (listParticlesMeso.size() < (storm.size + extraSpawning) / 1F)
-				{		
-					double stormRad = storm.size * 1.2D;
+				if ((listParticlesMeso.size() < (storm.size + extraSpawning) / 1F) && (listParticlesMesoAlt.size() < (storm.size + extraSpawning)))
+				{
+					int cloud = Maths.random(0, 2);
+					double stormRad = storm.size * (storm.stormType ==  StormType.WATER.ordinal() ? 1.2 : cloud !=0 ? 1.1D : 0.95D); //Used for main meso clouds, alternative texture for cumulonimbus cloud. We spawn it 0.95D instead so it looks more realistic.
+					double stormRad2 = storm.size * 0.80D; //Used for base cloud. Base cloud is currently spawned using tryPos2.
 					double defMesoHeight = layerHeight + (rand.nextDouble() * 40.0F);
 					Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad), storm.stormType == StormType.WATER.ordinal() ? defMesoHeight : defMesoHeight * ConfigClient.meso_height , storm.pos.posZ + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad));
+					Vec3 tryPos2 = new Vec3(storm.pos.posX + (rand.nextDouble()*stormRad2) - (rand.nextDouble()*stormRad2), storm.stormType == StormType.WATER.ordinal() ? defMesoHeight : defMesoHeight * ConfigClient.meso_height , storm.pos.posZ + (rand.nextDouble()*stormRad2) - (rand.nextDouble()*stormRad2));
 					if (tryPos.distanceSq(playerAdjPos) < maxRenderDistance) {
 						if (storm.stormType == 1 && storm.pos.distanceSq(tryPos) > 350.0D || storm.stormType == 0)
 						if (storm.getAvoidAngleIfTerrainAtOrAheadOfPosition(storm.getAngle(), tryPos) == 0) {
 							ExtendedEntityRotFX particle;
+							ExtendedEntityRotFX particle2;
 							if (WeatherUtil.isAprilFoolsDay()) {
 								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, ParticleRegistry.chicken);
-								if (particle == null) break;
+								particle2 = spawnParticle(tryPos2.posX, tryPos.posY - 60D, tryPos2.posZ, 0, ParticleRegistry.chicken);
+								if (particle == null || particle2 == null) break;
 								particle.setColor(1F, 1F, 1F);
+								particle2.setColor(1F, 1F, 1F);
 							}
 							else
 							{
-								float finalRed = Math.min(0.8F, 0.6F + (rand.nextFloat() * 0.2F) -0.3F);
+								float finalRed = Math.min(0.8F, 0.65F + (rand.nextFloat() * 0.2F) -0.3F);
 								float finalGreen = finalRed;
 								float finalBlue = finalRed;
+								 
 								if (!storm.isFirenado && !WeatherUtil.isAprilFoolsDay()) finalRed = Maths.clamp(finalRed -= NewSceneEnhancer.instance().overcast, (finalGreen + finalBlue)* ConfigClient.meso_greenblue_mult, 1.0F);
-								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
-								if (particle == null) break;
+								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, (cloud != 0 ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso_wall));
+								particle2 = spawnParticle(tryPos2.posX, tryPos.posY - 60D, tryPos2.posZ, 0, net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
+								if (particle == null || particle2 == null) break;
 									particle.setColor(finalRed, finalGreen, finalBlue);
-										if (storm.isFirenado)
-										{
-												particle.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
-												particle.setColor(1F, 1F, 1F);
-										}									
+									particle2.setColor(finalRed, finalGreen, finalBlue);
+									if (storm.isFirenado)
+									{
+											particle.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
+											particle2.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
+											particle.setColor(1F, 1F, 1F);
+											particle2.setColor(1F, 1F, 1F);
+									}									
 							}
 							particle.rotationPitch = Maths.random(70.0F, 110.0F);
 							particle.setScale(1250.0F * sizeCloudMult);
+							particle2.setScale(1000.0F);
 							listParticlesMeso.add(particle);
+							listParticlesMesoAlt.add(particle2);
 							}
 						}
 					}
@@ -435,8 +474,38 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 					double var18 = storm.pos.posZ - ent.getPosZ();
 					ent.rotationYaw = (float)(Maths.fastATan2(var18, var16) * 180.0D / Math.PI) - 90.0F;
 					ent.rotationPitch = -30F - (ent.getEntityId() % 10); //meso clouds
-					ent.setScale((storm.stormType == StormType.WATER.ordinal() ? 400.0F : 900.0F) * sizeCloudMult);
-					ent.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
+					ent.setScale((storm.stormType == StormType.WATER.ordinal() ? 1500.0F : 900.0F) * sizeCloudMult);
+				if (curSpeed < speed * 20D)
+				{
+					ent.setMotionX(ent.getMotionX() + -Maths.fastSin(Math.toRadians(angle)) * speed);
+					ent.setMotionZ(ent.getMotionZ() + Maths.fastCos(Math.toRadians(angle)) * speed);
+				}
+			}
+		}
+		for (int i = 0; i < listParticlesMesoAlt.size(); i++)
+		{
+			EntityRotFX ent = listParticlesMesoAlt.get(i);
+			if (!ent.isAlive())
+			{
+				ent.setExpired();
+				listParticlesMesoAlt.remove(ent);
+			}
+			else
+			{
+				double speed = storm.spin + (rand.nextDouble() * 0.04D) * rotationMult;
+				double curSpeed = Math.sqrt(ent.getMotionX() * ent.getMotionX() + ent.getMotionY() * ent.getMotionY() + ent.getMotionZ() * ent.getMotionZ());
+				if (storm.stormType == 1)
+					speed *= 2.0D;
+				
+				double vecX = ent.getPosX() - storm.pos.posX;
+				double vecZ = ent.getPosZ() - storm.pos.posZ;
+				float angle = (float)(Maths.fastATan2(vecZ, vecX) * 180.0D / Math.PI);
+				double var16 = storm.pos.posX - ent.getPosX();
+				double var18 = storm.pos.posZ - ent.getPosZ();
+				ent.rotationYaw = (float)(Maths.fastATan2(var18, var16) * 180.0D / Math.PI) - 90.0F;
+				ent.rotationPitch = 90F; //meso clouds
+				ent.setScale(2000.0F * sizeCloudMult);
+				ent.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
 				if (curSpeed < speed * 20D)
 				{
 					ent.setMotionX(ent.getMotionX() + -Maths.fastSin(Math.toRadians(angle)) * speed);

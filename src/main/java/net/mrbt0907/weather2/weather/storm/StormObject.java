@@ -566,7 +566,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 			boolean hasWater, hasOcean = false;
 			
 			if (stage > Stage.TORNADO.getStage() || stormType == StormType.WATER.ordinal() && stage > Stage.TROPICAL_DEPRESSION.getStage())
-				funnelSize = (float) Math.min(Math.pow((intensity - 3.0F) * 14, ConfigStorm.storm_size_curve_mult) * (stormType == StormType.LAND.ordinal() ? sizeRate : sizeRate * 1.5F), ConfigStorm.max_storm_size);
+				funnelSize = (float) Math.min(Math.pow((intensity - 3.0F) * 14, ConfigStorm.storm_size_curve_mult) * (stormType == StormType.LAND.ordinal() ? sizeRate : sizeRate * 1.5F), ConfigStorm.max_funnel_size);
 			else if(funnelSize != 14.0F)
 				funnelSize = 14.0F;
 			
