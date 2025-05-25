@@ -1,6 +1,5 @@
 package net.mrbt0907.weather2.client.rendering;
 
-import java.awt.Window.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,7 +22,6 @@ import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
 import net.mrbt0907.weather2.config.ConfigClient;
-import net.mrbt0907.weather2.config.ConfigGrab;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
