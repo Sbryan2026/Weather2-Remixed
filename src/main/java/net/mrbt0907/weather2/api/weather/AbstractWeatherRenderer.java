@@ -196,6 +196,11 @@ public abstract class AbstractWeatherRenderer
 		//temp?
 		if (ConfigCoroUtil.optimizedCloudRendering)
 			entityfx.setMaxAge(400);
+		else {
+			entityfx.setMaxAge(480);
+			entityfx.setTicksFadeInMax(80);
+			entityfx.setTicksFadeOutMax(400);
+		}
 		
 		entityfx.particleScale = (float) (entityfx.particleScale * ConfigClient.particle_scale_mult);
 		ExtendedRenderer.rotEffRenderer.addEffect(entityfx);

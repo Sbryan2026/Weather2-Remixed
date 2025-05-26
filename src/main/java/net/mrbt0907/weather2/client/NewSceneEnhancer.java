@@ -714,16 +714,16 @@ public class NewSceneEnhancer implements Runnable
 				if (storm.isDeadly())
 				{
 					boolean violent = (storm.isViolent || storm.stage > Stage.TORNADO.getStage() + 2);
-					if (!violent && cachedFunnelDistance - wo.size + 200.0D <= 0.0D)
+					if (!violent && cachedFunnelDistance < 224.0D)
 					{
 						SoundHandler.playMovingSound(storm.pos_funnel_base, SoundRegistry.windFast, SoundCategory.WEATHER, 2, ConfigVolume.cyclone, storm.isViolent ? 0.7F : 0.8F, storm.funnelSize + 350.0F);
 						if (wo.type.equals(Type.TORNADO))
 							SoundHandler.playMovingSound(storm.pos_funnel_base, SoundRegistry.debris, SoundCategory.WEATHER, 2, ConfigVolume.debris, 1.0F, storm.funnelSize + 150.0F);
 						success += 2;
 					}
-					else if (violent && cachedFunnelDistance - wo.size * 2.0D <= 0.0D)
+					else if (violent && cachedFunnelDistance < 1280.0D)
 					{
-						SoundHandler.playMovingSound(storm.pos_funnel_base, SoundRegistry.storm, SoundCategory.WEATHER, 1, ConfigVolume.cyclone, storm.isViolent ? 0.9F : 1.0F, wo.size * 2.0F);
+						SoundHandler.playMovingSound(storm.pos_funnel_base, SoundRegistry.storm, SoundCategory.WEATHER, 1, (float) Maths.clamp((ConfigVolume.cyclone * ((ConfigStorm.max_storm_size / 3) / (cachedFunnelDistance + 0.1F))), 0.05F, 1.35F), storm.isViolent ? 0.9F : 1.0F, wo.size * 2.0F);
 						success ++;
 					}
 				}
@@ -734,19 +734,20 @@ public class NewSceneEnhancer implements Runnable
 				success++;
 			}
 		}
-		
 		if (windSpeed > 6.5F)
 		{
 			ISound sound = SoundHandler.getSound(SoundRegistry.wind, 0);
 			if (sound != null)
 				MC.getSoundHandler().stopSound(sound);
-			SoundHandler.playStaticSound(SoundRegistry.windFast, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F);
+			if (cachedFunnelDistance < 320.0D) SoundHandler.playStaticSound(SoundRegistry.windFast, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F);
+			else if (cachedFunnelDistance < 690.0D) SoundHandler.playStaticSound(SoundRegistry.windFast, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind * 0.35F, 1.0F);
 		}
 		else if (windSpeed > 1.4F)
 		{
 			ISound sound = SoundHandler.getSound(SoundRegistry.windFast, 0);
-			if (sound != null)
-				MC.getSoundHandler().stopSound(sound);
+			ISound sound2 = SoundHandler.getSound(SoundRegistry.storm, 0);
+			if (sound != null) MC.getSoundHandler().stopSound(sound);
+			if (sound2 != null) MC.getSoundHandler().stopSound(sound2);
 			SoundHandler.playStaticSound(SoundRegistry.wind, SoundCategory.WEATHER, 0, (float) ConfigVolume.wind, 1.0F);
 		}
 	}

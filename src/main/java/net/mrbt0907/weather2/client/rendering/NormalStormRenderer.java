@@ -212,7 +212,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 			{
 				for (int i = 0; i < Math.round(((float) storm.stage / storm.stageMax) * 32) && shouldSpawn(2); i++)
 				{
-					double spawnRad = storm.funnelSize * 2.125D;
+					double spawnRad = storm.funnelSize * 1.75D;
 					Vec3 tryPos = new Vec3(storm.pos_funnel_base.posX + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad), storm.pos_funnel_base.posY, storm.pos_funnel_base.posZ + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad));
 					double distance = tryPos.distanceSq(playerAdjPos);
 					if (distance < maxRenderDistance && distance < 320.0D)
@@ -250,10 +250,10 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 						}
 						particle.setColor(r, g, b);
 						particle.setTicksFadeInMax(8);
-						particle.setTicksFadeOutMax(80);
+						particle.setTicksFadeOutMax(50);
 						particle.setGravity(0.25F);
-						particle.setMaxAge(50);
-						particle.setScale(Maths.random(230.0F, (storm.stage / storm.stageMax) * 625.0F));
+						particle.setMaxAge(60);
+						particle.setScale(Maths.random(230.0F, (storm.stage / storm.stageMax) * 425.0F));
 						particle.rotationYaw = rand.nextInt(360);
 						particle.rotationPitch = 30.0F + rand.nextInt(60);
 						particle.setMotionY(0.9D);
@@ -402,8 +402,8 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 								float finalBlue = finalRed;
 								 
 								if (!storm.isFirenado && !WeatherUtil.isAprilFoolsDay()) finalRed = Maths.clamp(finalRed -= NewSceneEnhancer.instance().overcast, (finalGreen + finalBlue)* ConfigClient.meso_greenblue_mult, 1.0F);
-								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, (cloud != 0 ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso_wall));
-								particle2 = spawnParticle(tryPos2.posX, tryPos.posY - 60D, tryPos2.posZ, 0, net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
+								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 1, (cloud != 0 ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso_wall));
+								particle2 = spawnParticle(tryPos2.posX, tryPos.posY - 60D, tryPos2.posZ, 1, net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
 								if (particle == null || particle2 == null) break;
 									particle.setColor(finalRed, finalGreen, finalBlue);
 									particle2.setColor(finalRed, finalGreen, finalBlue);
@@ -417,7 +417,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 							}
 							particle.rotationPitch = Maths.random(70.0F, 110.0F);
 							particle.setScale(1250.0F * sizeCloudMult);
-							particle2.setScale(1000.0F);
+							particle2.setScale(2200.0F * sizeCloudMult);
 							listParticlesMeso.add(particle);
 							listParticlesMesoAlt.add(particle2);
 							}
@@ -501,8 +501,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 				double var16 = storm.pos.posX - ent.getPosX();
 				double var18 = storm.pos.posZ - ent.getPosZ();
 				ent.rotationYaw = (float)(Maths.fastATan2(var18, var16) * 180.0D / Math.PI) - 90.0F;
-				ent.rotationPitch = 90F; //meso clouds
-				ent.setScale(2000.0F * sizeCloudMult);
+				ent.rotationPitch = 90F; //rotate with meso clouds
 				ent.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
 				if (curSpeed < speed * 20D)
 				{

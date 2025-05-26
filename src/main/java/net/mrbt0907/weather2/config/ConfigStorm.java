@@ -32,7 +32,7 @@ public class ConfigStorm implements IConfigEX
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How big can storms expand up to? Allows storms to grow larger depending on size.")
-	public static int max_storm_size = 2000;
+	public static int max_storm_size = 1500;
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How small can storms expand up to? Allows storms to grow smaller depending on size.")

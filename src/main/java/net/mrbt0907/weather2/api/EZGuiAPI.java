@@ -115,7 +115,7 @@ public class EZGuiAPI
 		options.put(BA_EF, BL_TOGGLE, 0);
 		options.put(BA_SHADER, BL_SHADERS, 0);
 		options.put(BA_FOLIAGE, BL_TOGGLE, 0);
-		options.put(BA_RENDER_DISTANCE, BL_STR_ALT, 0);
+		options.put(BA_RENDER_DISTANCE, BL_STR_ALT, 4);
 		options.put(BA_FANCY_RENDERING, BL_TOGGLE, 0);
 		options.put(BB_GLOBAL, BL_TOGGLE, 0);
 		options.put(BA_RADAR, BL_TOGGLE, 0);

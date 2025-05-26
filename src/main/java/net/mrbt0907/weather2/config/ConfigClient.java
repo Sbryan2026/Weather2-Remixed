@@ -102,11 +102,11 @@ public class ConfigClient implements IConfigEX
 	public static double cloud_coverage_change_amount = 0.05D;
 	@Permission(0)
 	@Comment("Should particles render outside of the normal render distance?")
-	public static boolean enable_extended_render_distance = false;
+	public static boolean enable_extended_render_distance = true;
 	@Permission(0)
 	@DoubleRange(min=0.0D)
-	@Comment("Distance that particles can render up to in blocks. Does not work with optifine installed")
-	public static double extended_render_distance = 128.0D;
+	@Comment("Distance that particles can render up to in blocks. Lower = better performance but less storm visibility.")
+	public static double extended_render_distance = 384.0D;
 	@Permission(0)
 	@IntegerRange(min=-1)
 	@Comment("How many weather2 particles can exist at once. Set to -1 for infinite particles. A typical hailstorm spawns around 3500~ particles on ultra settings")

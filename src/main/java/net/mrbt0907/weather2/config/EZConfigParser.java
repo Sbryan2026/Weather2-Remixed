@@ -561,7 +561,7 @@ public class EZConfigParser
 							break;
 						case 3:
 							ConfigClient.enable_extended_render_distance = true;
-							ConfigClient.extended_render_distance = 370.0D;
+							ConfigClient.extended_render_distance = 384.0D;
 							ConfigClient.max_particles = 5000;
 							break;
 						case 4:
