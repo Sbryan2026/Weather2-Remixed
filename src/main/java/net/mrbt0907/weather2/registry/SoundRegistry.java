@@ -47,6 +47,8 @@ public class SoundRegistry
 	public static SoundEvent sandstorm;
 	/*Sound that plays when a weak sandstorm is nearby*/
 	public static SoundEvent sandstormSlow;
+	/*Sound that plays when thunder strikes dangerously close to us*/
+	public static SoundEvent thunderDangerouslyClose;
 	/*Sound that plays when thunder strikes in a somewhat far context*/
 	public static SoundEvent thunderNear;
 	/*Sound that plays when thunder strikes really far away*/
@@ -68,6 +70,7 @@ public class SoundRegistry
 		sandstormFast = register("weather.sandstorm.fast");
 		sandstorm = register("weather.sandstorm");
 		sandstormSlow = register("weather.sandstorm.slow");
+		thunderDangerouslyClose = register("entity.lightning.thunder.dangerous");
 		thunderNear = register("entity.lightning.thunder.near");
 		thunderFar = register("entity.lightning.thunder.far");
 	}

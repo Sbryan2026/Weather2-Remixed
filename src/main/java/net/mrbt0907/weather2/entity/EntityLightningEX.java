@@ -101,8 +101,9 @@ public class EntityLightningEX extends EntityLightningBolt
 				world.playSound(posX, posY, posZ, SoundRegistry.thunderNear, SoundCategory.WEATHER, 10000.0F * ConfigVolume.lightning, 0.8F + rand.nextFloat() * 0.2F, true);
 			else
 			{
+				System.out.println((float) 75.0D / distance);
 				world.playSound(posX, posY, posZ, SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.WEATHER, 64.0F * ConfigVolume.lightning, 0.8F + rand.nextFloat() * 0.2F, true);
-				world.playSound(posX, posY, posZ, SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.WEATHER, 2.0F, 0.5F + rand.nextFloat() * 0.2F, false);
+				world.playSound(posX, posY, posZ, SoundRegistry.thunderDangerouslyClose, SoundCategory.WEATHER, (float) (150.0D / distance) * ConfigVolume.lightning, 0.5F + rand.nextFloat() * 0.2F, false);
 			}
 		}
 		else if (distance < ConfigStorm.max_lightning_bolt_distance * 1.5D)

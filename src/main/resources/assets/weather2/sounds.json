@@ -93,6 +93,14 @@
 			{"name": "weather2:env/heavy_rain_4"}
 		]
 	},
+	"entity.lightning.thunder.dangerous":
+	{
+			"subtitle": "subtitle.weather2.entity.lightning.thunder.dangerous",
+			"sounds":
+			[
+				{"name": "weather2:weather/thunder_dangerously_close1"}
+			]
+	},
 	"entity.lightning.thunder.near":
 	{
 		"subtitle": "subtitle.weather2.entity.lightning.thunder.near",

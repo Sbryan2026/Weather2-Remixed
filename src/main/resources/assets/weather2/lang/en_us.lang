@@ -141,6 +141,7 @@ subtitle.weather2.ambient.wind.fast=Intense blowing winds
 subtitle.weather2.ambient.wind=Winds blowing
 subtitle.weather2.ambient.rain.light=Light raining
 subtitle.weather2.ambient.rain.heavy=Heavy raining
+subtitle.weather2.entity.lightning.thunder.dangerous=Lightning Strikes (VERY CLOSE)
 subtitle.weather2.entity.lightning.thunder.near=Thunder Nearby
 subtitle.weather2.entity.lightning.thunder.far=Thunder Distant
 subtitle.weather2.weather.debris=Storm destruction
