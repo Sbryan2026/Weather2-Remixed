@@ -112,11 +112,11 @@ public class ConfigMisc implements IConfigEX {
 	@Hidden
 	@ServerSide
 	@Comment("List of dimensions the mod can use for weather")
-	public static String dimensions_weather = "0, -127";
+	public static String dimensions_weather = "minecraft:overworld, -127";
 	@Hidden
 	@ServerSide
 	@Comment("List of dimensions the mod can use for effects")
-	public static String dimensions_effects = "0, -127";
+	public static String dimensions_effects = "minecraft:overworld, -127";
 	@ServerSide
 	@Comment("With repair mode on, enabling this will allow blocks to instantly repair when a tornado is not damaging it")
 	public static boolean block_instant_repair = false;

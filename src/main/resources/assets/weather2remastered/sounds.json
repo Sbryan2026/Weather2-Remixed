@@ -4,7 +4,7 @@
 		"subtitle": "subtitle.block.siren",
 		"sounds":
 		[
-			{"name": "weather2:streaming/siren", "stream": true}
+			{"name": "weather2remastered:streaming/siren", "stream": true}
 		]
 	},
 	"block.siren.darude":
@@ -12,12 +12,12 @@
 		"subtitle": "subtitle.block.siren.darude",
 		"sounds":
 		[
-			{"name": "weather2:streaming/siren_sandstorm_1", "stream": true},
-			{"name": "weather2:streaming/siren_sandstorm_2", "stream": true},
-			{"name": "weather2:streaming/siren_sandstorm_3", "stream": true},
-			{"name": "weather2:streaming/siren_sandstorm_4", "stream": true},
-			{"name": "weather2:streaming/siren_sandstorm_5_extra", "stream": true},
-			{"name": "weather2:streaming/siren_sandstorm_6_extra", "stream": true}
+			{"name": "weather2remastered:streaming/siren_sandstorm_1", "stream": true},
+			{"name": "weather2remastered:streaming/siren_sandstorm_2", "stream": true},
+			{"name": "weather2remastered:streaming/siren_sandstorm_3", "stream": true},
+			{"name": "weather2remastered:streaming/siren_sandstorm_4", "stream": true},
+			{"name": "weather2remastered:streaming/siren_sandstorm_5_extra", "stream": true},
+			{"name": "weather2remastered:streaming/siren_sandstorm_6_extra", "stream": true}
 		]
 	},
 	"block.siren.advanced":
@@ -25,7 +25,7 @@
 		"subtitle": "subtitle.block.siren.advanced",
 		"sounds":
 		[
-			{"name": "weather2:streaming/advanced_siren", "stream": true}
+			{"name": "weather2remastered:streaming/advanced_siren", "stream": true}
 		]
 	},
 	"ambient.leaves":
@@ -33,7 +33,7 @@
 		"subtitle": "subtitle.ambient.leaves",
 		"sounds":
 		[
-			"weather2:env/wind_calm", "weather2:env/wind_calmfade"
+			"weather2remastered:env/wind_calm", "weather2remastered:env/wind_calmfade"
 		]
 	},
 	"ambient.waterfall":
@@ -41,7 +41,7 @@
 		"subtitle": "subtitle.ambient.waterfall",
 		"sounds":
 		[
-			"weather2:env/waterfall"
+			"weather2remastered:env/waterfall"
 		]
 	},
 	"ambient.wind.fast":
@@ -49,10 +49,10 @@
 		"subtitle": "subtitle.ambient.wind.fast",
 		"sounds":
 		[
-			{"name": "weather2:streaming/wind_close", "stream": true},
-			{"name": "weather2:streaming/wind_close_0_", "stream": true},
-			{"name": "weather2:streaming/wind_close_1_", "stream": true},
-			{"name": "weather2:streaming/wind_close_2_", "stream": true}
+			{"name": "weather2remastered:streaming/wind_close", "stream": true},
+			{"name": "weather2remastered:streaming/wind_close_0_", "stream": true},
+			{"name": "weather2remastered:streaming/wind_close_1_", "stream": true},
+			{"name": "weather2remastered:streaming/wind_close_2_", "stream": true}
 		]
 	},
 	"ambient.wind":
@@ -61,10 +61,10 @@
 		"subtitle": "subtitle.ambient.wind",
 		"sounds":
 		[
-			{"name": "weather2:streaming/wind_far", "stream": true},
-			{"name": "weather2:streaming/wind_far_0_", "stream": true},
-			{"name": "weather2:streaming/wind_far_1_", "stream": true},
-			{"name": "weather2:streaming/wind_far_2_", "stream": true}
+			{"name": "weather2remastered:streaming/wind_far", "stream": true},
+			{"name": "weather2remastered:streaming/wind_far_0_", "stream": true},
+			{"name": "weather2remastered:streaming/wind_far_1_", "stream": true},
+			{"name": "weather2remastered:streaming/wind_far_2_", "stream": true}
 		]
 	},
 	"ambient.rain.light":
@@ -73,11 +73,11 @@
 		"subtitle": "subtitle.ambient.rain.light",
 		"sounds":
 		[
-			{"name": "weather2:env/light_rain"},
-			{"name": "weather2:env/light_rain_1"},
-			{"name": "weather2:env/light_rain_2"},
-			{"name": "weather2:env/light_rain_3"},
-			{"name": "weather2:env/light_rain_4"}
+			{"name": "weather2remastered:env/light_rain"},
+			{"name": "weather2remastered:env/light_rain_1"},
+			{"name": "weather2remastered:env/light_rain_2"},
+			{"name": "weather2remastered:env/light_rain_3"},
+			{"name": "weather2remastered:env/light_rain_4"}
 		]
 	},
 	"ambient.rain.heavy":
@@ -86,20 +86,28 @@
 		"subtitle": "subtitle.ambient.rain.heavy",
 		"sounds":
 		[
-			{"name": "weather2:env/heavy_rain"},
-			{"name": "weather2:env/heavy_rain_1"},
-			{"name": "weather2:env/heavy_rain_2"},
-			{"name": "weather2:env/heavy_rain_3"},
-			{"name": "weather2:env/heavy_rain_4"}
+			{"name": "weather2remastered:env/heavy_rain"},
+			{"name": "weather2remastered:env/heavy_rain_1"},
+			{"name": "weather2remastered:env/heavy_rain_2"},
+			{"name": "weather2remastered:env/heavy_rain_3"},
+			{"name": "weather2remastered:env/heavy_rain_4"}
 		]
+	},
+	"entity.lightning.thunder.dangerous":
+	{
+			"subtitle": "subtitle.entity.lightning.thunder.dangerous",
+			"sounds":
+			[
+				{"name": "weather2remastered:weather/thunder_dangerously_close1"}
+			]
 	},
 	"entity.lightning.thunder.near":
 	{
 		"subtitle": "subtitle.entity.lightning.thunder.near",
 		"sounds":
 		[
-			{"name": "weather2:weather/thunder_muffled_near1"},
-			{"name": "weather2:weather/thunder_muffled_near2"}
+			{"name": "weather2remastered:weather/thunder_muffled_near1"},
+			{"name": "weather2remastered:weather/thunder_muffled_near2"}
 		]
 	},
 	"entity.lightning.thunder.far":
@@ -107,10 +115,10 @@
 		"subtitle": "subtitle.entity.lightning.thunder.far",
 		"sounds":
 		[
-			{"name": "weather2:weather/thunder_distant1"},
-			{"name": "weather2:weather/thunder_distant2"},
-			{"name": "weather2:weather/thunder_distant3", "stream": true},
-			{"name": "weather2:weather/thunder_distant4"}
+			{"name": "weather2remastered:weather/thunder_distant1"},
+			{"name": "weather2remastered:weather/thunder_distant2"},
+			{"name": "weather2remastered:weather/thunder_distant3", "stream": true},
+			{"name": "weather2remastered:weather/thunder_distant4"}
 		]
 	},
 	"weather.storm":
@@ -119,7 +127,7 @@
 		"subtitle": "subtitle.weather.storm",
 		"sounds":
 		[
-			{"name": "weather2:streaming/storm_far", "stream": true}
+			{"name": "weather2remastered:streaming/storm_far", "stream": true}
 		]
 	},
 	"weather.debris":
@@ -128,11 +136,11 @@
 		"subtitle": "subtitle.weather.debris",
 		"sounds":
 		[
-			{"name": "weather2:streaming/destruction", "stream": true},
-			{"name": "weather2:streaming/destruction_0_", "stream": true},
-			{"name": "weather2:streaming/destruction_1_", "stream": true},
-			{"name": "weather2:streaming/destruction_2_", "stream": true},
-			{"name": "weather2:streaming/destruction_s", "stream": true}
+			{"name": "weather2remastered:streaming/destruction", "stream": true},
+			{"name": "weather2remastered:streaming/destruction_0_", "stream": true},
+			{"name": "weather2remastered:streaming/destruction_1_", "stream": true},
+			{"name": "weather2remastered:streaming/destruction_2_", "stream": true},
+			{"name": "weather2remastered:streaming/destruction_s", "stream": true}
 		]
 	},
 	"weather.sandstorm.fast":
@@ -141,7 +149,7 @@
 		"subtitle": "subtitle.weather.sandstorm.fast",
 		"sounds":
 		[
-			{"name": "weather2:streaming/sandstorm_high1", "stream": true}
+			{"name": "weather2remastered:streaming/sandstorm_high1", "stream": true}
 		]
 	},
 	"weather.sandstorm":
@@ -150,8 +158,8 @@
 		"subtitle": "subtitle.weather.sandstorm",
 		"sounds":
 		[
-			{"name": "weather2:streaming/sandstorm_med1", "stream": true},
-			{"name": "weather2:streaming/sandstorm_med2", "stream": true}
+			{"name": "weather2remastered:streaming/sandstorm_med1", "stream": true},
+			{"name": "weather2remastered:streaming/sandstorm_med2", "stream": true}
 		]
 	},
 	"weather.sandstorm.slow":
@@ -160,8 +168,8 @@
 		"subtitle": "subtitle.weather.sandstorm.slow",
 		"sounds":
 		[
-			{"name": "weather2:streaming/sandstorm_low1", "stream": true},
-			{"name": "weather2:streaming/sandstorm_low2", "stream": true}
+			{"name": "weather2remastered:streaming/sandstorm_low1", "stream": true},
+			{"name": "weather2remastered:streaming/sandstorm_low2", "stream": true}
 		]
 	}
 }

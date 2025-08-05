@@ -15,6 +15,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.weather2remastered.config.*;
 import net.mrbt0907.weather2remastered.registry.BlockRegistry;
+import net.mrbt0907.weather2remastered.registry.SoundRegistry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,8 +29,8 @@ public class Weather2Remastered
 	
 	public Weather2Remastered()
 	{
-		FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
-		IEventBus MOD_BUS = context.getModEventBus();
+		info("Starting Weather2 - Remastered...");
+		IEventBus MOD_BUS = FMLJavaModLoadingContext.get().getModEventBus();
 		ConfigManager.register(new ConfigClient());
 		ConfigManager.register(new ConfigMisc());
 		ConfigManager.register(new ConfigVolume());
@@ -43,14 +44,13 @@ public class Weather2Remastered
 		ConfigManager.register(new ConfigSand());
 		ConfigManager.register(new ConfigSnow());
 		ConfigManager.register(new ConfigFoliage());
+	    SoundRegistry.register(MOD_BUS);
 		MOD_BUS.addListener(this::init);
 		MOD_BUS.addListener(this::initClient);
 		MOD_BUS.addListener(this::postInit);
 		MinecraftForge.EVENT_BUS.addListener(this::onServerStarting);
-	
 		CommonProxy.preInit();
 		DistExecutor.safeRunWhenOn(Dist.CLIENT,() -> ClientProxy::preInit);
-		info("Starting Weather2 - Remastered...");
 	}
 
 	private void init(final FMLCommonSetupEvent event)

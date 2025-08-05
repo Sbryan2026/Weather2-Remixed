@@ -11,9 +11,7 @@ import java.io.FileInputStream;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
@@ -25,7 +23,6 @@ import net.mrbt0907.weather2remastered.config.ConfigGrab;
 import net.mrbt0907.weather2remastered.config.ConfigMisc;
 import net.mrbt0907.weather2remastered.config.ConfigSand;
 import net.mrbt0907.weather2remastered.config.ConfigStorm;
-import net.mrbt0907.weather2remastered.gui.EZGUI;
 import net.mrbt0907.weather2remastered.util.TriMapEx;
 import net.mrbt0907.weather2remastered.util.coro.CoroFile;
 
@@ -34,8 +31,8 @@ public class EZConfigParser
 	public static final String version = "2.6";
 	public static final Map<String, Integer> CLIENT_DEFAULTS = new HashMap<String, Integer>();
 	public static final Map<String, Integer> SERVER_DEFAULTS = new HashMap<String, Integer>();
-	private static List<Integer> weatherList = new ArrayList<Integer>();
-	private static List<Integer> effectList = new ArrayList<Integer>();
+	private static List<String> weatherList = new ArrayList<String>();
+	private static List<String> effectList = new ArrayList<String>();
 	
 	public static final Map<Integer, String> dimNames = new HashMap<Integer, String>();
 	
@@ -166,16 +163,16 @@ public class EZConfigParser
 			{
 				if (key.contains("dimb_"))
 				{
-					int keyN = Integer.parseInt(key.replaceFirst("dimb_", ""));
+					String keyN = (key.replaceFirst("dimb_", ""));
 					
-					if (cache.getCompound("dimData").getInt(key) == 1)
+					if (cache.getCompound("dimData").getString(key) == "minecraft:the_end")
 						weatherList.add(keyN);
 					else if (weatherList.contains(keyN))
 						weatherList.remove(weatherList.indexOf(keyN));
 				}
 				else if (key.contains("dimc_"))
 				{
-					int keyN = Integer.parseInt(key.replaceFirst("dimc_", ""));
+					String keyN = (key.replaceFirst("dimc_", ""));
 					
 					if (cache.getCompound("dimData").getInt(key) == 1)
 						effectList.add(keyN);
@@ -184,7 +181,7 @@ public class EZConfigParser
 				}
 			}
 			String list = "";
-			for (int dimension : weatherList)
+			for (String dimension : weatherList)
 				if (list.length() == 0)
 					list = dimension + "";
 				else
@@ -192,7 +189,7 @@ public class EZConfigParser
 			ConfigMisc.dimensions_weather = list;
 
 			list = "";
-			for (int dimension : effectList)
+			for (String dimension : effectList)
 				if (list.length() == 0)
 					list = dimension + "";
 				else
@@ -662,9 +659,9 @@ public class EZConfigParser
 						if (name.contains("dima_"))
 							dimNames.put(Integer.parseInt(name.replaceFirst("dima_", "")), dimensions.getString(name));
 						else if (name.contains("dimb_"))
-							weatherList.add(Integer.parseInt(name.replaceFirst("dimb_", "")));
+							weatherList.add((name.replaceFirst("dimb_", "")));
 						else if (name.contains("dimc_"))
-							effectList.add(Integer.parseInt(name.replaceFirst("dimc_", "")));;
+							effectList.add(name.replaceFirst("dimc_", ""));;
 				}
 				Weather2Remastered.debug("Received server data from the server: " + parNBT);
 			}
@@ -738,14 +735,14 @@ public class EZConfigParser
 			return 0;
 	}
 	
-	public static List<Integer> parseList(String intList)
+	public static List<String> parseList(String sList)
 	{
-		String[] arrStr = intList.split("[\\s\\,]+");
-		List<Integer> arrInt = new ArrayList<Integer>();
+		String[] arrStr = sList.split("[\\s\\,]+");
+		List<String> arrInt = new ArrayList<String>();
 		for (int i = 0; i < arrStr.length; i++)
 		{
-			try {arrInt.add(Integer.parseInt(arrStr[i]));}
-			catch (Exception ex) {Weather2Remastered.debug("Entry was not an integer: " + arrStr[i]);}
+			try {arrInt.add(arrStr[i]);}
+			catch (Exception ex) {Weather2Remastered.debug("Entry was not a string: " + arrStr[i]);}
 		}
 		return arrInt;
 	}
@@ -824,9 +821,9 @@ public class EZConfigParser
 		return weatherList.contains(resourceLocation.toString());
 	}
 	
-	public static boolean isEffectsEnabled(int dimension)
+	public static boolean isEffectsEnabled(ResourceLocation dimension)
 	{
-		return effectList.contains(dimension);
+		return effectList.contains(dimension.toString());
 	}
 	
 	public static void refreshDimensionRules()
@@ -835,15 +832,15 @@ public class EZConfigParser
 		effectList = parseList(ConfigMisc.dimensions_effects);
 		nbtServerData.put("dimData", new CompoundNBT());
 		String list = "Dimension Rules have been refreshed\nWeather:";
-		for (int dim : weatherList)
+		for (String dim : weatherList)
 		{
-			nbtServerData.getCompound("dimData").putInt("dimb_" + dim, 1);
+			nbtServerData.getCompound("dimData").putString("dimb_" + dim, "1");
 			list += " " + dim;
 		}
 		list += "\nEffects:";
-		for (int dim : effectList)
+		for (String dim : effectList)
 		{
-			nbtServerData.getCompound("dimData").putInt("dimc_" + dim, 1);
+			nbtServerData.getCompound("dimData").putString("dimc_" + dim, "1");
 			list += " " + dim;
 		}
 		Weather2Remastered.debug(list);

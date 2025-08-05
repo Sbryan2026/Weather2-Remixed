@@ -1,20 +1,11 @@
 package net.mrbt0907.weather2remastered.gui;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.mrbt0907.configex.ConfigManager;
-import net.mrbt0907.weather2remastered.gui.EZConfigParser;
-import net.mrbt0907.weather2remastered.api.EZGUIAPI;
-import net.mrbt0907.weather2remastered.ClientProxy;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
