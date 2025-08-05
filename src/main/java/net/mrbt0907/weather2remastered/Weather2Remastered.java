@@ -30,6 +30,7 @@ public class Weather2Remastered
 	{
 		FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
 		IEventBus MOD_BUS = context.getModEventBus();
+		ConfigManager.register(new ConfigClient());
 		ConfigManager.register(new ConfigMisc());
 		ConfigManager.register(new ConfigVolume());
 		ConfigManager.register(new ConfigGraphics());
@@ -49,6 +50,7 @@ public class Weather2Remastered
 	
 		CommonProxy.preInit();
 		DistExecutor.safeRunWhenOn(Dist.CLIENT,() -> ClientProxy::preInit);
+		info("Starting Weather2 - Remastered...");
 	}
 
 	private void init(final FMLCommonSetupEvent event)

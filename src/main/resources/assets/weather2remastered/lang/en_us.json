@@ -1,4 +1,13 @@
+
 {
+	"configex.ezgui.title": "Weather2 EZ Settings",
+	"configex.ezgui.graphics": "Graphics",
+	"configex.ezgui.system": "System",
+	"configex.ezgui.storms": "Storms",
+	"configex.ezgui.dimensions": "Dimensions",
+	"configex.ezgui.advanced": "Advanced",
+	"configex.ezgui.title.advanced": "Weather2 Advanced Settings",
+	"configex.ezgui.save": "Save & Exit",
 	"subtitle.block.siren": "Tornado Siren",
 	"subtitle.block.siren.darude": "Darude Sandstorm",
 	"subtitle.block.siren.advanced": "Advanced Siren",

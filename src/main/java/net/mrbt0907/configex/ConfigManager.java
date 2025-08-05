@@ -75,4 +75,10 @@ public class ConfigManager
 	{
 		return name.toLowerCase().replaceAll("[^a-z0-9\\\\-\\\\_ ]*", "").replaceAll(" +", "_");
 	}
+
+	public static void save() {
+		System.out.println("Can't save from ConfigManager just yet...");
+		// TODO Auto-generated method stub
+		
+	}
 }
