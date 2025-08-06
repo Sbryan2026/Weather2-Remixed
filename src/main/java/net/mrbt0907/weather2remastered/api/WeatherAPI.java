@@ -203,5 +203,9 @@ public class WeatherAPI
     	}
     	return list;
 	}
+	public static void refreshRenders(boolean b) {
+		Weather2Remastered.error("Sorry, refreshRenders isn't imported yet!");
+		
+	}
 
 }

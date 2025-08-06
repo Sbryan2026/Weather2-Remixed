@@ -13,6 +13,7 @@ import net.mrbt0907.configex.api.ConfigAnnotations.Permission;
 import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.WeatherAPI;
+import net.mrbt0907.weather2remastered.client.ClientTickHandler;
 //import net.mrbt0907.weather2remastered.client.ClientTickHandler;
 
 public class ConfigClient implements IConfigEX
@@ -185,12 +186,10 @@ public class ConfigClient implements IConfigEX
 	public void onConfigChanged(Phase phase, int variables)
 	{
 		if (phase.equals(Phase.END) && FMLEnvironment.dist == Dist.CLIENT)
-    	{/*
+    	{
     		WeatherAPI.refreshRenders(false);
     		if (ClientTickHandler.weatherManager != null)
     			ClientTickHandler.weatherManager.refreshParticleLimit();
-    			*/
-			System.out.println("onConfigChanged but we're not refreshing renders yet.");
     	}
 		
 	}

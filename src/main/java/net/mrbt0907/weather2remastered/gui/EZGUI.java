@@ -12,6 +12,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.mrbt0907.weather2remastered.api.EZGUIAPI;
+import net.mrbt0907.configex.ConfigManager;
+import net.mrbt0907.weather2remastered.ClientProxy;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
@@ -55,8 +57,8 @@ public class EZGUI extends Screen {
       	//PacketEZGUI.sync();
       	//Initialize send cache.
       	nbtSendCache = new CompoundNBT();
-      	//ClientProxy.clientTickHandler.op = ConfigManager.getPermissionLevel() > 3;
-      	System.out.println("clientproxy clienttickhanlder no exist! and packetezgui.sync no exist either!");
+      	ClientProxy.clientTickHandler.op = ConfigManager.getPermissionLevel() > 3;
+      	Weather2Remastered.error("clientproxy packetezgui.sync is not implemented yet");
       	EZGUIAPI.refreshOptions();
     }
 

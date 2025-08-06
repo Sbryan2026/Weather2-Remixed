@@ -8,11 +8,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.mrbt0907.weather2remastered.client.ClientTickHandler;
 import net.mrbt0907.weather2remastered.gui.EZGUI;
 import net.mrbt0907.weather2remastered.gui.EZGUIEX;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ClientProxy
+public class ClientProxy extends CommonProxy
 {
+	public static EZGUI guiWeather;
+	public static ClientTickHandler clientTickHandler;
 	public static void preInit()
 	{
 		
@@ -25,7 +28,7 @@ public class ClientProxy
 	
 	public static void postInit()
 	{
-		
+		clientTickHandler = new ClientTickHandler();
 	}
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent

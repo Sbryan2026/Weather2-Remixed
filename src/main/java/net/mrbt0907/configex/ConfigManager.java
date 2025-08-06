@@ -14,6 +14,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.configex.manager.ConfigInstance;
 import net.mrbt0907.configex.network.NetField;
+import net.mrbt0907.weather2remastered.Weather2Remastered;
 
 public class ConfigManager
 {
@@ -77,8 +78,14 @@ public class ConfigManager
 	}
 
 	public static void save() {
-		System.out.println("Can't save from ConfigManager just yet...");
+		Weather2Remastered.error("Can't save from ConfigManager just yet...");
 		// TODO Auto-generated method stub
 		
+	}
+
+	public static int getPermissionLevel() {
+		// TODO Auto-generated method stub
+		Weather2Remastered.error("Can't get the permission level yet. Fartsy is lame and didn't implement it yet!");
+		return 0;
 	}
 }
