@@ -10,7 +10,10 @@ public class ConfigAnnotations {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
 	public static @interface Ignore {}
-	
+	/**Forces all clients to use the server's value instead of their own<br>This also hides the variable from client settings in a multiplayer game*/
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public static @interface Enforce {}
 	/**Adds this config to the client config, which is ignored by the server*/
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
