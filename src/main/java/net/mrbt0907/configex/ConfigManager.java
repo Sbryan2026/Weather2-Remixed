@@ -4,13 +4,21 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.OpEntry;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.configex.manager.ConfigInstance;
 import net.mrbt0907.configex.network.NetField;
@@ -77,15 +85,51 @@ public class ConfigManager
 		return name.toLowerCase().replaceAll("[^a-z0-9\\\\-\\\\_ ]*", "").replaceAll(" +", "_");
 	}
 
-	public static void save() {
+	public static void save()
+	{
 		Weather2Remastered.error("Can't save from ConfigManager just yet...");
-		// TODO Auto-generated method stub
-		
 	}
 
-	public static int getPermissionLevel() {
-		// TODO Auto-generated method stub
-		Weather2Remastered.error("Can't get the permission level yet. Fartsy is lame and didn't implement it yet!");
+	@OnlyIn(Dist.CLIENT)
+	public static int getPermissionLevel()
+	{
+		net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+		return mc.player != null ? getPermissionLevel(mc.player.getUUID()) : 4;
+	}
+	
+	public static int getPermissionLevel(UUID uuid)
+	{
+		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		if (server != null)
+		{
+			PlayerList players = server.getPlayerList();
+			ServerPlayerEntity player = players.getPlayer(uuid);
+			if (player != null)
+			{
+				GameProfile profile = player.getGameProfile();
+				if (server.isSingleplayer())
+				{
+					if (server.isSingleplayerOwner(profile))
+						return 4;
+					else
+						return players.isAllowCheatsForAllPlayers() ? 4 : 0;
+				}
+				else
+				{
+					if (players.isOp(profile))
+					{
+						OpEntry opentry = players.getOps().get(profile);
+						if (opentry != null) 
+							return opentry.getLevel();
+						else 
+							return server.getOperatorUserPermissionLevel();
+					}
+					else
+						return 0;
+				}
+			}
+		}
+		
 		return 0;
 	}
 }
