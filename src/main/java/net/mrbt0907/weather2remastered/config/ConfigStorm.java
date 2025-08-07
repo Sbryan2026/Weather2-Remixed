@@ -31,11 +31,19 @@ public class ConfigStorm implements IConfigEX
 	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("How big can storms expand up to? Allows funnels to grow larger depending on size.")
-	public static int max_storm_size = 1000;
+	public static int max_storm_size = 1500;
 	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("How small can storms expand up to? Allows funnels to grow smaller depending on size.")
-	public static int min_storm_size = 400;
+	public static int min_storm_size = 700;
+	@Enforce
+	@IntegerRange(min=0)
+	@Comment("How big can tornadoes expand up to? Allows funnels to grow larger depending on size.")
+	public static int max_funnel_size = 900;
+	@Enforce
+	@IntegerRange(min=0)
+	@Comment("How small can tornadoes expand up to? Allows funnels to grow larger depending on size.")
+	public static int min_funnel_size = 300;
 	@ServerSide
 	@IntegerRange(min=1)
 	@Comment("Tick delay for storms. Higher values means storms have slower development. DO NOT PUT 0")
@@ -230,7 +238,10 @@ public class ConfigStorm implements IConfigEX
 	@DoubleRange(min=0.0D)
 	@Comment("How fast storms may progress at a maximum. Higher values = faster development")
 	public static double storm_lifespan_max = 0.04D;
-	
+	@Enforce
+	@FloatRange(min=0.0F)
+	@Comment("How much rain can storms have at maximum. Higher values = longer rain")
+	public static float max_rain_buildup = 1500.0F;
     @Override
     public String getName()
     {
