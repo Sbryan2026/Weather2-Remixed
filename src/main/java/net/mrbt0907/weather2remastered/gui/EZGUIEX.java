@@ -27,9 +27,11 @@ public class EZGUIEX extends Screen {
 	public int maxEntries = 6;
 	private boolean send = false;
 	public static final String PREFIX = "btn_";
+	
     public EZGUIEX() {
         super(new StringTextComponent("EZ Config Advanced"));
     }
+    
     @Override
     protected void init() {
         super.init();

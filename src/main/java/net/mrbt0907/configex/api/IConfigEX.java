@@ -1,12 +1,20 @@
 package net.mrbt0907.configex.api;
 
+import net.minecraft.util.ResourceLocation;
+
 public interface IConfigEX
-{
+{	
 	/**Sets the human readable name of this config*/
 	public String getName();
 	
 	/**Sets the tooltip that will show when the player highlights the name of the config*/
 	public String getDescription();
+	
+	/**Sets the banner texture that is shown at the top of the category in the advanced gui*/
+	public default ResourceLocation getBannerTexture()
+	{
+		return null;
+	}
 	
 	/**Sets the save location of the config. Defaults to getName()*/
 	public default String getSaveLocation()
