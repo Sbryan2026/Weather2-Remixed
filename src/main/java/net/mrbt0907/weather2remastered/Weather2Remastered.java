@@ -2,6 +2,7 @@ package net.mrbt0907.weather2remastered;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -12,8 +13,11 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.weather2remastered.config.*;
+import net.mrbt0907.weather2remastered.network.PacketNBT;
 import net.mrbt0907.weather2remastered.registry.BlockRegistry;
 import net.mrbt0907.weather2remastered.registry.SoundRegistry;
 
@@ -26,7 +30,14 @@ public class Weather2Remastered
 	public static final String MODID = "weather2remastered";
 	public static final ItemGroup TAB = new ItemGroup(MODID) {@Override public ItemStack makeIcon(){return new ItemStack(BlockRegistry.tornado_sensor);}};
 	private static final Logger LOG = LogManager.getLogger();
-	
+	public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+            new ResourceLocation(Weather2Remastered.MODID, "main"),
+            () -> "1.0",
+            s -> true,
+            s -> true
+        );
+
+        private static int id = 0;
 	public Weather2Remastered()
 	{
 		info("Starting Weather2 - Remastered...");
@@ -45,6 +56,7 @@ public class Weather2Remastered
 		ConfigManager.register(new ConfigSnow());
 		ConfigManager.register(new ConfigFoliage());
 	    SoundRegistry.register(MOD_BUS);
+	    MOD_BUS.addListener(this::setup);
 		MOD_BUS.addListener(this::init);
 		MOD_BUS.addListener(this::initClient);
 		MOD_BUS.addListener(this::postInit);
@@ -68,7 +80,9 @@ public class Weather2Remastered
 		CommonProxy.postInit();
 		DistExecutor.safeRunWhenOn(Dist.CLIENT,() -> ClientProxy::postInit);
 	}
-	
+	private void setup(final FMLCommonSetupEvent event) {
+        CHANNEL.registerMessage(id++, PacketNBT.class, PacketNBT::encode, PacketNBT::decode, PacketNBT::handle);
+	}
 	public void onServerStarting(FMLServerStartingEvent event)
 	{
 		
