@@ -165,6 +165,9 @@ public class ConfigClient implements IConfigEX
 	@Comment("Green/Blue multiplier for coloring clouds. 1.0 = fully red, 0.0 = fully blue")
 	@FloatRange(min=0.0F, max=1.0F)
 	public static float cloud_greenblue_mult = 0.40F;
+	//maybe temp - coro
+	@Comment("WIP, more strict transparent cloud usage, better on fps")
+	public static boolean optimizedCloudRendering = false;
 
     @Override
     public String getName() {
