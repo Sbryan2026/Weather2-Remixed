@@ -13,6 +13,7 @@ import net.mrbt0907.weather2remastered.client.ClientTickHandler;
 import net.mrbt0907.weather2remastered.client.NewSceneEnhancer;
 import net.mrbt0907.weather2remastered.event.ServerTickHandler;
 import net.mrbt0907.weather2remastered.gui.EZConfigParser;
+import net.mrbt0907.weather2remastered.util.NBTPrettyPrinter;
 
 public class PacketNBT {
     private final CompoundNBT tag;
@@ -34,6 +35,7 @@ public class PacketNBT {
         ctx.get().enqueueWork(() -> {
             if (ctx.get().getDirection().getReceptionSide().isClient()) {
                 handleClient(pkt);
+                Weather2Remastered.debug("PacketNBT.java:38 - sent to client, it contains: \n" + NBTPrettyPrinter.prettyPrint(pkt.tag));
             } else {
                 handleServer(pkt, ctx); // optional if you want server logic too
             }

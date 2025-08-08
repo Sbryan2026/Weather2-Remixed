@@ -88,7 +88,7 @@ public class WeatherManagerClient extends AbstractWeatherManager
 	 *7 - Create Lightning Bolt*/
 	public void nbtSyncFromServer(CompoundNBT mainNBT)
 	{
-		System.out.println("SYNCING FROM SERVER " + mainNBT);
+		//System.out.println("SYNCING FROM SERVER " + mainNBT);
 		int command = mainNBT.getInt("command");
 		switch(command)
 		{
