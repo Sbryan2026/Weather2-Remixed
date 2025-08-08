@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
@@ -43,6 +42,7 @@ public class EZConfigParser
 
 	public static void processServerData(CompoundNBT cache)
 	{
+		System.out.println("PROCESSING SERVER DATA");
 		for(String key : cache.getAllKeys())
 		{
 			int value = cache.getInt(key);
@@ -612,6 +612,7 @@ public class EZConfigParser
 	/**Used to get needed information from a client to add to the server data*/
 	public static void nbtReceiveServer(CompoundNBT parNBT)
 	{
+		System.out.println("GOT NBT DATA");
 		CompoundNBT cache = new CompoundNBT();
 		String newKey;
 		for (String key : parNBT.getAllKeys())
@@ -816,14 +817,14 @@ public class EZConfigParser
 		nbtSaveDataServer();
 	}
 	
-	public static boolean isWeatherEnabled(ResourceLocation resourceLocation)
+	public static boolean isWeatherEnabled(String registryKey)
 	{
-		return weatherList.contains(resourceLocation.toString());
+		return weatherList.contains(registryKey);
 	}
 	
-	public static boolean isEffectsEnabled(ResourceLocation dimension)
+	public static boolean isEffectsEnabled(String registryKey)
 	{
-		return effectList.contains(dimension.toString());
+		return effectList.contains(registryKey);
 	}
 	
 	public static void refreshDimensionRules()
@@ -843,6 +844,6 @@ public class EZConfigParser
 			nbtServerData.getCompound("dimData").putString("dimc_" + dim, "1");
 			list += " " + dim;
 		}
-		Weather2Remastered.debug(list);
+		System.out.println(list);
 	}
 }

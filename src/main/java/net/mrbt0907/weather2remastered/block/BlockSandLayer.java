@@ -2,6 +2,7 @@ package net.mrbt0907.weather2remastered.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.state.Property;
 
 public class BlockSandLayer extends Block
 {
@@ -16,6 +17,9 @@ public class BlockSandLayer extends Block
 		new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.75D, 1.0D), 
 		new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.875D, 1.0D), 
 		new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)};*/
+
+	@SuppressWarnings("rawtypes")
+	public static Property LAYERS;
 
 	public BlockSandLayer()
 	{

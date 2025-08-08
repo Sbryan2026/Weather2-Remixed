@@ -6,6 +6,8 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.mrbt0907.weather2remastered.client.ClientTickHandler;
@@ -39,4 +41,31 @@ public class ClientProxy extends CommonProxy
             ));
         }
     }
+	@SubscribeEvent
+	public void tickClient(ClientTickEvent event)
+	{
+		if (event.phase == Phase.START)
+		{
+			try
+			{
+				ClientProxy.clientTickHandler.onTickInGame();
+/*
+				if (extraGrassLast != ConfigFoliage.enable_extra_grass)
+					extraGrassLast = ConfigFoliage.enable_extra_grass;
+*/
+				boolean hackyLiveReplace = false;
+/*
+				if (hackyLiveReplace && EventHandler.flagFoliageUpdate) {
+					Weather2.debug("CoroUtil detected a need to reload resource packs, initiating");
+					EventHandler.flagFoliageUpdate = false;
+					FoliageEnhancerShader.liveReloadModels();
+				}
+*/
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
 }

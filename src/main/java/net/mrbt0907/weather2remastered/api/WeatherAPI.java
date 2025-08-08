@@ -7,18 +7,22 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
+import net.mrbt0907.weather2remastered.api.weather.AbstractStormObject;
+import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherManager;
+import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherRenderer;
 import net.mrbt0907.weather2remastered.config.ConfigGrab;
 import net.mrbt0907.weather2remastered.event.EventRegisterGrabLists;
 import net.mrbt0907.weather2remastered.util.ConfigList;
 
 public class WeatherAPI
 {
+	private static final ConfigList tornadoStageList = new ConfigList();
+	private static final ConfigList hurricaneStageList = new ConfigList();
 	private static final ConfigList grabList = new ConfigList();
 	private static final ConfigList replaceList = new ConfigList();
 	private static final ConfigList entityList = new ConfigList();
@@ -206,6 +210,29 @@ public class WeatherAPI
 	public static void refreshRenders(boolean b) {
 		Weather2Remastered.error("Sorry, refreshRenders isn't imported yet!");
 		
+	}
+	public static ResourceLocation getParticleRendererId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public static AbstractWeatherRenderer getParticleRenderer(AbstractStormObject abstractStormObject) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public static AbstractWeatherManager getManager(World world) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/**Gets the tornado stage list, which is used for rolling tornado stages*/
+	public static ConfigList getTornadoStageList()
+	{
+		return tornadoStageList;
+	}
+	
+	/**Gets the hurricane stage list, which is used for rolling hurricane stages*/
+	public static ConfigList getHurricaneStageList()
+	{
+		return hurricaneStageList;
 	}
 
 }

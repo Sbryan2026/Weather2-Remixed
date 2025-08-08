@@ -17,6 +17,7 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.weather2remastered.config.*;
+import net.mrbt0907.weather2remastered.event.EventsForge;
 import net.mrbt0907.weather2remastered.network.PacketNBT;
 import net.mrbt0907.weather2remastered.registry.BlockRegistry;
 import net.mrbt0907.weather2remastered.registry.SoundRegistry;
@@ -56,10 +57,10 @@ public class Weather2Remastered
 		ConfigManager.register(new ConfigSnow());
 		ConfigManager.register(new ConfigFoliage());
 	    SoundRegistry.register(MOD_BUS);
-	    MOD_BUS.addListener(this::setup);
 		MOD_BUS.addListener(this::init);
 		MOD_BUS.addListener(this::initClient);
 		MOD_BUS.addListener(this::postInit);
+		MOD_BUS.addListener(this::setup);
 		MinecraftForge.EVENT_BUS.addListener(this::onServerStarting);
 		CommonProxy.preInit();
 		DistExecutor.safeRunWhenOn(Dist.CLIENT,() -> ClientProxy::preInit);
@@ -82,6 +83,7 @@ public class Weather2Remastered
 	}
 	private void setup(final FMLCommonSetupEvent event) {
         CHANNEL.registerMessage(id++, PacketNBT.class, PacketNBT::encode, PacketNBT::decode, PacketNBT::handle);
+        MinecraftForge.EVENT_BUS.register(EventsForge.class);
 	}
 	public void onServerStarting(FMLServerStartingEvent event)
 	{

@@ -7,20 +7,21 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
+/**CoroFile - Interacts with game folders, etc. Patched up by Fartsy!**/
 public class CoroFile {
 public static String lastWorldFolder = "";
-    
+private static boolean isClientSide = (!(ServerLifecycleHooks.getCurrentServer() instanceof DedicatedServer));    
 	public static CompoundNBT getExtraWorldNBT(String fileName, World world) {
 		CompoundNBT data = new CompoundNBT();
 		//try load
@@ -62,33 +63,21 @@ public static String lastWorldFolder = "";
 	}
 	
 	public static String getSaveFolderPath() {
-		if (Minecraft.getInstance().getCurrentServer() == null || Minecraft.getInstance().hasSingleplayerServer()) {
-    		return getClientSidePath() + File.separator;
-    	} else {
-    		return new File(".").getAbsolutePath() + File.separator;
-    	}
-    	
+
+    	return (isClientSide ? getClientSidePath() : new File(".").getAbsolutePath()) + File.separator; 
     }
 	
 	public static String getMinecraftSaveFolderPath() {
-		if (Minecraft.getInstance().getCurrentServer() == null || Minecraft.getInstance().hasSingleplayerServer()) {
-    		return getClientSidePath() + File.separator + "config" + File.separator;
-    	} else {
-    		return new File(".").getAbsolutePath() + File.separator + "config" + File.separator;
-    	}
+		return (isClientSide ? getClientSidePath() : new File(".").getAbsolutePath()) + "config" + File.separator;
     }
 	
 	public static String getWorldSaveFolderPath() {
-    	if (Minecraft.getInstance().getCurrentServer() == null || Minecraft.getInstance().hasSingleplayerServer()) {
-    		return getClientSidePath() + File.separator + "saves" + File.separator;
-    	} else {
-    		return new File(".").getAbsolutePath() + File.separator;
-    	}
+    	return (isClientSide ? getClientSidePath() + File.separator + "saves" + File.separator : new File(".").getAbsolutePath() + File.separator);
     }
     
     @OnlyIn(Dist.CLIENT)
 	public static String getClientSidePath() {
-		return Minecraft.getInstance().gameDirectory.getPath();
+		return net.minecraft.client.Minecraft.getInstance().gameDirectory.getPath();
 	}
     
     public static void writeCoords(String name, CoroBlockCoord coords, CompoundNBT nbt) {
@@ -108,7 +97,7 @@ public static String lastWorldFolder = "";
     @OnlyIn(Dist.CLIENT)
     public static String getContentsFromResourceLocation(ResourceLocation resourceLocation) {
 		try {
-			IResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+			IResourceManager resourceManager = net.minecraft.client.Minecraft.getInstance().getResourceManager();
 			IResource iresource = resourceManager.getResource(resourceLocation);
 			String contents = IOUtils.toString(iresource.getInputStream(), StandardCharsets.UTF_8);
 			return contents;

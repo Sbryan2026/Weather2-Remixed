@@ -3,21 +3,22 @@ package net.mrbt0907.weather2remastered.client;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import net.minecraft.client.MainWindow;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.IngameMenuScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.settings.CloudOption;
 import net.minecraft.world.World;
-//import net.mrbt0907.weather2remastered.client.weather.WeatherManagerClient;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.mrbt0907.configex.ConfigManager;
+import net.mrbt0907.weather2remastered.Weather2Remastered;
+import net.mrbt0907.weather2remastered.api.WindReader;
+import net.mrbt0907.weather2remastered.client.weather.WeatherManagerClient;
 import net.mrbt0907.weather2remastered.config.ConfigFoliage;
 import net.mrbt0907.weather2remastered.config.ConfigMisc;
-import net.mrbt0907.weather2remastered.gui.EZGUI;
-
+import net.mrbt0907.weather2remastered.gui.EZConfigParser;
+import net.mrbt0907.weather2remastered.util.Maths;
+import net.mrbt0907.weather2remastered.util.Maths.Vec3;
+@OnlyIn(Dist.CLIENT)
 public class ClientTickHandler
 {
 	public static World lastWorld;
@@ -37,83 +38,53 @@ public class ClientTickHandler
 	
 	public ClientTickHandler()
 	{
-		System.out.println("Starting up ClientTickHandler!");
+		System.out.println("Starting up ClientTickHandler - foliage renderer does not exist though!");
 	
 		//this constructor gets called multiple times when created from proxy, this prevents multiple inits
-		new Thread(NewSceneEnhancer.instance(), "Weather2 New Scene Enhancer").start();
-	/*	
+		new Thread(NewSceneEnhancer.instance(), "W2R NewSceneEnhancer").start();
+		/*
 		if (foliageEnhancer == null)
 		{
 			foliageEnhancer = new FoliageEnhancerShader();
 			(new Thread(foliageEnhancer, "Weather2 Foliage Enhancer")).start();
 		}
-		
-    	op = ConfigManager.getPermissionLevel() > 3;*/
+		*/
+    	op = ConfigManager.getPermissionLevel() > 3;
 	}
-    		/*
-    		ScaledResolution scaledresolution = new ScaledResolution(mc);
-            int i = scaledresolution.getScaledWidth();
-            int j = scaledresolution.getScaledHeight();
-    		int k = Mouse.getX() * i / mc.displayWidth;
-            int l = j - Mouse.getY() * j / mc.displayHeight - 1;
-    		configButton = new GuiButton(0, (i/2)-100, 0, 200, 20, "Weather2 EZ Config");
-    		configButton.drawButton(mc, k, l, 1F);
-    		
-    		if (k >= configButton.x && l >= configButton.y && k < configButton.x + 200 && l < configButton.y + 20 && Mouse.isButtonDown(0))
-    			mc.displayGuiScreen(new GuiEZConfig());
-    		}}*/
-/*
-    public void onTickInGUI(GuiScreen guiscreen)
-    {
-        
-    }
-    
+
     public void onTickInGame()
     {
-
-		if (ConfigMisc.toaster_pc_mode) return;
-		
-        Minecraft mc = FMLClientHandler.instance().getClient();
-        World world = mc.world;
-
-		if (world != null)
+    	if (ConfigMisc.toaster_pc_mode) return;
+    	net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+    	World world = mc.level;
+    	if (world != null)
 		{
 			checkClientWeather();
 			weatherManager.tick();
-			
-			if (!ConfigMisc.aesthetic_mode && ConfigMisc.enable_forced_clouds_off && world.provider.getDimension() == 0)
-				mc.gameSettings.clouds = 0;
-			
-			if (EZConfigParser.isEffectsEnabled(world.provider.getDimension()))
+			if (!ConfigMisc.aesthetic_mode && ConfigMisc.enable_forced_clouds_off && world.dimension().toString() == "minecraft:overworld")
+				mc.options.renderClouds = CloudOption.OFF;
+			if (EZConfigParser.isEffectsEnabled(world.dimension().location().toString()))
 				NewSceneEnhancer.instance().tick();
-			
-			if (!EZConfigParser.isWeatherEnabled(world.provider.getDimension()) && weatherManager.getFronts().size() > 1)
+			if (!EZConfigParser.isWeatherEnabled(world.dimension().location().toString()) && weatherManager.getFronts().size() > 1)
 			{
-				Weather2.debug("Removing all storms as the dimension weather is disabled");
+				Weather2Remastered.debug("Removing all storms as the dimension weather is disabled");
 				weatherManager.reset(false);
 			}
-			
 			//TODO: evaluate if best here
-			
-			Vec3 pos = mc.player == null ? null : new Vec3(mc.player.getPosition());
+			Vec3 pos = mc.player == null ? null : new Vec3(mc.player.getX(), mc.player.getY(), mc.player.getZ());
 			float windDir = WindReader.getWindAngle(world, pos);
 			float windSpeed = WindReader.getWindSpeed(world, pos) * 0.25F;
-*/
-//			float diff = Math.abs(windDir - smoothAngle)/* - 180*/;
-/*
+			float diff = Math.abs(windDir - smoothAngle)/* - 180*/;
 			if (diff > 10)
 			{
 
 				if (smoothAngle > 180) smoothAngle -= 360;
 				if (smoothAngle < -180) smoothAngle += 360;
-
 				float bestMove = Maths.wrapDegrees(windDir - smoothAngle);
 
 				smoothAngleAdj = windSpeed;//0.2F;
-*/
-//				if (Math.abs(bestMove) < 180/* - (angleAdjust * 2)*/) {
-/*					float realAdj = smoothAngleAdj;//Math.max(smoothAngleAdj, Math.abs(bestMove));
-
+				if (Math.abs(bestMove) < 180/* - (angleAdjust * 2)*/) {
+					float realAdj = smoothAngleAdj;//Math.max(smoothAngleAdj, Math.abs(bestMove));
 					if (realAdj * 2 > windSpeed) {
 						if (bestMove > 0) {
 							smoothAngleRotationalVelAccel -= realAdj;
@@ -138,77 +109,78 @@ public class ClientTickHandler
 					smoothAngleRotationalVelAccel *= 0.80F;
 				}
 			}
-			if (!Minecraft.getMinecraft().isGamePaused()) {
+		}
 
-				ExtendedRenderer.foliageRenderer.windDir = smoothAngle;
+    	if (!mc.isPaused()) {
+    		/*
+			ExtendedRenderer.foliageRenderer.windDir = smoothAngle;
 
-				float rate = 0.005F;
+			float rate = 0.005F;
 
-				if (ExtendedRenderer.foliageRenderer.windSpeedSmooth != windSpeed) {
-					if (ExtendedRenderer.foliageRenderer.windSpeedSmooth < windSpeed) {
-						if (ExtendedRenderer.foliageRenderer.windSpeedSmooth + rate > windSpeed) {
-							ExtendedRenderer.foliageRenderer.windSpeedSmooth = windSpeed;
-						} else {
-							ExtendedRenderer.foliageRenderer.windSpeedSmooth += rate;
-						}
+			if (ExtendedRenderer.foliageRenderer.windSpeedSmooth != windSpeed) {
+				if (ExtendedRenderer.foliageRenderer.windSpeedSmooth < windSpeed) {
+					if (ExtendedRenderer.foliageRenderer.windSpeedSmooth + rate > windSpeed) {
+						ExtendedRenderer.foliageRenderer.windSpeedSmooth = windSpeed;
 					} else {
-						if (ExtendedRenderer.foliageRenderer.windSpeedSmooth - rate < windSpeed) {
-							ExtendedRenderer.foliageRenderer.windSpeedSmooth = windSpeed;
-						} else {
-							ExtendedRenderer.foliageRenderer.windSpeedSmooth -= rate;
-						}
+						ExtendedRenderer.foliageRenderer.windSpeedSmooth += rate;
+					}
+				} else {
+					if (ExtendedRenderer.foliageRenderer.windSpeedSmooth - rate < windSpeed) {
+						ExtendedRenderer.foliageRenderer.windSpeedSmooth = windSpeed;
+					} else {
+						ExtendedRenderer.foliageRenderer.windSpeedSmooth -= rate;
 					}
 				}
-
-				float baseTimeChangeRate = 60F;
-
-
-				FoliageRenderer.windTime += 0 + (baseTimeChangeRate * ExtendedRenderer.foliageRenderer.windSpeedSmooth);
 			}
-		}
-		else
-			resetClientWeather();
-    }
 
+			float baseTimeChangeRate = 60F;
+
+
+			FoliageRenderer.windTime += 0 + (baseTimeChangeRate * ExtendedRenderer.foliageRenderer.windSpeedSmooth);
+		}
+		*/
+    		Weather2Remastered.error("Foliage renderer does not exist -Fartsy");
+	}
+	else
+		resetClientWeather();
+    }
     public static void resetClientWeather() {
 		if (weatherManager != null) {
-			Weather2.debug("Weather2: Detected old WeatherManagerClient with unloaded world, clearing its data");
+			Weather2Remastered.debug("Detected old WeatherManagerClient with unloaded world, clearing its data");
 			weatherManager.reset(true);
 			weatherManager = null;
 		}
 	}
-	
     public static void checkClientWeather()
     {
     	try
     	{
-			World world = FMLClientHandler.instance().getClient().world;
+			World world = net.minecraft.client.Minecraft.getInstance().level;
     		if (weatherManager == null || world != lastWorld)
     			init(world);
     	} 
     	catch (Exception ex)
     	{
-    		Weather2.debug("Weather2: Warning, client received packet before it was ready to use, and failed to init client weather due to null world");
+    		Weather2Remastered.debug("Warning, client received packet before it was ready to use, and failed to init client weather due to null world");
     	}
     }
-    
     public static void init(World world)
     {
 		//this is generally triggered when they teleport to another dimension
 		if (weatherManager != null)
 		{
-			Weather2.debug("Weather2: Detected old WeatherManagerClient with active world, clearing its data");
+			Weather2Remastered.debug("Weather2: Detected old WeatherManagerClient with active world, clearing its data");
 			weatherManager.reset(true);
 		}
 
-		Weather2.debug("Weather2: Initializing WeatherManagerClient for client world and requesting full sync");
+		Weather2Remastered.debug("Weather2: Initializing WeatherManagerClient for client world and requesting full sync");
 
     	lastWorld = world;
     	weatherManager = new WeatherManagerClient(world);
 		//request a full sync from server
-    	PacketData.sync();
+    	//PacketData.sync();
+    	Weather2Remastered.error("Can't call PacketData.sync because fartsy is lazy and did not implement it yet!");
     }
-
     static void getField(Field field, Object newValue) throws Exception
     {
         field.setAccessible(true);
@@ -218,5 +190,4 @@ public class ClientTickHandler
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
         field.set(null, newValue);
     }
-    */
 }
