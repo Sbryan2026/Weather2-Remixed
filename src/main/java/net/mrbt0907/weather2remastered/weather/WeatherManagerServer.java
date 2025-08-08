@@ -239,7 +239,7 @@ public class WeatherManagerServer extends AbstractWeatherManager
 		}
 			
 		if (ticks % 40 == 0) {
-			int rainTime = ((IServerWorldInfo)(world).getLevelData()).getRainTime();
+			int rainTime = ((IServerWorldInfo)world.getLevelData()).getRainTime();
 			PacketVanillaWeather.send(dimension, isRaining ? isThundering ? 2 : 1 : 0, rainTime);
 		}
 		//tick partial cloud cover variation0
