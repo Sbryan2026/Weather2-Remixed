@@ -12,7 +12,6 @@ import net.mrbt0907.weather2remastered.Weather2Remastered;
 
 public class PacketBase
 {
-	@SuppressWarnings("unchecked")
 	public static void send(int command, CompoundNBT nbt, Object... target)
 	{
 		if (nbt == null)

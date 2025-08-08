@@ -25,8 +25,6 @@ import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
@@ -623,7 +621,7 @@ public class WeatherManagerServer extends AbstractWeatherManager
 				if (ticks > ConfigSand.sandstorm_spawn_delay)
 					ticksSandstormFormed = world.getTotalWorldTime() + ConfigSand.sandstorm_spawn_delay;
 				return !ConfigSand.disable_sandstorms && ticksSandstormFormed < world.getTotalWorldTime() && systems.size() < ConfigStorm.max_weather_objects;*/
-				Weather2Remastered.error("sandstorm dont exist, no darude for you -Fartsy");
+				//Weather2Remastered.error("sandstorm dont exist, no darude for you -Fartsy");
 				return false;
 			default:
 				return false;

@@ -68,7 +68,7 @@ private static boolean isClientSide = (!(ServerLifecycleHooks.getCurrentServer()
     }
 	
 	public static String getMinecraftSaveFolderPath() {
-		return (isClientSide ? getClientSidePath() : new File(".").getAbsolutePath()) + "config" + File.separator;
+		return (isClientSide ? getClientSidePath() : new File(".").getAbsolutePath()) + File.separator + "config" + File.separator;
     }
 	
 	public static String getWorldSaveFolderPath() {

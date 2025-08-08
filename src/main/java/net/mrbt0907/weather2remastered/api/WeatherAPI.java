@@ -8,6 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -17,6 +19,7 @@ import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherManager;
 import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherRenderer;
 import net.mrbt0907.weather2remastered.config.ConfigGrab;
 import net.mrbt0907.weather2remastered.event.EventRegisterGrabLists;
+import net.mrbt0907.weather2remastered.gui.EZConfigParser;
 import net.mrbt0907.weather2remastered.util.ConfigList;
 
 public class WeatherAPI
@@ -219,9 +222,23 @@ public class WeatherAPI
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public static AbstractWeatherManager getManager(World world) {
-		// TODO Auto-generated method stub
-		return null;
+	/**Gets the weather manager used in the world provided. There is a weather manager for each dimension.*/
+	public static AbstractWeatherManager getManager(World world)
+	{
+		AbstractWeatherManager manager = null;
+		if (world != null)
+			if (world.isClientSide())
+				manager = getManager();
+			else
+				manager = net.mrbt0907.weather2remastered.event.ServerTickHandler.dimensionSystems.get(world.dimension().location().toString());
+		
+		return manager;
+	}
+	/**Gets the weather manager used on the client.*/
+	@OnlyIn(Dist.CLIENT)
+	public static AbstractWeatherManager getManager()
+	{
+		return net.mrbt0907.weather2remastered.client.ClientTickHandler.weatherManager;
 	}
 	/**Gets the tornado stage list, which is used for rolling tornado stages*/
 	public static ConfigList getTornadoStageList()
@@ -233,6 +250,11 @@ public class WeatherAPI
 	public static ConfigList getHurricaneStageList()
 	{
 		return hurricaneStageList;
+	}
+	/**Refreshes the dimension rules. These rules determine if weather can spawn in a dimension and whether they can create effects in a dimension.*/
+	public static void refreshDimensionRules()
+	{
+		EZConfigParser.refreshDimensionRules();
 	}
 
 }

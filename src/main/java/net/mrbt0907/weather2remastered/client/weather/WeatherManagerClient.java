@@ -2,25 +2,37 @@ package net.mrbt0907.weather2remastered.client.weather;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.mrbt0907.weather2remastered.Weather2Remastered;
+import net.mrbt0907.weather2remastered.api.weather.AbstractFrontObject;
 import net.mrbt0907.weather2remastered.api.weather.AbstractStormObject;
 import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherManager;
 import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherObject;
 import net.mrbt0907.weather2remastered.api.weather.IWeatherRain;
 import net.mrbt0907.weather2remastered.api.weather.IWeatherStaged;
+import net.mrbt0907.weather2remastered.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2remastered.client.NewSceneEnhancer;
 import net.mrbt0907.weather2remastered.config.ConfigClient;
+import net.mrbt0907.weather2remastered.config.ConfigStorm;
+import net.mrbt0907.weather2remastered.config.ConfigVolume;
+import net.mrbt0907.weather2remastered.registry.SoundRegistry;
 import net.mrbt0907.weather2remastered.util.Maths;
 import net.mrbt0907.weather2remastered.util.Maths.Vec3;
-@OnlyIn(Dist.CLIENT)
-public class WeatherManagerClient extends AbstractWeatherManager {
 
-	private static final net.minecraft.client.Minecraft MC = net.minecraft.client.Minecraft.getInstance(); 
+@OnlyIn(Dist.CLIENT)
+public class WeatherManagerClient extends AbstractWeatherManager
+{
+	private static final Minecraft MC = Minecraft.getInstance(); 
 	//data for client, stormfronts synced from server
 	//new for 1.10.2, replaces world.weatherEffects use
 	public List<Particle> effectedParticles = new ArrayList<Particle>();
@@ -29,15 +41,18 @@ public class WeatherManagerClient extends AbstractWeatherManager {
 	public int weatherID = 0;
 	public int weatherRainTime = 0;
 	private int particleLimit = 0;
-	public WeatherManagerClient(World world) {
+
+	public WeatherManagerClient(World world)
+	{
 		super(world);
 	}
+	
 	@Override
 	public World getWorld()
 	{
-		return MC.level;
+		return Minecraft.getInstance().level;
 	}
-
+	
 	@Override
 	public void tick()
 	{
@@ -55,19 +70,210 @@ public class WeatherManagerClient extends AbstractWeatherManager {
 			}
 		}
 	}
+	
 	public void tickRender(float partialTick)
 	{
 		if (world != null)
 			getWeatherObjects().forEach(wo -> wo.tickRender(partialTick));
 	}
 	
-	@Override
-	public void reset(boolean fullReset)
+	/**Gets called when the server sends a network packet<p><b>Network Command List</b><br>
+	 *0 - Update Vanilla Weather<br>
+	 *1 - Create Weather Object<br>
+	 *2 - Update Weather Object<br>
+	 *3 - Remove Weather Object<br>
+	 *4 - Create Volcano Object<br>
+	 *5 - Update Volcano Object<br>
+	 *6 - Update Wind Manager<br>
+	 *7 - Create Lightning Bolt*/
+	public void nbtSyncFromServer(CompoundNBT mainNBT)
 	{
-		super.reset(fullReset);
-		effectedParticles.clear();
-		closestStormCached = null;
+		System.out.println("SYNCING FROM SERVER " + mainNBT);
+		int command = mainNBT.getInt("command");
+		switch(command)
+		{
+			case 0:
+				weatherID = mainNBT.getInt("weatherID");
+				weatherRainTime = mainNBT.getInt("weatherRainTime");
+				break;
+			case 1:
+			{
+				CompoundNBT nbt = mainNBT.getCompound("weatherObject");
+				AbstractFrontObject front = getFront(nbt.getUUID("frontUUID"));
+				UUID uuid = nbt.getUUID("ID");
+				
+				Type weatherObjectType = Type.get(nbt.getInt("weatherType"));
+				
+				AbstractWeatherObject wo = null;
+				if (weatherObjectType.ordinal() < Type.SANDSTORM.ordinal())
+				{
+					Weather2Remastered.debug("Creating a new storm: " + uuid.toString());
+					wo = new AbstractStormObject(front);
+				}
+				else
+				{
+					Weather2Remastered.debug("NOT Creating a new sandstorm: " + uuid.toString());
+					//wo = new SandstormObject(this);
+				}
+				
+				//StormObject so
+				wo.nbt.setNewNBT(nbt);
+				wo.nbt.updateCacheFromNew();
+				wo.readFromNBT();
+				
+				front.addWeatherObject(wo);
+				refreshParticleLimit();
+				break;
+			}
+			case 2:
+			{
+				CompoundNBT nbt = mainNBT.getCompound("weatherObject");
+				AbstractFrontObject front = getFront(nbt.getUUID("frontUUID"));
+				if(front == null) break;
+					
+				AbstractWeatherObject wo = front.getWeatherObject(nbt.getUUID("ID"));
+				if (wo != null)
+				{
+					wo.nbt.setNewNBT(nbt);
+					wo.readFromNBT();
+					wo.nbt.updateCacheFromNew();
+				}
+				break;
+			}
+			case 3:
+			{
+				UUID uuidA = mainNBT.getUUID("weatherObject"), uuidB = mainNBT.getUUID("frontObject");
+				AbstractFrontObject front = getFront(uuidB);
+				AbstractWeatherObject system = systems.get(uuidA);
+				
+				if (front != null)
+					front.removeWeatherObject(uuidA);
+				else if (system != null)
+					removeWeatherObject(uuidA);
+
+				refreshParticleLimit();
+				break;
+			}
+			case 4:
+			{
+				CompoundNBT nbt = mainNBT.getCompound("volcanoObject");
+				//VolcanoObject vo = new VolcanoObject(this);
+				Weather2Remastered.debug("error Creating a new volcano: " + nbt.getUUID("ID"));
+				//vo.nbtSyncFromServer(nbt);
+				//addVolcanoObject(vo);
+				break;
+			}
+			case 5:
+			{
+				//CompoundNBT stormNBT = mainNBT.getCompound("volcanoObject");
+				//UUID uuid = stormNBT.getUUID("ID");
+				
+				//if (volcanoUUIDS.contains(uuid))
+				//	getVolcanoObjectByID(uuid).nbtSyncFromServer(stormNBT);
+				break;
+			}
+			case 6:
+			{
+				CompoundNBT nbt = mainNBT.getCompound("manager");
+				windManager.nbtSyncFromServer(nbt);
+				break;
+			}
+			case 7:
+			{
+				int posXS = mainNBT.getInt("posX");
+				int posYS = mainNBT.getInt("posY");
+				int posZS = mainNBT.getInt("posZ");
+				if (mainNBT.contains("entityID"))
+				{/*
+					double posX = (double)posXS;
+					double posY = (double)posYS;
+					double posZ = (double)posZS;
+					Entity ent = new EntityLightningEX(world, posX, posY, posZ);
+					ent.serverPosX = posXS;
+					ent.serverPosY = posYS;
+					ent.serverPosZ = posZS;
+					ent.rotationYaw = 0.0F;
+					ent.rotationPitch = 0.0F;
+					ent.setEntityId(mainNBT.getInt("entityID"));
+					world.addWeatherEffect(ent);
+					*/
+					Weather2Remastered.error("Couldn't spawn lightningEX just yet!");
+				}
+				else
+				{
+					int x = mainNBT.getInt("posX"), y = mainNBT.getInt("posY"), z = mainNBT.getInt("posZ");
+					double distance = Maths.distanceSq(MC.player.getX(), MC.player.getY(), MC.player.getZ(), x, y, z);
+					if (MC.player != null)
+					{
+						if (distance < ConfigStorm.max_lightning_bolt_distance)
+						{
+							if (ConfigClient.enable_sky_lightning)
+								world.setSkyFlashTime(4);
+							world.playSound(null, new BlockPos(x, y, z), SoundRegistry.THUNDER_NEAR.get(), SoundCategory.WEATHER, 10000.0F * (float)ConfigVolume.lightning, Maths.random(0.65F, 0.75F));
+						}
+						else if (distance < ConfigStorm.max_lightning_bolt_distance * 1.5D)
+							world.playSound(null, new BlockPos(x, y, z), SoundRegistry.THUNDER_FAR.get(), SoundCategory.WEATHER, 10000.0F * (float)ConfigVolume.lightning, Maths.random(0.65F, 0.75F));
+					}
+				}
+				break;
+			}
+			case 11:
+			{
+				CompoundNBT nbt = mainNBT.getCompound("frontObject");
+				UUID uuid = mainNBT.getUUID("uuid");
+				if (nbt.contains("posX"))
+				{
+					Weather2Remastered.debug("Creating a new front: " + uuid.toString());
+					AbstractFrontObject front = createFront(nbt.getInt("layer"), nbt.getDouble("posX"), nbt.getDouble("posZ"));
+					front.readNBT(nbt);
+					fronts.put(uuid, front);
+				}
+				else
+				{
+					Weather2Remastered.debug("Creating a new global front: " + uuid.toString());
+					globalFront = new AbstractFrontObject(this, null, 0);
+					globalFront.readNBT(nbt);
+					fronts.put(uuid, globalFront);
+				}
+				break;
+			}
+			case 12:
+			{
+				CompoundNBT nbt = mainNBT.getCompound("frontObject");
+				AbstractFrontObject front = getFront(nbt.getUUID("uuid"));
+				if(front != null)
+					front.readNBT(nbt);
+				break;
+			}
+			case 13:
+			{
+				UUID uuid = mainNBT.getUUID("frontUUID");
+				AbstractFrontObject front = getFront(uuid);
+				if (front != null)
+					if (globalFront.equals(front))
+						globalFront.reset();
+					else
+					{
+						front.reset();
+						removeFront(front);
+					}
+				else
+					Weather2Remastered.error("error removing front, cant find by ID: " + uuid.toString());
+				break;
+			}
+			case 14:
+			{
+				fronts.forEach((uuid, front) -> front.cleanupClient(false));
+				weatherParticles.forEach(particle -> particle.remove());
+				weatherParticles.clear();
+				Weather2Remastered.debug("Cleaned up client particles");
+				break;
+			}
+			default:
+				Weather2Remastered.error("Server sent an invalid network packet");
+		}
 	}
+	
 	public float getRainTargetValue(Vec3 position)
 	{
 		float rainTarget = -Float.MAX_VALUE, rain;
@@ -84,6 +290,7 @@ public class WeatherManagerClient extends AbstractWeatherManager {
 		}
 		return Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 1.0F);
 	}
+	
 	public float getOvercastTargetValue(Vec3 position)
 	{
 		float overcastTarget = -Float.MAX_VALUE, overcast;
@@ -142,5 +349,13 @@ public class WeatherManagerClient extends AbstractWeatherManager {
 	public int getParticleLimit()
 	{
 		return particleLimit;
+	}
+	
+	@Override
+	public void reset(boolean fullReset)
+	{
+		super.reset(fullReset);
+		effectedParticles.clear();
+		closestStormCached = null;
 	}
 }

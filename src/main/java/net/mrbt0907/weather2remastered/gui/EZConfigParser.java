@@ -159,8 +159,10 @@ public class EZConfigParser
 		
 		if (cache.contains("dimData"))
 		{
+			System.out.println("GOT dimData!!!");
 			for(String key : cache.getCompound("dimData").getAllKeys())
 			{
+				System.out.println("GOT" + cache.getCompound("dimData"));
 				if (key.contains("dimb_"))
 				{
 					String keyN = (key.replaceFirst("dimb_", ""));
@@ -738,6 +740,7 @@ public class EZConfigParser
 	
 	public static List<String> parseList(String sList)
 	{
+		System.out.println("parsing " + sList);
 		String[] arrStr = sList.split("[\\s\\,]+");
 		List<String> arrInt = new ArrayList<String>();
 		for (int i = 0; i < arrStr.length; i++)
@@ -819,6 +822,7 @@ public class EZConfigParser
 	
 	public static boolean isWeatherEnabled(String registryKey)
 	{
+		if (weatherList.isEmpty()) System.out.println("Weather List is Empty. Weather Manager won't be able to spawn.");
 		return weatherList.contains(registryKey);
 	}
 	

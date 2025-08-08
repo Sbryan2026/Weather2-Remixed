@@ -418,17 +418,23 @@ public class AbstractFrontObject implements IWeatherDetectable
 
 	public void addWeatherObject(AbstractWeatherObject weather)
 	{
-		if (weather != null && weather.front.equals(this))
-		{
-			storms++;
-			
-			if (!weather.type.equals(Type.CLOUD))
-				activeStorms++;
+		if (weather.front == null) {
+			Weather2Remastered.error("Weather front is null!");
+			return;
+		}
+		if (weather != null && weather.front != null) {
+			if (weather.front.equals(this))
+			{
+				storms++;
 				
-			systems.put(weather.getUUID(), weather);
-			if (ConfigStorm.storms_aim_at_player && !overrideAngle && weather instanceof AbstractStormObject && ((AbstractStormObject)weather).stageMax >= WeatherEnum.Stage.SEVERE.getStage())
-				aimStormAtPlayer(null);
-			manager.addWeatherObject(weather);
+				if (!weather.type.equals(Type.CLOUD))
+					activeStorms++;
+					
+				systems.put(weather.getUUID(), weather);
+				if (ConfigStorm.storms_aim_at_player && !overrideAngle && weather instanceof AbstractStormObject && ((AbstractStormObject)weather).stageMax >= WeatherEnum.Stage.SEVERE.getStage())
+					aimStormAtPlayer(null);
+				manager.addWeatherObject(weather);
+			}
 		}
 	}
 

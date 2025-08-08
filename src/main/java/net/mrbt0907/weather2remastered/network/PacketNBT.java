@@ -2,11 +2,15 @@ package net.mrbt0907.weather2remastered.network;
 
 import java.util.function.Supplier;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.mrbt0907.weather2remastered.Weather2Remastered;
+import net.mrbt0907.weather2remastered.client.ClientTickHandler;
+import net.mrbt0907.weather2remastered.client.NewSceneEnhancer;
 import net.mrbt0907.weather2remastered.event.ServerTickHandler;
 import net.mrbt0907.weather2remastered.gui.EZConfigParser;
 
@@ -26,7 +30,56 @@ public class PacketNBT {
         return new PacketNBT(tag);
     }
 
-    public static void handle(PacketNBT msg, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(PacketNBT pkt, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            if (ctx.get().getDirection().getReceptionSide().isClient()) {
+                handleClient(pkt);
+            } else {
+                handleServer(pkt, ctx); // optional if you want server logic too
+            }
+        });
+        ctx.get().setPacketHandled(true);
+    }
+
+	@OnlyIn(Dist.CLIENT)
+	private static void handleClient(PacketNBT pkt) {
+	    CompoundNBT nbt = pkt.tag;
+	    int command = nbt.getInt("command");
+	
+	    switch(command)
+		{
+			case 0: case 1: case 2: case 3:case 4: case 5: case 6: case 7:
+				ClientTickHandler.checkClientWeather();
+				//this line still gets NPE's despite it checking if its null right before it, wtf
+				//Fixed it, your welcome
+				ClientTickHandler.weatherManager.nbtSyncFromServer(nbt);
+				break;
+			case 9:
+				EZConfigParser.nbtReceiveClient(nbt);
+				break;
+			//case 9:
+				//ItemPocketSand.particulateFromServer(nbt.getString("playerName"));
+				//break;
+			case 10:
+				//ClientTickHandler.clientConfigData.readNBT(nbt);
+				break;
+			case 11: case 12: case 13: case 14:
+				ClientTickHandler.checkClientWeather();
+				ClientTickHandler.weatherManager.nbtSyncFromServer(nbt);
+				break;
+			case 17:
+				NewSceneEnhancer.instance().reset();
+				NewSceneEnhancer.instance().enable();
+				break;
+			case 18:
+				
+				break;
+			default:
+				Weather2Remastered.error("Recieved an invalid network packet from the server");
+		}
+	}
+
+    public static void handleServer(PacketNBT msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             // This runs on the server thread
             if (ctx.get().getSender() != null) {
@@ -46,10 +99,11 @@ public class PacketNBT {
     					case 11:
     						ServerTickHandler.playerClientRequestsFullSync(ctx.get().getSender());
     						break;
-    					case 10:
+    					case 10:{
     						if (net.minecraft.client.Minecraft.getInstance().hasSingleplayerServer() || ServerLifecycleHooks.getCurrentServer().getPlayerList().isOp(ctx.get().getSender().getGameProfile()))
     							EZConfigParser.nbtReceiveServer(msg.tag);
     						break;
+    					}
     				}
     			
             }

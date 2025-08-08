@@ -10,7 +10,6 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.config.ConfigSimulation;

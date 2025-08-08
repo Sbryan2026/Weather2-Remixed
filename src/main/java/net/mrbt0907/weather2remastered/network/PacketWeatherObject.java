@@ -2,14 +2,17 @@ package net.mrbt0907.weather2remastered.network;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.world.World;
+import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherObject;
 
 public class PacketWeatherObject extends PacketBase
 {
 	public static void create(Object target, AbstractWeatherObject wo)
 	{
+		if (wo.nbt == null) {
+			Weather2Remastered.error("wo is not null, but wo.nbt is? wat?");
+			return;
+		}
 		CompoundNBT nbt = new CompoundNBT();
 		wo.nbt.setUpdateForced(true);
 		wo.writeToNBT();

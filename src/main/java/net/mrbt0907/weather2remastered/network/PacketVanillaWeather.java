@@ -1,8 +1,6 @@
 package net.mrbt0907.weather2remastered.network;
 
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.world.World;
 
 public class PacketVanillaWeather extends PacketBase
 {
