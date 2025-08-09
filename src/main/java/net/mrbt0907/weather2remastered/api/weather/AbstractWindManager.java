@@ -65,9 +65,9 @@ public class AbstractWindManager
 				if (manager.world.getGameTime() % 200L == 0L)
 					cache.clear();
 				
-				if (manager.getWorld().getGameTime() >= nextWindRefresh)
+				if (manager.world.getGameTime() >= nextWindRefresh)
 				{
-					nextWindRefresh = manager.getWorld().getGameTime() + Maths.random(ConfigWind.windRefreshMin, ConfigWind.windRefreshMax);
+					nextWindRefresh = manager.world.getGameTime() + Maths.random(ConfigWind.windRefreshMin, ConfigWind.windRefreshMax);
 					windSpeedTarget = (float) Maths.random(ConfigWind.windSpeedMin, ConfigWind.windSpeedMax);
 					windAngleTarget += (float) Maths.random(-ConfigWind.windAngleChangeMax, ConfigWind.windAngleChangeMax);
 
@@ -78,7 +78,7 @@ public class AbstractWindManager
 				
 				if (ConfigWind.enableWindAffectsEntities)
 				{
-					Entity[] entities = manager.getWorld().getEntitiesOfClass(Entity.class, new AxisAlignedBB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)).toArray(new Entity[0]);
+					Entity[] entities = manager.world.getEntitiesOfClass(Entity.class, new AxisAlignedBB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY)).toArray(new Entity[0]);
 					int size = entities.length;
 					Entity entity;
 					for (int i = 0; i < size; i++)
@@ -359,7 +359,6 @@ public class AbstractWindManager
         windSpeedGust = data.getFloat("windSpeedGust");
         windAngleGust = data.getFloat("windAngleGust");
         windTimeGust = data.getInt("windTimeGust");
-
     }
 
     public CompoundNBT writeToNBT(CompoundNBT data) {

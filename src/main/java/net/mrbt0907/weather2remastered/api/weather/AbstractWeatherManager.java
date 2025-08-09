@@ -38,18 +38,6 @@ public abstract class AbstractWeatherManager
 		dimension = world.dimension().location().toString();
 		isClientSide = world.isClientSide;
 		windManager = new AbstractWindManager(this);
-		fronts = new HashMap<UUID, AbstractFrontObject>();
-		systems = new HashMap<UUID, AbstractWeatherObject>();
-	}
-	
-	public AbstractFrontObject getFront(@Nonnull UUID uuid)
-	{
-		return fronts.get(uuid);
-	}
-	
-	public AbstractWeatherObject getSystem(@Nonnull UUID uuid)
-	{
-		return systems.get(uuid);
 	}
 
 	public void reset(boolean fullReset)
@@ -67,9 +55,10 @@ public abstract class AbstractWeatherManager
 		if (fullReset)
 		{
 		//	Reset wind manager
-			//windManager.reset();
+			windManager.reset();
 		}
 	}
+
 	public void tick()
 	{
 		if (world != null)
@@ -77,9 +66,19 @@ public abstract class AbstractWeatherManager
 			fronts.forEach((uuid, front) -> {if (!front.isDead) {front.tick();}});
 			systems.forEach((uuid, system) -> system.tick());
 			//volcanoObjects.forEach(vo -> vo.tick());
-			//windManager.tick();
+			windManager.tick();
 			ticks++;
 		}
+	}
+
+	public AbstractFrontObject getFront(@Nonnull UUID uuid)
+	{
+		return fronts.get(uuid);
+	}
+	
+	public AbstractWeatherObject getSystem(@Nonnull UUID uuid)
+	{
+		return systems.get(uuid);
 	}
 
 	public World getWorld()
@@ -105,6 +104,7 @@ public abstract class AbstractWeatherManager
 			systems.put(wo.getUUID(), wo);
 		return wo;
 	}
+
 	public List<AbstractWeatherObject> getWeatherObjects()
 	{
 		return new ArrayList<AbstractWeatherObject>(systems.values());

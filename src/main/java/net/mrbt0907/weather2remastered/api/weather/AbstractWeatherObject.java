@@ -10,7 +10,7 @@ import net.mrbt0907.weather2remastered.config.ConfigStorm;
 import net.mrbt0907.weather2remastered.util.CachedNBTTagCompound;
 import net.mrbt0907.weather2remastered.util.Maths.Vec3;
 
-public class AbstractWeatherObject implements IWeatherDetectable
+public abstract class AbstractWeatherObject implements IWeatherDetectable
 {
 	private UUID id;
 	public AbstractFrontObject front;
@@ -24,82 +24,63 @@ public class AbstractWeatherObject implements IWeatherDetectable
 	public boolean isDead = false;
 	public long ticks = 0L;
 	public int size = ConfigStorm.min_storm_size;
-	public int ticksSinceNoNearPlayer = 0;
+	
 	public AbstractWeatherLogic weatherLogic;
 	
 	protected World world;
+	
+	/**
+	 * used to count up to a threshold to finally remove weather objects,
+	 * solves issue of simbox cutoff removing storms for first few ticks as player is joining in singleplayer
+	 * helps with multiplayer, requiring 30 seconds of no players near before removal
+	 */
+	public int ticksSinceNoNearPlayer = 0;
+
 	public AbstractWeatherObject(AbstractFrontObject front) {
-		// TODO Auto-generated constructor stub
+		this.front = front;
+		manager = front.getWeatherManager();
+		nbt = new CachedNBTTagCompound();
+		world = front.world;
+		init();
+	}
+
+	public void init() {
+		id = UUID.randomUUID();
 	}
 
 	public void tick()
 	{
+		ticks++;
+		if (ticks < 0) ticks = 0;
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	public void tickRender(float partialTick) {}
+
+	public void setDead()
+	{
+		isDead = true;
 		
+		//cleanup memory
+		if (FMLEnvironment.dist.equals(Dist.CLIENT)) cleanupClient(true);
+		cleanup();
 	}
 
-	public void init() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void reset() { setDead(); }
+	public void cleanup() { manager = null; }
 
-	@Override
-	public float getWindSpeed() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	@OnlyIn(Dist.CLIENT)
+	public void cleanupClient(boolean wipe) {}
 
-	@Override
-	public int getStage() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void setStage(int stage) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getTypeName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UUID getUUID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Vec3 getPos() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public float getAngle() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public float getSpeed() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isDying() {
-		// TODO Auto-generated method stub
-		return false;
+	public void readFromNBT()
+	{
+		id = nbt.getUUID("ID");
+		pos = new Vec3(nbt.getDouble("posX"), nbt.getDouble("posY"), nbt.getDouble("posZ"));
+		motion = new Vec3(nbt.getDouble("vecX"), nbt.getDouble("vecY"), nbt.getDouble("vecZ"));
+		size = nbt.getInteger("size");
+		type = WeatherEnum.Type.get(nbt.getInteger("weatherType"));
+		isDying = nbt.getBoolean("isDying");
+		isDead = nbt.getBoolean("isDead");
 	}
 
 	public CachedNBTTagCompound writeToNBT()
@@ -121,33 +102,13 @@ public class AbstractWeatherObject implements IWeatherDetectable
 		return nbt;
 	}
 
-	public void readFromNBT() {
-		// TODO Auto-generated method stub
-		
-	}
+	public int getNetRate() { return 40; }
+	public boolean isDangerous() { return type.isDangerous(); }
+	public UUID getUUID() { return id; }
 
-	public void tickRender(float partialTick) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void setDead()
-	{
-		isDead = true;
-		
-		//cleanup memory
-		if (FMLEnvironment.dist.equals(Dist.CLIENT)) 
-			cleanupClient(true);
-		
-		cleanup();
-	}
-	public void cleanup() {manager = null;}
-	@OnlyIn(Dist.CLIENT)
-	public void cleanupClient(boolean wipe) {}
-	public void reset() {
-		setDead();
-		
-	}
+	@Override
+	public Vec3 getPos() { return pos; }
 
-	public int getNetRate() {return 40;}
+	@Override
+	public boolean isDying() { return isDying; }
 }

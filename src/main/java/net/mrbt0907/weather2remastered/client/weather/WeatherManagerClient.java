@@ -107,6 +107,11 @@ public class WeatherManagerClient extends AbstractWeatherManager
 				AbstractWeatherObject wo = null;
 				if (weatherObjectType.ordinal() < Type.SANDSTORM.ordinal())
 				{
+					System.out.println(nbt.getUUID("frontUUID"));
+					if (front == null) {
+						Weather2Remastered.error("FRONT NULL WTF?" + front);
+						return;
+					}
 					Weather2Remastered.debug("Creating a new storm: " + uuid.toString());
 					wo = new AbstractStormObject(front);
 				}

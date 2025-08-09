@@ -234,7 +234,11 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 		//adjust posGround to be pos with the ground Y pos for convinient usage
 		posGround = new Vec3(pos.posX, pos.posY, pos.posZ);
 		posGround.posY = currentTopYBlock;
-		if (manager.getWorld().isClientSide)
+		if (manager.world == null) {
+			Weather2Remastered.error("World was null, trying again...");
+			return;
+		}
+		if (manager.world.isClientSide())
 		{
 			if (!WeatherUtil.isPaused())
 			{
@@ -573,7 +577,6 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 			if (biome != null)
 			{
 				hasOcean = biome.getBiomeCategory().toString().contains("ocean");
-				Weather2Remastered.debug("biome " + biome.getBiomeCategory().toString() + " hasOcean: " + hasOcean);
 				float biomeTempAdj = getTemperatureMCToWeatherSys(CoroCompat.getAdjustedTemperature(manager.getWorld(), biome, new BlockPos(MathHelper.floor(pos.posX), 64, MathHelper.floor(pos.posZ))));
 				if (temperature > biomeTempAdj)
 					temperature -= tempAdjustRate; 

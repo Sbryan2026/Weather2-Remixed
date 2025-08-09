@@ -46,8 +46,7 @@ public class ServerTickHandler
 		//regularly save data
 		if (world != null)
 			if (world.getGameTime() % ConfigMisc.auto_save_interval == 0)
-				//Weather2Remastered.writeOutData(false);
-				Weather2Remastered.error("Couldn't write out data, not implemented yet.");
+				Weather2Remastered.writeOutData(false);
 		
 		World[] worlds = StreamSupport.stream(server.getAllLevels().spliterator(), false).toArray(ServerWorld[]::new);
 		World dim;

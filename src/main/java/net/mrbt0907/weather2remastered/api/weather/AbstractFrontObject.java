@@ -103,11 +103,12 @@ public class AbstractFrontObject implements IWeatherDetectable
 		
 		tickMovement();
 		
-		if (manager.getWorld() != null)
-			if(!manager.getWorld().isClientSide()) {
+		if (manager.world != null) {
+			if(!manager.world.isClientSide()) {
 				tickProgressionNormal();
 			}
 		systems.forEach((uuid, system) -> {if (!system.isDead) {system.tick();}});
+		}
 	}
 	
 	public void tickMovement()

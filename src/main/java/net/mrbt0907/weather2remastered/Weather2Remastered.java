@@ -18,9 +18,12 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.weather2remastered.config.*;
 import net.mrbt0907.weather2remastered.event.EventsForge;
+import net.mrbt0907.weather2remastered.event.ServerTickHandler;
 import net.mrbt0907.weather2remastered.network.PacketNBT;
 import net.mrbt0907.weather2remastered.registry.BlockRegistry;
 import net.mrbt0907.weather2remastered.registry.SoundRegistry;
+import net.mrbt0907.weather2remastered.util.UtilPlayerData;
+import net.mrbt0907.weather2remastered.weather.WeatherManagerServer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -131,5 +134,23 @@ public class Weather2Remastered
 			error = new Error(String.valueOf(message));
 		
 		throw error;
+	}
+
+	public static void writeOutData(boolean unloadInstances)
+	{
+		//write out overworld only, because only dim with volcanos planned
+		try {
+			WeatherManagerServer wm = ServerTickHandler.dimensionSystems.get("minecraft:overworld");
+			if (wm != null) {
+				wm.writeToFile();
+			}
+			UtilPlayerData.writeAllPlayerNBT(unloadInstances);
+			//doesnt cover all needs, client connected to server needs this called from gui close too
+			//maybe dont call this from here so client connected to server doesnt override what a client wants his 'server' settings to be in his singleplayer world
+			//factoring in we dont do per world settings for this
+			//WeatherUtilConfig.nbtSaveDataAll();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 }
