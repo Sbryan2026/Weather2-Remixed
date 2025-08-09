@@ -54,7 +54,7 @@ public class AbstractFrontObject implements IWeatherDetectable
 	public AbstractFrontObject(AbstractWeatherManager manager, Vec3 pos, int layer)
 	{
 		this.manager = manager;
-		world = manager.getWorld();
+		world = manager.world;
 		this.pos = pos;
 		this.layer = layer;
 		size = Maths.random(ConfigStorm.min_storm_size, ConfigFront.max_front_size);
