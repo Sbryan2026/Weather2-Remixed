@@ -15,6 +15,7 @@ import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2remastered.config.ConfigStorm;
 import net.mrbt0907.weather2remastered.config.ConfigWind;
+import net.mrbt0907.weather2remastered.network.PacketWind;
 import net.mrbt0907.weather2remastered.util.Maths;
 import net.mrbt0907.weather2remastered.util.Maths.Vec3;
 import net.mrbt0907.weather2remastered.util.WeatherUtil;
@@ -214,8 +215,7 @@ public class AbstractWindManager
 	public void syncData()
 	{
 		if (manager instanceof WeatherManagerServer)
-			//PacketWind.update(manager.dim, this);
-			Weather2Remastered.error("I've come to make an announcement. Fartsy is a lazy mf who didn't implmement PacketWind yet!!! That's right! and he even commented out the function!");
+			PacketWind.update(manager.dimension, this);
 	}
 	
 	public void reset() {

@@ -168,7 +168,4 @@ public class ServerTickHandler
 		//ClientConfigData.writeNBT(data);
 		PacketEZGUI.apply(data, player);
 	}
-	public static RegistryKey<World> dimensionKey (String dim) {
-		return RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(dim));
-	}
 }

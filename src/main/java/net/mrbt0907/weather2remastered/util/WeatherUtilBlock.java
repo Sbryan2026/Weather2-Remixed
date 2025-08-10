@@ -939,7 +939,7 @@ public class WeatherUtilBlock
 	 */
 	public static BlockPos getPrecipitationHeightSafe(World world, BlockPos pos) {
 	    if (world.isLoaded(pos)) {
-	        return new BlockPos(pos.getX(), world.getChunkAt(pos).getHeight(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getZ()), pos.getZ());
+	        return new BlockPos(pos.getX(), world.getChunkAt(pos).getHeight(Heightmap.Type.MOTION_BLOCKING, pos.getX(), pos.getY()), pos.getZ());
 	    } else {
 	        return new BlockPos(pos.getX(), 0, pos.getZ());
 	    }

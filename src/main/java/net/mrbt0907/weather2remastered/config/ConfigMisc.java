@@ -46,7 +46,7 @@ public class ConfigMisc implements IConfigEX {
 	public static int sync_interval = 2400;
 	@ServerSide
 	@Comment("If true, storms are removed when no players are in the dimension")
-	public static boolean remove_storms_if_no_players = false;
+	public static boolean remove_storms_if_no_players = true;
 	@ServerSide
 	@Comment("If true, lets server side do vanilla weather rules, weather2 will only make storms when server side says 'rain' is on")
 	public static boolean overcast_mode = false;
