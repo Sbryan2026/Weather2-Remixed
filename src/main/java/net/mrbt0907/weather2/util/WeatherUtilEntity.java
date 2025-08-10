@@ -153,22 +153,25 @@ public class WeatherUtilEntity {
 		return parWorld.rayTraceBlocks(parPos.toVec3MC(), parCheckPos.toVec3MC()) == null && WeatherUtilBlock.getPrecipitationHeightSafe(parWorld, new BlockPos(MathHelper.floor(parCheckPos.posX), 0, MathHelper.floor(parCheckPos.posZ))).getY() < parCheckPos.posY;
 	}
 
-	public static EntityPlayer getClosestPlayer(World world, double posX, double posY, double posZ, double distance)
+	/**Gets the closest player - rewritten by Miyu, also now uses sqrtf instead of just standard sqrt**/
+	public static EntityPlayer getClosestPlayer(World world, double posX, double posY, double posZ, double radius)
 	{
-		double r = 0.0D;
+		double min_radius = 9999;
 		EntityPlayer player = null;
 
-		for (EntityPlayer entity : world.playerEntities)
-		{
-			double player_distance = entity.getDistanceSq(posX, posY, posZ);
-			if (player_distance < distance * distance && (player_distance < r || player == null))
-			{
-				r = player_distance;
-				player = entity;
-			}
-		}
+	    for (EntityPlayer entity : world.playerEntities)
+	    {
+	        double player_distance = FartsyUtil.sqrtf((float) entity.getDistanceSq(posX, posY, posZ));
 
-		return player;
+	        if (player_distance <= radius && (player_distance < min_radius || player == null))
+	        {
+	            player = entity;
+	            min_radius = player_distance;
+	            //System.out.println("Closest returns " + min_radius);
+	        }
+	    }
+
+	    return player;
 	}
 	
 	public static boolean hasAITask(EntityCreature creature, Class<? extends EntityAIBase> clazz)
