@@ -6,6 +6,8 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherObject;
 import net.mrbt0907.weather2remastered.config.ConfigClient;
@@ -205,5 +207,15 @@ public class NewSceneEnhancer implements Runnable
 			}
 			else
 				Weather2Remastered.warn("Scene Enhancer is already running, skipping enable...");
+		}
+
+		//----- Non Threaded Methods -----\\
+		public void tickRender(RenderTickEvent event)
+		{
+			if (event.phase.equals(Phase.START) && MC.level != null)
+			{
+				MC.level.setRainLevel(Math.abs(overcast));
+				MC.level.setThunderLevel(overcast);
+			}
 		}
 }

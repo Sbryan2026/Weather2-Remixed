@@ -56,6 +56,7 @@ private static boolean isClientSide = (!(ServerLifecycleHooks.getCurrentServer()
     public static String getWorldFolderName(World world) {
 		if (world != null) {
 			lastWorldFolder = world.getServer().getWorldPath(FolderName.ROOT).toString();
+			System.out.println("IMPORTANT " + lastWorldFolder);
 			return lastWorldFolder + File.separator;
 		}
 		
@@ -72,7 +73,8 @@ private static boolean isClientSide = (!(ServerLifecycleHooks.getCurrentServer()
     }
 	
 	public static String getWorldSaveFolderPath() {
-    	return (isClientSide ? getClientSidePath() + File.separator + "saves" + File.separator : new File(".").getAbsolutePath() + File.separator);
+		System.out.println("Save folder is: "+ (isClientSide ? getClientSidePath() + File.separator : new File(".").getAbsolutePath() + File.separator));
+    	return (isClientSide ? getClientSidePath() + File.separator : new File(".").getAbsolutePath() + File.separator);
     }
     
     @OnlyIn(Dist.CLIENT)
