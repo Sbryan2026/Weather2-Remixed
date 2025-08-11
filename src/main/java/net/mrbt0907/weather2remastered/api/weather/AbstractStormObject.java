@@ -253,16 +253,13 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 				tickMovementClient();
 			}
 		}
-		else
-		{
-			if (isDeadly())
-				Weather2Remastered.error("Trying to tick deadly storm but fartsy didn't load the new tornado helper yet!");
+		if (isDeadly())
+			Weather2Remastered.error("Trying to tick deadly storm but fartsy didn't load the new tornado helper yet!");
 
-			tickMovement();
-			tickWeatherEvents();
-			tickProgressionNormal();
-			tickSnowFall();
-		}
+		tickMovement();
+		tickWeatherEvents();
+		tickProgressionNormal();
+		tickSnowFall();
 		
 		if (layer == 0)
 		{

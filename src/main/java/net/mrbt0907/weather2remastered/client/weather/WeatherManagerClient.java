@@ -307,14 +307,15 @@ public class WeatherManagerClient extends AbstractWeatherManager
 				rain = ((IWeatherRain)system).getDownfall(position) - IWeatherRain.MINIMUM_DRIZZLE;
 				if (rain > rainTarget)
 					rainTarget = rain;
+//				System.out.println(Math.abs(rainTarget) > 0.10 ? Maths.clamp(Math.abs(rainTarget) / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 1.0F) : 0.0F);
 			}
 		}
-		return Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 1.0F);
+		return Math.abs(rainTarget) > 0.10 ? Maths.clamp(Math.abs(rainTarget) / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 1.0F) : 0.0F;
 	}
 	
 	public float getOvercastTargetValue(Vec3 position)
 	{
-		float overcastTarget = -Float.MAX_VALUE, overcast;
+		float overcastTarget = -1.0F, overcast;
 		List<AbstractWeatherObject> systems = new ArrayList<AbstractWeatherObject>(this.systems.values());
 		
 		for (AbstractWeatherObject system : systems)
@@ -327,9 +328,9 @@ public class WeatherManagerClient extends AbstractWeatherManager
 				overcast = stageMult * distanceMult;
 				if (overcast > overcastTarget)
 					overcastTarget = overcast;
+				//System.out.println(overcast);
 			}
 		}
-		
 		return Maths.clamp(overcastTarget, 0.0F, 1.0F);
 	}
 	

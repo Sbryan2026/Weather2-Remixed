@@ -163,10 +163,10 @@ public class NewSceneEnhancer implements Runnable
 	/**Finds if precipitation needs to be rendered and sets the target rain if needed*/
 	protected void tickQueuePrecipitation()
 	{
+//		System.out.println(MC.level.isThundering());
 		Vec3 pos = new Vec3(MC.player.position());
 		rainTarget = ClientTickHandler.weatherManager != null ? ClientTickHandler.weatherManager.getRainTargetValue(pos) : 0.0F;
 		overcastTarget = ClientTickHandler.weatherManager != null ? ClientTickHandler.weatherManager.getOvercastTargetValue(pos) : 0.0F;
-//		System.out.println(overcast);
 		if (ConfigMisc.overcast_mode && ClientTickHandler.weatherManager != null && ClientTickHandler.weatherManager.weatherID >= 1)
 		{
 			rainTarget = Math.max(rainTarget, ConfigStorm.min_overcast_rain);
@@ -179,14 +179,16 @@ public class NewSceneEnhancer implements Runnable
 		if (overcastTarget != 0.0F)
 		{
 			MC.level.getLevelData().setRaining(true);
-			MC.level.setThunderLevel(1.0F);
+			MC.level.setThunderLevel(overcast * 1.25F);
 		}
 		else
 		{
+			rainTarget = 0.0F;
 			MC.level.getLevelData().setRaining(false);
 			MC.level.setRainLevel(0.0F);
 			MC.level.setThunderLevel(0.0F);
 		}
+		
 	}
 	//----- Other -----\\
 		@Override
@@ -434,9 +436,8 @@ public class NewSceneEnhancer implements Runnable
 		{
 			if (event.phase.equals(Phase.START) && MC.level != null)
 			{
-
-				MC.level.setRainLevel(Math.abs(overcast));
-				MC.level.setThunderLevel(overcast);
+				MC.level.setRainLevel(Math.abs(rain));
+				MC.level.setThunderLevel(overcast * 1.25F);
 //				System.out.println("Overcast "+ overcast);
 			}
 		}

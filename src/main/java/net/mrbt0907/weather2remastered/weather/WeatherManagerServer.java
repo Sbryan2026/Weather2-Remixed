@@ -240,7 +240,7 @@ public class WeatherManagerServer extends AbstractWeatherManager
 		{
 			if (!ConfigMisc.overcast_mode && ConfigMisc.server_weather_mode != -1)
 			{
-				world.getLevelData().setRaining(ConfigMisc.server_weather_mode == 1);
+				((ServerWorld)world).getLevelData().setRaining(ConfigMisc.server_weather_mode == 1);
 				CompoundNBT thunder = new CompoundNBT();
 				thunder.putFloat("setThunderLevel", 1.0F);
 				PacketBase.send(20, thunder);
