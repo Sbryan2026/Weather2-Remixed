@@ -102,6 +102,10 @@ public class WeatherManagerClient extends AbstractWeatherManager
 			case 1:
 			{
 				CompoundNBT nbt = mainNBT.getCompound("weatherObject");
+				if (!nbt.contains("frontUUID")) {
+					Weather2Remastered.debug("nbt didn't contain frontUUID...?: " + FartsyUtil.prettyPrintNBT(nbt));
+					break;
+				}
 				AbstractFrontObject front = getFront(nbt.getUUID("frontUUID"));
 				UUID uuid = nbt.getUUID("ID");
 				

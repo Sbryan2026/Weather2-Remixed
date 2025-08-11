@@ -122,7 +122,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		Vec3 playerAdjPos = new Vec3(entP.getX(), storm.pos.posY, entP.getZ());
 		
 		//spawn clouds
-		if (true ? true : storm.isStorm())
+		if (ConfigClient.enable_cloud_rendering ? true : storm.isStorm())
 			if (ConfigClient.optimizedCloudRendering)
 			{
 				boolean isStorm = storm.stage >= Stage.RAIN.getStage();
@@ -161,10 +161,10 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 				if (manager.getWorld().getGameTime() % (delay + ConfigClient.cloud_particle_delay) == 0) {
 					for (int i = 0; i < loopSize && shouldSpawn(0); i++)
 					{
-						//System.out.println(storm.getPos().posX + " " + storm.getPos().posZ);
-						if (listParticlesCloud.size() < (storm.size + extraSpawning) / 50F)
+//						if (storm.isStorm() && !storm.isRaining()) storm.rain = 500.0F;
+//						if (storm.isStorm() && storm.isRaining()) System.out.println(storm.getPos().posX + " " + storm.type.toString() + " " + storm.getPos().posZ);
+						if (listParticlesCloud.size() < (storm.size + extraSpawning) / 1F)
 						{
-							
 							double spawnRad = storm.size * 1.2D;
 							Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad), layerHeight + (rand.nextDouble() * 40.0F) + (storm.stage >= Stage.RAIN.getStage() ? 30.0F : 60.0D), storm.pos.posZ + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad));
 							if (tryPos.distanceSq(playerAdjPos) < maxRenderDistance * 10) {

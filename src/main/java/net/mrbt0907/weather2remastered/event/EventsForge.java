@@ -30,6 +30,7 @@ public class EventsForge
 		System.out.println("THE SERVER IS STARTING. REFRESH THE DIMENSION RULES.");
 		net.mrbt0907.weather2remastered.api.WeatherAPI.refreshDimensionRules();
 	}
+
 	@SubscribeEvent
 	public static void onWorldSave(WorldEvent.Save event)
 	{
@@ -39,7 +40,7 @@ public class EventsForge
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-    public void worldRender(RenderWorldLastEvent event)
+    public static void worldRender(RenderWorldLastEvent event)
     {
 		if (ConfigMisc.toaster_pc_mode) return;
 
@@ -50,7 +51,7 @@ public class EventsForge
     }
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	public void onRenderTick(TickEvent.RenderTickEvent event)
+	public static void onRenderTick(TickEvent.RenderTickEvent event)
 	{
 		NewSceneEnhancer.instance().tickRender(event);	
 	}

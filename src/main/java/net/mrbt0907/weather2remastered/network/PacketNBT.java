@@ -59,9 +59,11 @@ public class PacketNBT {
 				break;
 			case 18:
 				break;
-			case 20:
+			case 20: {
+				if (ClientTickHandler.weatherManager == null) break;
 				ClientTickHandler.weatherManager.nbtSyncFromServer(nbt);
 				break;
+			}
 			default: Weather2Remastered.error("Recieved an invalid network packet from the server");
 		}
 	}

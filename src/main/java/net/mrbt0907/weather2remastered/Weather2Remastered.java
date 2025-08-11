@@ -65,7 +65,6 @@ public class Weather2Remastered
 		ConfigManager.register(new ConfigSnow());
 		ConfigManager.register(new ConfigFoliage());
 	    SoundRegistry.register(MOD_BUS);
-	    MinecraftForge.EVENT_BUS.register(this);
 		MOD_BUS.addListener(this::init);
 		MOD_BUS.addListener(this::initClient);
 		MOD_BUS.addListener(this::postInit);
@@ -75,21 +74,6 @@ public class Weather2Remastered
 		DistExecutor.safeRunWhenOn(Dist.CLIENT,() -> ClientProxy::preInit);
 	}
 
-	@SubscribeEvent
-	public void onInterModProcess(InterModProcessEvent event) {
-	    event.getIMCStream()
-	         .filter(imc -> imc.getMethod().equals("weather.storms"))
-	         .forEach(imc -> {
-	             Object message = imc.getMessageSupplier().get();
-	             if (message instanceof CompoundNBT) {
-	                 CompoundNBT receivedNbt = (CompoundNBT) message;
-	                 System.out.println("Received weather.storms IMC with NBT: " + receivedNbt);
-	                 // Further process here...
-	             } else {
-	                 System.out.println("Received weather.storms IMC with unexpected type: " + message);
-	             }
-	         });
-	}
 	private void init(final FMLCommonSetupEvent event)
 	{
 		CommonProxy.init();

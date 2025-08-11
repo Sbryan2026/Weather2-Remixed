@@ -45,7 +45,7 @@ public class ClientProxy extends CommonProxy
         }
     }
 	@SubscribeEvent
-	public void tickClient(ClientTickEvent event)
+	public static void tickClient(ClientTickEvent event)
 	{
 		if (event.phase == Phase.START)
 		{

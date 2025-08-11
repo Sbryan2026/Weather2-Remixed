@@ -63,7 +63,7 @@ public class ClientTickHandler
     {
     	if (ConfigMisc.toaster_pc_mode) return;
     	net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
-    	World world = ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD);
+    	World world = mc.level;
     	if (world != null)
 		{
 			checkClientWeather();
@@ -144,7 +144,7 @@ public class ClientTickHandler
 				FoliageRenderer.windTime += 0 + (baseTimeChangeRate * ExtendedRenderer.foliageRenderer.windSpeedSmooth);
 			}
 			*/
-	    		Weather2Remastered.error("Foliage renderer does not exist -Fartsy");
+//	    		Weather2Remastered.error("Foliage renderer does not exist -Fartsy");
 	    	}
 		}
 	else

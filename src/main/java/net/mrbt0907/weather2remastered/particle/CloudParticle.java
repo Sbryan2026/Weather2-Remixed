@@ -45,7 +45,7 @@ public class CloudParticle extends SpriteTexturedParticle
     this.eid = world.random.nextInt(100000);
     setColor(tint.getRed()/255.0F, tint.getGreen()/255.0F, tint.getBlue()/255.0F);
     setSize((float)diameter, (float)diameter);    // size of collision box
-    System.out.println("Spawn success! @ " + x + " " + y + " " + z);
+//    System.out.println("Spawn success! @ " + x + " " + y + " " + z);
     final float PARTICLE_SCALE_FOR_ONE_METRE = 1.2F;
     quadSize = PARTICLE_SCALE_FOR_ONE_METRE * (float)diameter; // rendering size
     count++;
