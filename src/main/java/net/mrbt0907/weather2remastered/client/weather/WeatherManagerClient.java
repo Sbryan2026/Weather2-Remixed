@@ -283,11 +283,11 @@ public class WeatherManagerClient extends AbstractWeatherManager
 			}
 			case 20: 
 			{
-				if (net.minecraft.client.Minecraft.getInstance().level != null) {
-					net.minecraft.client.world.ClientWorld world = net.minecraft.client.Minecraft.getInstance().level;
-					world.setThunderLevel(mainNBT.getFloat("setThunderLevel"));
+				//if (net.minecraft.client.Minecraft.getInstance().level != null) {
+					//net.minecraft.client.world.ClientWorld world = net.minecraft.client.Minecraft.getInstance().level;
+					//world.setThunderLevel(mainNBT.getFloat("setThunderLevel"));
 //					System.out.println("Changing thunder level in world! Now: " + mainNBT.getFloat("setThunderLevel"));
-				}
+				//}
 				break;
 			}
 			default:
