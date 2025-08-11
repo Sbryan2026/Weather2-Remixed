@@ -10,6 +10,8 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.mrbt0907.weather2remastered.api.WeatherAPI;
 import net.mrbt0907.weather2remastered.client.ClientTickHandler;
 import net.mrbt0907.weather2remastered.gui.EZGUI;
 import net.mrbt0907.weather2remastered.gui.EZGUIEX;
@@ -25,12 +27,13 @@ public class ClientProxy extends CommonProxy
 	
 	public static void init()
 	{
-		
 	}
 	
 	public static void postInit()
 	{
 		clientTickHandler = new ClientTickHandler();
+		WeatherAPI.refreshRenders(true);
+		
 	}
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
@@ -53,7 +56,7 @@ public class ClientProxy extends CommonProxy
 				if (extraGrassLast != ConfigFoliage.enable_extra_grass)
 					extraGrassLast = ConfigFoliage.enable_extra_grass;
 */
-				boolean hackyLiveReplace = false;
+				//boolean hackyLiveReplace = false;
 /*
 				if (hackyLiveReplace && EventHandler.flagFoliageUpdate) {
 					Weather2.debug("CoroUtil detected a need to reload resource packs, initiating");

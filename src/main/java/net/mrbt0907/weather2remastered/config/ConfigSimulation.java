@@ -12,11 +12,11 @@ public class ConfigSimulation implements IConfigEX
 	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("Distance storms can go to from players before they are deleted")
-	public static int max_storm_distance = 2300;
+	public static int max_storm_distance = 3600;
 	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("Distance storms can spawn away from players")
-	public static int max_storm_spawning_distance = 2150;
+	public static int max_storm_spawning_distance = 1500;
 	
     @Override
     public String getName()

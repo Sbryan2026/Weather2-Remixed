@@ -14,8 +14,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.mrbt0907.weather2remastered.api.weather.AbstractWindManager;
 import net.mrbt0907.weather2remastered.client.ClientTickHandler;
+import net.mrbt0907.weather2remastered.config.ConfigSimulation;
+import net.mrbt0907.weather2remastered.config.ConfigStorm;
 import net.mrbt0907.weather2remastered.util.Maths.Vec3;
 import net.mrbt0907.weather2remastered.util.coro.CoroEntParticle;
+import net.mrbt0907.weather2remastered.util.fartsy.FartsyUtil;
 
 public class WeatherUtilEntity {
 	//old non multiplayer friendly var, needs resdesign where this is used
@@ -151,22 +154,26 @@ public class WeatherUtilEntity {
 	//	return parWorld.rayTraceBlocks(parPos.toVec3MC(), parCheckPos.toVec3MC()) == null && WeatherUtilBlock.getPrecipitationHeightSafe(parWorld, new BlockPos(MathHelper.floor(parCheckPos.posX), 0, MathHelper.floor(parCheckPos.posZ))).getY() < parCheckPos.posY;
 	}
 
-	public static PlayerEntity getClosestPlayer(World world, double posX, double posY, double posZ, double distance)
+	/**Gets the closest player - rewritten by Miyu, also now uses sqrtf instead of just standard sqrt**/
+	public static PlayerEntity getClosestPlayer(World world, double posX, double posY, double posZ, double radius)
 	{
-		double r = 0.0D;
-		PlayerEntity player = null;
+		double min_radius = 9999;
+	    PlayerEntity player = null;
+	    
+	    for (PlayerEntity entity : world.players())
+	    {
+	    	//System.out.println("Checking distance");
+	        double player_distance = FartsyUtil.sqrtf((float) entity.distanceToSqr(posX, posY, posZ));
+	        
+	        if (player_distance <= radius && (player_distance < min_radius || player == null))
+	        {
+	            player = entity;
+	            min_radius = player_distance;
+//	            System.out.println("Closest returns " + player_distance);
+	        }
+	    }
 
-		for (PlayerEntity entity : world.players())
-		{
-			double player_distance = entity.distanceToSqr(posX, posY, posZ);
-			if (player_distance < distance * distance && (player_distance < r || player == null))
-			{
-				r = player_distance;
-				player = entity;
-			}
-		}
-
-		return player;
+	    return player;
 	}
 /* Fix this	
 	public static boolean hasAITask(EntityCreature creature, Class<? extends EntityAIBase> clazz)

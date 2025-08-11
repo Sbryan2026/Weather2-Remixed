@@ -2,15 +2,19 @@ package net.mrbt0907.weather2remastered;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -21,6 +25,7 @@ import net.mrbt0907.weather2remastered.event.EventsForge;
 import net.mrbt0907.weather2remastered.event.ServerTickHandler;
 import net.mrbt0907.weather2remastered.network.PacketNBT;
 import net.mrbt0907.weather2remastered.registry.BlockRegistry;
+import net.mrbt0907.weather2remastered.registry.ParticleRegistry;
 import net.mrbt0907.weather2remastered.registry.SoundRegistry;
 import net.mrbt0907.weather2remastered.util.UtilPlayerData;
 import net.mrbt0907.weather2remastered.weather.WeatherManagerServer;
@@ -60,6 +65,7 @@ public class Weather2Remastered
 		ConfigManager.register(new ConfigSnow());
 		ConfigManager.register(new ConfigFoliage());
 	    SoundRegistry.register(MOD_BUS);
+	    MinecraftForge.EVENT_BUS.register(this);
 		MOD_BUS.addListener(this::init);
 		MOD_BUS.addListener(this::initClient);
 		MOD_BUS.addListener(this::postInit);
@@ -69,6 +75,21 @@ public class Weather2Remastered
 		DistExecutor.safeRunWhenOn(Dist.CLIENT,() -> ClientProxy::preInit);
 	}
 
+	@SubscribeEvent
+	public void onInterModProcess(InterModProcessEvent event) {
+	    event.getIMCStream()
+	         .filter(imc -> imc.getMethod().equals("weather.storms"))
+	         .forEach(imc -> {
+	             Object message = imc.getMessageSupplier().get();
+	             if (message instanceof CompoundNBT) {
+	                 CompoundNBT receivedNbt = (CompoundNBT) message;
+	                 System.out.println("Received weather.storms IMC with NBT: " + receivedNbt);
+	                 // Further process here...
+	             } else {
+	                 System.out.println("Received weather.storms IMC with unexpected type: " + message);
+	             }
+	         });
+	}
 	private void init(final FMLCommonSetupEvent event)
 	{
 		CommonProxy.init();
@@ -141,6 +162,7 @@ public class Weather2Remastered
 		//write out overworld only, because only dim with volcanos planned
 		try {
 			WeatherManagerServer wm = ServerTickHandler.dimensionSystems.get("minecraft:overworld");
+			System.out.println("WRITING OUT DATA!!! " + wm);
 			if (wm != null) {
 				wm.writeToFile();
 			}
@@ -153,4 +175,5 @@ public class Weather2Remastered
 			ex.printStackTrace();
 		}
 	}
+	
 }

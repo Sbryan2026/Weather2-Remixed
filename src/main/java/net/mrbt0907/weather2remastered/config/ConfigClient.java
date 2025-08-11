@@ -115,7 +115,7 @@ public class ConfigClient implements IConfigEX
 	@Permission(0)
 	@IntegerRange(min=-1)
 	@Comment("How many weather2 particles can exist at once. Set to -1 for infinite particles. A typical hailstorm spawns around 3500~ particles on ultra settings")
-	public static int max_particles = 3000;
+	public static int max_particles = 1000;
 	@Permission(0)
 	@DoubleRange(min=0.0D)
 	@Comment("Particle multiplier that adjusts how fast rain rates change. Set it higher to make rain change faster")

@@ -22,6 +22,7 @@ import net.mrbt0907.weather2remastered.config.ConfigStorm;
 import net.mrbt0907.weather2remastered.util.Maths;
 import net.mrbt0907.weather2remastered.util.Maths.Vec3;
 import net.mrbt0907.weather2remastered.util.WeatherUtil;
+import net.mrbt0907.weather2remastered.util.fartsy.FartsyUtil;
 import net.mrbt0907.weather2remastered.weather.WeatherManagerServer;
 
 public class AbstractFrontObject implements IWeatherDetectable
@@ -54,7 +55,7 @@ public class AbstractFrontObject implements IWeatherDetectable
 	public AbstractFrontObject(AbstractWeatherManager manager, Vec3 pos, int layer)
 	{
 		this.manager = manager;
-		world = manager.world;
+		world = manager.getWorld();
 		this.pos = pos;
 		this.layer = layer;
 		size = Maths.random(ConfigStorm.min_storm_size, ConfigFront.max_front_size);
@@ -68,9 +69,11 @@ public class AbstractFrontObject implements IWeatherDetectable
 		{
 			maxStorms = -1;
 			isGlobal = true;
+			System.out.println("Created GLOBAL FRONT");
 		}
 		else
 		{
+			System.out.println("Created @ " + pos.posX + " " + pos.posZ);
 			maxStorms = Maths.random(1, 35);
 			temperature = WeatherUtil.getTemperature(world, pos.toBlockPos());
 			humidity = WeatherUtil.getTemperature(world, pos.toBlockPos());
@@ -103,8 +106,8 @@ public class AbstractFrontObject implements IWeatherDetectable
 		
 		tickMovement();
 		
-		if (manager.world != null) {
-			if(!manager.world.isClientSide()) {
+		if (manager.getWorld() != null) {
+			if(!manager.getWorld().isClientSide()) {
 				tickProgressionNormal();
 			}
 		systems.forEach((uuid, system) -> {if (!system.isDead) {system.tick();}});
@@ -113,7 +116,7 @@ public class AbstractFrontObject implements IWeatherDetectable
 	
 	public void tickMovement()
 	{
-		if (pos != null)
+		if (pos != null) {
 			if (world.isClientSide())
 			{
 				pos.posX += motion.posX;
@@ -134,6 +137,7 @@ public class AbstractFrontObject implements IWeatherDetectable
 				pos.posX += motion.posX;
 				pos.posZ += motion.posZ;
 			}
+		}
 	}
 	
 	/**TODO: Make occluded fronts  merge only when cold front meets warm front from behind, make stationary fronts merge when colliding from any other direction*/
@@ -143,7 +147,8 @@ public class AbstractFrontObject implements IWeatherDetectable
 			Weather2Remastered.fatal("ERROR, WORLD WAS NULL.");
 			return;
 		}
-		if (world.getGameTime() % Math.max(ConfigFront.tick_rate, 1L) == 0L)
+		//System.out.println(getWorld().getGameTime() + " ? " + manager.getWorld().getGameTime());
+		if (getWorld().getGameTime() % Math.max(ConfigFront.tick_rate, 1L) == 0L)
 		{
 			if (pos != null)
 			{
@@ -239,12 +244,16 @@ public class AbstractFrontObject implements IWeatherDetectable
 			{
 				if (target == null)
 					return null;
-				else
-					storm.pos = new Vec3(target.getX() + Maths.random(-ConfigSimulation.max_storm_spawning_distance, ConfigSimulation.max_storm_spawning_distance), storm.getLayerHeight(), target.getZ() + Maths.random(-ConfigSimulation.max_storm_spawning_distance, ConfigSimulation.max_storm_spawning_distance));
+				else {
+					 Vec3 newpos = new Vec3(target.getX() + Maths.random(-ConfigSimulation.max_storm_spawning_distance, ConfigSimulation.max_storm_spawning_distance), storm.getLayerHeight(), target.getZ() + Maths.random(-ConfigSimulation.max_storm_spawning_distance, ConfigSimulation.max_storm_spawning_distance));
+					 System.out.println("New storm at " + newpos.posX + " " + newpos.posY + " " + newpos.posZ);
+					 storm.pos = newpos;
+				}
 			}
-			else
-				storm.pos = new Vec3(pos.posX + Maths.random(-size, size), storm.getLayerHeight(), pos.posZ + Maths.random(-size, size));
-			
+			else {
+				storm.pos = new Vec3(0 + Maths.random(-size, size), storm.getLayerHeight(), 0 + Maths.random(-size, size));
+				System.out.println("SPAWNING AT " + storm.pos.posX + " " + storm.pos.posZ + "BECAUSE THIS HAS X/Z " + pos.posX + "/" + this.pos.posZ);
+			}
 			if (layer == 0 && Maths.chance(WeatherManagerServer.stormChanceToday * 0.01D))
 				storm.initRealStorm();
 			
@@ -314,7 +323,7 @@ public class AbstractFrontObject implements IWeatherDetectable
 			pos = new Vec3(0, 0, 0);
 			
 		if (entP == null)
-			entP = manager.getWorld().getNearestPlayer(pos.posX, pos.posY, pos.posZ, -1, false);
+			if (manager.world != null) entP = manager.world.getNearestPlayer(pos.posX, pos.posY, pos.posZ, -1, false);
 		
 		if (entP != null)
 		{
@@ -357,7 +366,7 @@ public class AbstractFrontObject implements IWeatherDetectable
 	
 	public CompoundNBT writeNBT()
 	{
-		nbt.putUUID("uuid", uuid);
+		nbt.putUUID("uuid", getUUID());
 		if (pos != null)
 		{
 			nbt.putDouble("posX", pos.posX);
@@ -379,7 +388,6 @@ public class AbstractFrontObject implements IWeatherDetectable
 		nbt.putInt("maxStorms", maxStorms);
 		nbt.putInt("storms", storms);
 		nbt.putFloat("size", size);
-
 		return nbt;
 	}
 	

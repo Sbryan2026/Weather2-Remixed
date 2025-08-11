@@ -1,6 +1,8 @@
 package net.mrbt0907.weather2remastered.api;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -16,12 +18,16 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.weather.AbstractStormObject;
 import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherManager;
-import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherRenderer;
+import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherObject;
+import net.mrbt0907.weather2remastered.client.render.AbstractWeatherRenderer;
+import net.mrbt0907.weather2remastered.client.render.NormalStormRenderer;
+import net.mrbt0907.weather2remastered.config.ConfigClient;
 import net.mrbt0907.weather2remastered.config.ConfigGrab;
 import net.mrbt0907.weather2remastered.event.EventRegisterGrabLists;
+import net.mrbt0907.weather2remastered.event.EventRegisterParticleRenderer;
 import net.mrbt0907.weather2remastered.gui.EZConfigParser;
 import net.mrbt0907.weather2remastered.util.ConfigList;
-
+import net.minecraftforge.common.MinecraftForge;
 public class WeatherAPI
 {
 	private static final ConfigList tornadoStageList = new ConfigList();
@@ -30,6 +36,11 @@ public class WeatherAPI
 	private static final ConfigList replaceList = new ConfigList();
 	private static final ConfigList entityList = new ConfigList();
 	private static final ConfigList windResistanceList = new ConfigList().setReplaceOnly();
+
+	private static Map<ResourceLocation, Class<?>> particleRenderers = new LinkedHashMap<ResourceLocation, Class<?>>();
+	private static ResourceLocation currentParticleRenderer;
+	private static ResourceLocation currentWeatherLogic;
+	private static ResourceLocation currentWeatherManager;
 	/**Gets the block replace list, which is used to specify what block turns to what when a tornado attempts to replace said block. Feel free to use any block including tile entities*/
 	public static ConfigList getEntityGrabList()
 	{
@@ -210,17 +221,77 @@ public class WeatherAPI
     	}
     	return list;
 	}
-	public static void refreshRenders(boolean b) {
-		Weather2Remastered.error("Sorry, refreshRenders isn't imported yet!");
+	@OnlyIn(Dist.CLIENT)
+	/**Refreshes all renderers in the mod.
+	 * @param fullRefresh: Clears the renderer list and repopulates the list.*/
+	public static void refreshRenders(boolean fullRefresh)
+	{
+		currentParticleRenderer = null;
+		if (fullRefresh)
+		{
+			Weather2Remastered.debug("Refreshing all renderers...");
+			particleRenderers.clear();
+			Weather2Remastered.debug("Registering particle renderers...");
+			particleRenderers.put(new ResourceLocation(Weather2Remastered.MODID, "normal"), NormalStormRenderer.class);
+			EventRegisterParticleRenderer event = new EventRegisterParticleRenderer();
+			MinecraftForge.EVENT_BUS.post(event);
+			Weather2Remastered.debug("Registered particle renderer " + Weather2Remastered.MODID + ":normal");
+			particleRenderers.putAll(event.getRegistry());
+			Weather2Remastered.debug("All weather renderers have been updated: " + particleRenderers.size() + " total");
+		}
 		
+		if (ConfigClient.particle_renderer.matches("^\\d$"))
+		{
+			try
+			{
+				int i = 0, ii = Integer.parseInt(ConfigClient.particle_renderer);
+				for (ResourceLocation id : particleRenderers.keySet())
+				{
+					if (i == ii)
+						currentParticleRenderer = id;
+					i++;
+				}
+			}
+			catch (Exception e)
+			{
+				Weather2Remastered.error(e);
+				ConfigClient.particle_renderer = Weather2Remastered.MODID + ":normal";
+				currentParticleRenderer = new ResourceLocation(Weather2Remastered.MODID, "normal");
+			}
+		}
+		else
+			for (ResourceLocation id : particleRenderers.keySet())
+				if (id.toString().equals(ConfigClient.particle_renderer))
+					currentParticleRenderer = id;
+		
+		Weather2Remastered.debug("Set particle renderer to " + (currentParticleRenderer == null ? "none" : currentParticleRenderer.toString()));
 	}
-	public static ResourceLocation getParticleRendererId() {
-		// TODO Auto-generated method stub
-		return null;
+	/**Gets the current particle renderer id. Can return null*/
+	public static ResourceLocation getParticleRendererId()
+	{
+		return currentParticleRenderer;
 	}
-	public static AbstractWeatherRenderer getParticleRenderer(AbstractStormObject abstractStormObject) {
-		// TODO Auto-generated method stub
-		return null;
+	@OnlyIn(Dist.CLIENT)
+	/**Gets the current particle renderer for use with storms. Can return null*/
+	public static net.mrbt0907.weather2remastered.client.render.AbstractWeatherRenderer getParticleRenderer(AbstractWeatherObject storm)
+	{
+		if (currentParticleRenderer == null || storm == null)
+		{
+			System.out.println("Something was null!");
+			return null;
+		}
+		
+		Class<?> renderer = particleRenderers.get(currentParticleRenderer);
+		
+		try
+		{
+			return renderer == null ? null : (AbstractWeatherRenderer) renderer.getConstructor(AbstractWeatherObject.class).newInstance(storm);
+		}
+		catch (Exception e)
+		{
+			Weather2Remastered.error(e);
+			return null;
+		}
 	}
 	/**Gets the weather manager used in the world provided. There is a weather manager for each dimension.*/
 	public static AbstractWeatherManager getManager(World world)

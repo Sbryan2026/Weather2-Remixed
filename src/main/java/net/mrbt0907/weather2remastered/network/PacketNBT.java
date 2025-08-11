@@ -35,10 +35,11 @@ public class PacketNBT {
 	private static void handleClient(PacketNBT pkt) {
 	    CompoundNBT nbt = pkt.tag;
 	    int command = nbt.getInt("command");
-	    Weather2Remastered.debug("PacketNBT.java:39 - sent to client, it contains: \n" + FartsyUtil.prettyPrintNBT(pkt.tag));
+	    //Weather2Remastered.debug("PacketNBT.java:38 - sent to client, it contains: \n" + FartsyUtil.prettyPrintNBT(pkt.tag));
 	    switch(command)
 		{
 			case 0: case 1: case 2: case 3:case 4: case 5: case 6: case 7:
+				//System.out.println(FartsyUtil.prettyPrintNBT(nbt));
 				ClientTickHandler.checkClientWeather();
 				ClientTickHandler.weatherManager.nbtSyncFromServer(nbt);
 				break;
@@ -50,12 +51,16 @@ public class PacketNBT {
 			case 11: case 12: case 13: case 14:
 				ClientTickHandler.checkClientWeather();
 				ClientTickHandler.weatherManager.nbtSyncFromServer(nbt);
+				
 				break;
 			case 17:
 				NewSceneEnhancer.instance().reset();
 				NewSceneEnhancer.instance().enable();
 				break;
 			case 18:
+				break;
+			case 20:
+				ClientTickHandler.weatherManager.nbtSyncFromServer(nbt);
 				break;
 			default: Weather2Remastered.error("Recieved an invalid network packet from the server");
 		}
@@ -65,7 +70,7 @@ public class PacketNBT {
         ctx.get().enqueueWork(() -> {
         	net.minecraft.entity.player.ServerPlayerEntity player = ctx.get().getSender();
             if (player != null) {
-            	Weather2Remastered.debug("PacketNBT.java:69 - got from client, it contains: \n" + FartsyUtil.prettyPrintNBT(msg.tag));
+            	//Weather2Remastered.debug("PacketNBT.java:69 - got from client, it contains: \n" + FartsyUtil.prettyPrintNBT(msg.tag));
     			switch(msg.tag.getInt("command"))
     			{
     				case 8:

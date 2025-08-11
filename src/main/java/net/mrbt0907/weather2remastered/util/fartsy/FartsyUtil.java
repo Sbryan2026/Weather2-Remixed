@@ -10,6 +10,9 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.LongArrayNBT;
 import net.minecraft.nbt.NumberNBT;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 public class FartsyUtil {
@@ -87,7 +90,7 @@ public class FartsyUtil {
         return sb.toString();
     }
     /**is the provided game profile an operator?**/
-	public static boolean isPlayerOp (com.mojang.authlib.GameProfile player) {
+	public static boolean isPlayerOp(com.mojang.authlib.GameProfile player) {
     	return ServerLifecycleHooks.getCurrentServer().isSingleplayer() || ServerLifecycleHooks.getCurrentServer().getPlayerList().isOp(player);
     }
 	//Gets the square root of a floating-point number, C++ style.  
@@ -104,4 +107,8 @@ public class FartsyUtil {
 
 	    return y;
 	}
+
+    public static boolean isClientWorldSafe(World world) {
+    	return (FMLEnvironment.dist != Dist.CLIENT) ? false : (net.minecraft.client.Minecraft.getInstance().level != null || world instanceof net.minecraft.client.world.ClientWorld);
+    }
 }

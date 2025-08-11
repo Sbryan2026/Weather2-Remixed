@@ -3,19 +3,24 @@ package net.mrbt0907.weather2remastered.client;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.settings.CloudOption;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.WindReader;
+import net.mrbt0907.weather2remastered.client.render.CoroRotatingParticleManager;
 import net.mrbt0907.weather2remastered.client.weather.WeatherManagerClient;
 import net.mrbt0907.weather2remastered.config.ConfigFoliage;
 import net.mrbt0907.weather2remastered.config.ConfigMisc;
 import net.mrbt0907.weather2remastered.gui.EZConfigParser;
+import net.mrbt0907.weather2remastered.network.PacketData;
 import net.mrbt0907.weather2remastered.util.Maths;
 import net.mrbt0907.weather2remastered.util.Maths.Vec3;
 @OnlyIn(Dist.CLIENT)
@@ -35,6 +40,7 @@ public class ClientTickHandler
 	public int prevDir = 0;
 	public boolean extraGrassLast = ConfigFoliage.enable_extra_grass;
 	public boolean op = false;
+	public static CoroRotatingParticleManager rotEffRenderer;
 	
 	public ClientTickHandler()
 	{
@@ -42,6 +48,7 @@ public class ClientTickHandler
 	
 		//this constructor gets called multiple times when created from proxy, this prevents multiple inits
 		new Thread(NewSceneEnhancer.instance(), "W2R NewSceneEnhancer").start();
+		this.rotEffRenderer = new CoroRotatingParticleManager();
 		/*
 		if (foliageEnhancer == null)
 		{
@@ -56,12 +63,12 @@ public class ClientTickHandler
     {
     	if (ConfigMisc.toaster_pc_mode) return;
     	net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
-    	World world = mc.level;
+    	World world = ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD);
     	if (world != null)
 		{
 			checkClientWeather();
 			weatherManager.tick();
-			if (!ConfigMisc.aesthetic_mode && ConfigMisc.enable_forced_clouds_off && world.dimension().toString() == "minecraft:overworld")
+			if (!ConfigMisc.aesthetic_mode && ConfigMisc.enable_forced_clouds_off && world.dimension().location().toString().equals("minecraft:overworld"))
 				mc.options.renderClouds = CloudOption.OFF;
 			if (EZConfigParser.isEffectsEnabled(world.dimension().location().toString()))
 				NewSceneEnhancer.instance().tick();
@@ -109,38 +116,37 @@ public class ClientTickHandler
 					smoothAngleRotationalVelAccel *= 0.80F;
 				}
 			}
-		}
+			if (!mc.isPaused()) {
+	    		/*
+				ExtendedRenderer.foliageRenderer.windDir = smoothAngle;
 
-    	if (!mc.isPaused()) {
-    		/*
-			ExtendedRenderer.foliageRenderer.windDir = smoothAngle;
+				float rate = 0.005F;
 
-			float rate = 0.005F;
-
-			if (ExtendedRenderer.foliageRenderer.windSpeedSmooth != windSpeed) {
-				if (ExtendedRenderer.foliageRenderer.windSpeedSmooth < windSpeed) {
-					if (ExtendedRenderer.foliageRenderer.windSpeedSmooth + rate > windSpeed) {
-						ExtendedRenderer.foliageRenderer.windSpeedSmooth = windSpeed;
+				if (ExtendedRenderer.foliageRenderer.windSpeedSmooth != windSpeed) {
+					if (ExtendedRenderer.foliageRenderer.windSpeedSmooth < windSpeed) {
+						if (ExtendedRenderer.foliageRenderer.windSpeedSmooth + rate > windSpeed) {
+							ExtendedRenderer.foliageRenderer.windSpeedSmooth = windSpeed;
+						} else {
+							ExtendedRenderer.foliageRenderer.windSpeedSmooth += rate;
+						}
 					} else {
-						ExtendedRenderer.foliageRenderer.windSpeedSmooth += rate;
-					}
-				} else {
-					if (ExtendedRenderer.foliageRenderer.windSpeedSmooth - rate < windSpeed) {
-						ExtendedRenderer.foliageRenderer.windSpeedSmooth = windSpeed;
-					} else {
-						ExtendedRenderer.foliageRenderer.windSpeedSmooth -= rate;
+						if (ExtendedRenderer.foliageRenderer.windSpeedSmooth - rate < windSpeed) {
+							ExtendedRenderer.foliageRenderer.windSpeedSmooth = windSpeed;
+						} else {
+							ExtendedRenderer.foliageRenderer.windSpeedSmooth -= rate;
+						}
 					}
 				}
+
+				float baseTimeChangeRate = 60F;
+
+
+				FoliageRenderer.windTime += 0 + (baseTimeChangeRate * ExtendedRenderer.foliageRenderer.windSpeedSmooth);
 			}
-
-			float baseTimeChangeRate = 60F;
-
-
-			FoliageRenderer.windTime += 0 + (baseTimeChangeRate * ExtendedRenderer.foliageRenderer.windSpeedSmooth);
+			*/
+	    		Weather2Remastered.error("Foliage renderer does not exist -Fartsy");
+	    	}
 		}
-		*/
-    		Weather2Remastered.error("Foliage renderer does not exist -Fartsy");
-	}
 	else
 		resetClientWeather();
     }
@@ -155,7 +161,7 @@ public class ClientTickHandler
     {
     	try
     	{
-			World world = net.minecraft.client.Minecraft.getInstance().level;
+			ClientWorld world = net.minecraft.client.Minecraft.getInstance().level;
     		if (weatherManager == null || world != lastWorld)
     			init(world);
     	} 
@@ -164,7 +170,7 @@ public class ClientTickHandler
     		Weather2Remastered.debug("Warning, client received packet before it was ready to use, and failed to init client weather due to null world");
     	}
     }
-    public static void init(World world)
+    public static void init(ClientWorld world)
     {
 		//this is generally triggered when they teleport to another dimension
 		if (weatherManager != null)
@@ -178,13 +184,11 @@ public class ClientTickHandler
     	lastWorld = world;
     	weatherManager = new WeatherManagerClient(world);
 		//request a full sync from server
-    	//PacketData.sync();
-    	Weather2Remastered.error("Can't call PacketData.sync because fartsy is lazy and did not implement it yet!");
+    	PacketData.sync();
     }
     static void getField(Field field, Object newValue) throws Exception
     {
         field.setAccessible(true);
-        // remove final modifier from field
         Field modifiersField = Field.class.getDeclaredField("modifiers");
         modifiersField.setAccessible(true);
         modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);

@@ -7,10 +7,12 @@ import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
@@ -28,6 +30,7 @@ import net.mrbt0907.weather2remastered.config.ConfigVolume;
 import net.mrbt0907.weather2remastered.registry.SoundRegistry;
 import net.mrbt0907.weather2remastered.util.Maths;
 import net.mrbt0907.weather2remastered.util.Maths.Vec3;
+import net.mrbt0907.weather2remastered.util.fartsy.FartsyUtil;
 
 @OnlyIn(Dist.CLIENT)
 public class WeatherManagerClient extends AbstractWeatherManager
@@ -42,9 +45,9 @@ public class WeatherManagerClient extends AbstractWeatherManager
 	public int weatherRainTime = 0;
 	private int particleLimit = 0;
 
-	public WeatherManagerClient(World world)
+	public WeatherManagerClient(ClientWorld world)
 	{
-		super(world);
+		super((World) world);
 	}
 	
 	@Override
@@ -88,7 +91,7 @@ public class WeatherManagerClient extends AbstractWeatherManager
 	 *7 - Create Lightning Bolt*/
 	public void nbtSyncFromServer(CompoundNBT mainNBT)
 	{
-		//System.out.println("SYNCING FROM SERVER " + mainNBT);
+		//System.out.println("SYNCING FROM SERVER " + FartsyUtil.prettyPrintNBT(mainNBT));
 		int command = mainNBT.getInt("command");
 		switch(command)
 		{
@@ -109,7 +112,7 @@ public class WeatherManagerClient extends AbstractWeatherManager
 				{
 					System.out.println(nbt.getUUID("frontUUID"));
 					if (front == null) {
-						Weather2Remastered.error("FRONT NULL WTF?" + front);
+						Weather2Remastered.debug("FRONT NULL, is it a global front maybe...?" + front);
 						return;
 					}
 					Weather2Remastered.debug("Creating a new storm: " + uuid.toString());
@@ -150,12 +153,11 @@ public class WeatherManagerClient extends AbstractWeatherManager
 				UUID uuidA = mainNBT.getUUID("weatherObject"), uuidB = mainNBT.getUUID("frontObject");
 				AbstractFrontObject front = getFront(uuidB);
 				AbstractWeatherObject system = systems.get(uuidA);
-				
+
 				if (front != null)
 					front.removeWeatherObject(uuidA);
 				else if (system != null)
 					removeWeatherObject(uuidA);
-
 				refreshParticleLimit();
 				break;
 			}
@@ -225,10 +227,11 @@ public class WeatherManagerClient extends AbstractWeatherManager
 			case 11:
 			{
 				CompoundNBT nbt = mainNBT.getCompound("frontObject");
-				UUID uuid = mainNBT.getUUID("uuid");
+
+				UUID uuid = nbt.getUUID("uuid");
 				if (nbt.contains("posX"))
 				{
-					Weather2Remastered.debug("Creating a new front: " + uuid.toString());
+					Weather2Remastered.debug("Creating a new front: " + uuid.toString() + "" + nbt.getDouble("posX"));
 					AbstractFrontObject front = createFront(nbt.getInt("layer"), nbt.getDouble("posX"), nbt.getDouble("posZ"));
 					front.readNBT(nbt);
 					fronts.put(uuid, front);
@@ -246,8 +249,8 @@ public class WeatherManagerClient extends AbstractWeatherManager
 			{
 				CompoundNBT nbt = mainNBT.getCompound("frontObject");
 				AbstractFrontObject front = getFront(nbt.getUUID("uuid"));
-				if(front != null)
-					front.readNBT(nbt);
+				//System.out.println(nbt.getUUID("uuid"));
+				if(front != null) front.readNBT(nbt);
 				break;
 			}
 			case 13:
@@ -263,7 +266,7 @@ public class WeatherManagerClient extends AbstractWeatherManager
 						removeFront(front);
 					}
 				else
-					Weather2Remastered.error("error removing front, cant find by ID: " + uuid.toString());
+					Weather2Remastered.debug("error removing front, cant find by ID: " + uuid.toString());
 				break;
 			}
 			case 14:
@@ -272,6 +275,15 @@ public class WeatherManagerClient extends AbstractWeatherManager
 				weatherParticles.forEach(particle -> particle.remove());
 				weatherParticles.clear();
 				Weather2Remastered.debug("Cleaned up client particles");
+				break;
+			}
+			case 20: 
+			{
+				if (net.minecraft.client.Minecraft.getInstance().level != null) {
+					net.minecraft.client.world.ClientWorld world = net.minecraft.client.Minecraft.getInstance().level;
+					world.setThunderLevel(mainNBT.getFloat("setThunderLevel"));
+//					System.out.println("Changing thunder level in world! Now: " + mainNBT.getFloat("setThunderLevel"));
+				}
 				break;
 			}
 			default:

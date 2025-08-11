@@ -48,8 +48,8 @@ public class ServerTickHandler
 			if (world.getGameTime() % ConfigMisc.auto_save_interval == 0)
 				Weather2Remastered.writeOutData(false);
 		
-		World[] worlds = StreamSupport.stream(server.getAllLevels().spliterator(), false).toArray(ServerWorld[]::new);
-		World dim;
+		ServerWorld[] worlds = StreamSupport.stream(server.getAllLevels().spliterator(), false).toArray(ServerWorld[]::new);
+		ServerWorld dim;
 		List<String> removedManagers = new ArrayList<String>();
 		int size = worlds.length;
 		//add use of CSV of supported dimensions here once feature is added, for now just overworld
@@ -103,7 +103,7 @@ public class ServerTickHandler
 	}
 	
 	//must only be used when world is active, soonest allowed is TickType.WORLDLOAD
-	public static void addWeatherSystem(World world)
+	public static void addWeatherSystem(ServerWorld world)
 	{
 		String dim = world.dimension().location().toString();
 		Weather2Remastered.debug("Registering Weather2 manager for dim: " + dim);

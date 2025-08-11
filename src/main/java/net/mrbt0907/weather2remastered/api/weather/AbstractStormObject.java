@@ -8,6 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -22,6 +23,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.WeatherAPI;
 import net.mrbt0907.weather2remastered.api.weather.WeatherEnum.Stage;
+import net.mrbt0907.weather2remastered.client.render.AbstractWeatherRenderer;
 import net.mrbt0907.weather2remastered.config.ConfigMisc;
 import net.mrbt0907.weather2remastered.config.ConfigSnow;
 import net.mrbt0907.weather2remastered.config.ConfigStorm;
@@ -37,6 +39,7 @@ import net.mrbt0907.weather2remastered.util.WeatherUtilEntity;
 import net.mrbt0907.weather2remastered.util.coro.CoroChunkCoordsBlock;
 import net.mrbt0907.weather2remastered.util.coro.CoroCompat;
 import net.mrbt0907.weather2remastered.util.coro.CoroEntParticle;
+import net.mrbt0907.weather2remastered.util.fartsy.FartsyUtil;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraft.world.gen.Heightmap;
 public class AbstractStormObject extends AbstractWeatherObject implements IWeatherRain, IWeatherLayered
@@ -234,16 +237,15 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 		//adjust posGround to be pos with the ground Y pos for convinient usage
 		posGround = new Vec3(pos.posX, pos.posY, pos.posZ);
 		posGround.posY = currentTopYBlock;
-		if (manager.world == null) {
+		if (manager.getWorld() == null) {
 			Weather2Remastered.error("World was null, trying again...");
 			return;
 		}
-		if (manager.world.isClientSide())
+		if(FartsyUtil.isClientWorldSafe(manager.getWorld()))
 		{
 			if (!WeatherUtil.isPaused())
 			{
 				tickClient();
-				
 				if (isDeadly())
 					//NewTornadoHelper.tick(this, world);
 					Weather2Remastered.error("Trying to tick deadly storm but fartsy didn't load the new tornado helper yet!");
@@ -873,6 +875,7 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 		ResourceLocation id = WeatherAPI.getParticleRendererId();
 		if (particleRendererId != id)
 		{
+			
 			if (particleRenderer != null)
 			{
 				particleRenderer.cleanup();
@@ -884,6 +887,7 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 			
 		if (particleRenderer != null)
 			particleRenderer.tick();
+		
 	}
 	
 	@Override
@@ -1132,8 +1136,14 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 		
 		if (spawnBolt)
 		{
-			Weather2Remastered.error("Can't spawn new EntityLightningEX as it does not exist.");/*
-			EntityLightningEX lightning = new EntityLightningEX(world, x, y, z);
+			Weather2Remastered.error("UUID: " + getUUID() + "Can't spawn new EntityLightningEX as it does not exist. Storm pos " + pos.posX + " " + pos.posZ);
+			LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(world);
+		    if (lightning != null) {
+		        lightning.moveTo(x + 0.5, y, z + 0.5);
+		        lightning.setVisualOnly(false); // false = real lightning, true = visual only
+		        world.addFreshEntity(lightning);
+		    }
+			/*EntityLightningEX lightning = new EntityLightningEX(world, x, y, z);
 			manager.getWorld().weatherEffects.add(lightning);
 			PacketLightning.spawnLightning(manager.getDimension(), lightning);
 			*/
