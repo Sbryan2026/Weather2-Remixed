@@ -175,6 +175,7 @@ public class NewSceneEnhancer implements Runnable
 		if (cachedSystem != null)
 		{
 			float max = 0.29F;
+			//Weather2.info("fogdensity " + fogDensity + " Was calculated from Maths.clap (Math.max((Math.abs(" + rain + " 0.125F)) /" + " 0.69F, 0.0F) * " + max + " * " + (float) ConfigClient.fog_mult + "0.0F, " + max);
 			if (cachedSystem instanceof SandstormObject)
 			{
 				fogDensity = (float) ((1.0D - Math.min(cachedSystemDistance / 300.0D, 1.0D)) * max * ConfigClient.fog_mult);
@@ -195,32 +196,25 @@ public class NewSceneEnhancer implements Runnable
 	/**Finds if precipitation needs to be rendered and sets the target rain if needed*/
 	protected void tickQueuePrecipitation()
 	{
-		Vec3 pos = new Vec3(MC.player.getPositionVector());
-			
-		rainTarget = ClientTickHandler.weatherManager != null ? ClientTickHandler.weatherManager.getRainTargetValue(pos) : 0.0F;
-		overcastTarget = ClientTickHandler.weatherManager != null ? ClientTickHandler.weatherManager.getOvercastTargetValue(pos) : 0.0F;
+		if (ClientTickHandler.weatherManager != null)
+		{
+			Vec3 pos = new Vec3(MC.player.getPosition());
+			rainTarget = ClientTickHandler.weatherManager.getRainTarget(pos, renderDistance + 64F);
+			overcastTarget = ClientTickHandler.weatherManager.getOvercastTarget(pos, renderDistance + 64F);
+			if (ConfigMisc.overcast_mode && ClientTickHandler.weatherManager.weatherID >= 1)
+			{
+				rainTarget = Math.max(rainTarget, ConfigStorm.min_overcast_rain);
+				overcastTarget = Math.max(overcastTarget, ConfigStorm.min_overcast_rain);
+			}
 
-		if (ConfigMisc.overcast_mode && ClientTickHandler.weatherManager != null && ClientTickHandler.weatherManager.weatherID >= 1)
-		{
-			rainTarget = Math.max(rainTarget, ConfigStorm.min_overcast_rain);
-			overcastTarget = Math.max(overcastTarget, ConfigStorm.min_overcast_rain);
+			if (WeatherUtil.getTemperature(MC.world, MC.player.getPosition()) < 0.0F)
+				rainTarget = -rainTarget;
+
+			MC.world.getWorldInfo().setRaining(rainTarget != 0.0F);
+			MC.world.getWorldInfo().setThundering(overcastTarget > 0.45F);
 		}
-		
-		if (WeatherUtil.getTemperature(MC.world, MC.player.getPosition()) < 0.0F)
-			rainTarget = -rainTarget;
-			
-		if (overcastTarget != 0.0F)
-		{
-			MC.world.getWorldInfo().setRaining(true);
-			MC.world.getWorldInfo().setThundering(true);
-		}
-		else
-		{
-			MC.world.getWorldInfo().setRaining(false);
-			MC.world.getWorldInfo().setThundering(false);
-		}
+        else reset();
 	}
-	
 	/**Finds block positions of where particles can spawn and caches the results*/
 	protected void tickQueueParticles()
 	{
