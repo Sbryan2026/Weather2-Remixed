@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import CoroUtil.util.CoroUtilPhysics;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -37,8 +39,8 @@ public class WeatherManager
 	
 	//fronts
 	protected FrontObject globalFront;
-	protected Map<UUID, FrontObject> fronts = new LinkedHashMap<UUID, FrontObject>();
-	protected Map<UUID, WeatherObject> systems = new LinkedHashMap<UUID, WeatherObject>();
+	protected Map<UUID, FrontObject> fronts = new ConcurrentHashMap<UUID, FrontObject>();
+	protected Map<UUID, WeatherObject> systems = new ConcurrentHashMap<UUID, WeatherObject>();
 	
 	//volcanos
 	protected List<VolcanoObject> volcanoObjects = new ArrayList<>();

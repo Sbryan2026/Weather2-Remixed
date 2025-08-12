@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer;
+import net.mrbt0907.weather2.api.weather.WeatherEnum;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
@@ -66,6 +67,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 	{
 		if (!(system instanceof StormObject)) return;
 		StormObject storm = (StormObject) this.system;
+		double gapRadius = storm.stormType == StormType.WATER.ordinal() ? (storm.size / 1.75D) : (storm.size / Maths.random(2.25D, 1.5D)); // Gets a random radius to use as a visual gap
 		EntityPlayer entP = Minecraft.getMinecraft().player;
 		IBlockState state = ConfigCoroUtil.optimizedCloudRendering ? Blocks.AIR.getDefaultState() : ChunkUtils.getBlockState(manager.getWorld(), (int) storm.pos_funnel_base.posX, (int) storm.pos_funnel_base.posY - 1, (int) storm.pos_funnel_base.posZ);
 		Material material = state.getMaterial();
@@ -121,7 +123,6 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		
 		Random rand = new Random();
 		Vec3 playerAdjPos = new Vec3(entP.posX, storm.pos.posY, entP.posZ);
-		
 		//spawn clouds
 		if (ConfigClient.enable_cloud_rendering ? true : storm.isStorm())
 			if (ConfigCoroUtil.optimizedCloudRendering)
@@ -168,6 +169,15 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 							
 							double spawnRad = storm.size * 1.2D;
 							Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad), layerHeight + (rand.nextDouble() * 40.0F) + (storm.stage >= Stage.RAIN.getStage() ? 30.0F : 60.0D), storm.pos.posZ + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad));
+							if (storm.stormType == StormType.WATER.ordinal()) {
+								// --- Visual gap in storm base ---
+					            // Distance squared from storm center (XZ plane only), makes a visual gap for hurricanes
+					            double dx1 = tryPos.posX - storm.pos.posX;
+					            double dz1 = tryPos.posZ - storm.pos.posZ;
+	
+					            if ((dx1 * dx1 + dz1 * dz1) < (gapRadius * gapRadius)) continue;
+							}
+				            // -----------------
 							if (tryPos.distanceSq(playerAdjPos) < maxRenderDistance) {
 								if (storm.pos.distanceSq(tryPos) > 200.0D || storm.stormType == 0)
 								if (storm.getAvoidAngleIfTerrainAtOrAheadOfPosition(storm.getAngle(), tryPos) == 0) {
@@ -372,59 +382,83 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 				 storm.spinEntity(ent);
 			}
 		}
-		if (storm.getStage() > Stage.THUNDER.getStage()&& manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.cloud_particle_delay) == 0) {
-			for (int i = 0; i < loopSize && shouldSpawn(4); i++)
-			{
-				if ((listParticlesMeso.size() < (storm.size + extraSpawning) / 1F) && (listParticlesMesoAlt.size() < (storm.size + extraSpawning)))
-				{
-					int cloud = Maths.random(0, 2);
-					double stormRad = storm.size * (storm.stormType ==  StormType.WATER.ordinal() ? 1.2 : cloud !=0 ? 1.1D : 0.95D); //Used for main meso clouds, alternative texture for cumulonimbus cloud. We spawn it 0.95D instead so it looks more realistic.
-					double stormRad2 = storm.size * 0.80D; //Used for base cloud. Base cloud is currently spawned using tryPos2.
-					double defMesoHeight = layerHeight + (rand.nextDouble() * 40.0F);
-					Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad), storm.stormType == StormType.WATER.ordinal() ? defMesoHeight : defMesoHeight * ConfigClient.meso_height , storm.pos.posZ + (rand.nextDouble()*stormRad) - (rand.nextDouble()*stormRad));
-					Vec3 tryPos2 = new Vec3(storm.pos.posX + (rand.nextDouble()*stormRad2) - (rand.nextDouble()*stormRad2), storm.stormType == StormType.WATER.ordinal() ? defMesoHeight : defMesoHeight * ConfigClient.meso_height , storm.pos.posZ + (rand.nextDouble()*stormRad2) - (rand.nextDouble()*stormRad2));
-					if (tryPos.distanceSq(playerAdjPos) < maxRenderDistance) {
-						if (storm.stormType == 1 && storm.pos.distanceSq(tryPos) > 350.0D || storm.stormType == 0)
-						if (storm.getAvoidAngleIfTerrainAtOrAheadOfPosition(storm.getAngle(), tryPos) == 0) {
-							ExtendedEntityRotFX particle;
-							ExtendedEntityRotFX particle2;
-							if (WeatherUtil.isAprilFoolsDay()) {
-								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, ParticleRegistry.chicken);
-								particle2 = spawnParticle(tryPos2.posX, tryPos.posY - 60D, tryPos2.posZ, 0, ParticleRegistry.chicken);
-								if (particle == null || particle2 == null) break;
-								particle.setColor(1F, 1F, 1F);
-								particle2.setColor(1F, 1F, 1F);
-							}
-							else
-							{
-								float finalRed = Math.min(0.8F, 0.65F + (rand.nextFloat() * 0.2F) -0.3F);
-								float finalGreen = finalRed;
-								float finalBlue = finalRed;
-								 
-								if (!storm.isFirenado && !WeatherUtil.isAprilFoolsDay()) finalRed = Maths.clamp(finalRed -= NewSceneEnhancer.instance().overcast, (finalGreen + finalBlue)* ConfigClient.meso_greenblue_mult, 1.0F);
-								particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 1, (cloud != 0 ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso_wall));
-								particle2 = spawnParticle(tryPos2.posX, tryPos.posY - 60D, tryPos2.posZ, 1, net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
-								if (particle == null || particle2 == null) break;
-									particle.setColor(finalRed, finalGreen, finalBlue);
-									particle2.setColor(finalRed, finalGreen, finalBlue);
-									if (storm.isFirenado)
-									{
-											particle.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
-											particle2.setParticleTexture(net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_fire);
-											particle.setColor(1F, 1F, 1F);
-											particle2.setColor(1F, 1F, 1F);
-									}									
-							}
-							particle.rotationPitch = Maths.random(70.0F, 110.0F);
-							particle.setScale(1250.0F * sizeCloudMult);
-							particle2.setScale(2200.0F * sizeCloudMult);
-							listParticlesMeso.add(particle);
-							listParticlesMesoAlt.add(particle2);
-							}
-						}
-					}
-				}
-			}
+		
+		if (storm.getStage() > Stage.THUNDER.getStage() && manager.getWorld().getTotalWorldTime() % (delay + ConfigClient.cloud_particle_delay) == 0) {
+		    for (int i = 0; i < loopSize && shouldSpawn(4); i++) {
+		        if ((listParticlesMeso.size() < (storm.size + extraSpawning) / 1F) && (listParticlesMesoAlt.size() < (storm.size + extraSpawning))) {
+		            int cloud = Maths.random(0, 2);
+		            double stormRad = storm.size * (storm.stormType == StormType.WATER.ordinal() ? 1.2 : cloud != 0 ? 1.1D : 0.95D);
+		            double stormRad2 = storm.size * 0.80D;
+		            double defMesoHeight = layerHeight + (rand.nextDouble() * 40.0F);
+
+		            Vec3 tryPos = new Vec3(
+		                storm.pos.posX + (rand.nextDouble() * stormRad) - (rand.nextDouble() * stormRad),
+		                storm.stormType == StormType.WATER.ordinal() ? defMesoHeight : defMesoHeight * ConfigClient.meso_height,
+		                storm.pos.posZ + (rand.nextDouble() * stormRad) - (rand.nextDouble() * stormRad)
+		            );
+
+		            Vec3 tryPos2 = new Vec3(
+		                storm.pos.posX + (rand.nextDouble() * stormRad2) - (rand.nextDouble() * stormRad2),
+		                storm.stormType == StormType.WATER.ordinal() ? defMesoHeight + 250.0F : defMesoHeight * ConfigClient.meso_height,
+		                storm.pos.posZ + (rand.nextDouble() * stormRad2) - (rand.nextDouble() * stormRad2)
+		            );
+
+		            // --- Visual gap in storm base ---
+		            // Distance squared from storm center (XZ plane only), makes a visual gap instead of clipping the funnel with our particles
+		            double dx1 = tryPos.posX - storm.pos.posX;
+		            double dz1 = tryPos.posZ - storm.pos.posZ;
+		            double dx2 = tryPos2.posX - storm.pos.posX;
+		            double dz2 = tryPos2.posZ - storm.pos.posZ;
+
+		            if ((dx1 * dx1 + dz1 * dz1) < (gapRadius * gapRadius)) continue;
+		            if ((dx2 * dx2 + dz2 * dz2) < (gapRadius * gapRadius)) continue;
+		            // -----------------
+
+		            if (tryPos.distanceSq(playerAdjPos) < maxRenderDistance) {
+		                if (storm.stormType == 1 && storm.pos.distanceSq(tryPos) > 350.0D || storm.stormType == 0)
+		                if (storm.getAvoidAngleIfTerrainAtOrAheadOfPosition(storm.getAngle(), tryPos) == 0) {
+		                    ExtendedEntityRotFX particle;
+		                    ExtendedEntityRotFX particle2;
+
+		                    if (WeatherUtil.isAprilFoolsDay()) {
+		                        particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 0, ParticleRegistry.chicken);
+		                        particle2 = spawnParticle(tryPos2.posX, tryPos.posY - 60D, tryPos2.posZ, 0, ParticleRegistry.chicken);
+		                        if (particle == null || particle2 == null) break;
+		                        particle.setColor(1F, 1F, 1F);
+		                        particle2.setColor(1F, 1F, 1F);
+		                    } else {
+		                        float finalRed = Math.min(0.8F, 0.65F + (rand.nextFloat() * 0.2F) - 0.3F);
+		                        float finalGreen = finalRed;
+		                        float finalBlue = finalRed;
+
+		                        if (!storm.isFirenado && !WeatherUtil.isAprilFoolsDay())
+		                            finalRed = Maths.clamp(finalRed -= NewSceneEnhancer.instance().overcast, (finalGreen + finalBlue) * ConfigClient.meso_greenblue_mult, 1.0F);
+
+		                        particle = spawnParticle(tryPos.posX, tryPos.posY, tryPos.posZ, 1,
+		                                (cloud != 0 ? net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso : net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso_wall));
+		                        particle2 = spawnParticle(tryPos2.posX, tryPos.posY - 60D, tryPos2.posZ, 1, net.mrbt0907.weather2.registry.ParticleRegistry.cloud256_meso);
+		                        if (particle == null || particle2 == null) break;
+		                        particle.setColor(finalRed, finalGreen, finalBlue);
+		                        particle2.setColor(finalRed, finalGreen, finalBlue);
+
+		                        if (storm.isFirenado) {
+		                            particle.setParticleTexture(ParticleRegistry.cloud256_fire);
+		                            particle2.setParticleTexture(ParticleRegistry.cloud256_fire);
+		                            particle.setColor(1F, 1F, 1F);
+		                            particle2.setColor(1F, 1F, 1F);
+		                        }
+		                    }
+
+		                    particle.rotationPitch = Maths.random(70.0F, 110.0F);
+		                    particle.setScale(1250.0F * sizeCloudMult);
+		                    particle2.setScale(2200.0F * sizeCloudMult);
+		                    listParticlesMeso.add(particle);
+		                    listParticlesMesoAlt.add(particle2);
+		                }
+		            }
+		        }
+		    }
+		}
 		for (int i = 0; i < listParticlesMeso.size(); i++)
 		{
 			EntityRotFX ent = listParticlesMeso.get(i);
@@ -457,6 +491,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 					{
 						if (storm.stormType == StormType.WATER.ordinal())
 						{
+							ent.setPosition(ent.posX, layerHeight+40.0D, ent.posZ);
 							angle += 30 + ((ent.getEntityId() % 5) * 4);
 							if (curDist > 150 + ((storm.stage-Stage.TORNADO.getStage()+1) * 30)) 
 								angle += 10;
