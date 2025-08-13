@@ -416,8 +416,13 @@ public class Maths
 		/**Position Z of this 3D vector*/
 		public double posZ = 0.0D;
 
-		/**Used to create 3D vectors for positioning calculations*/
 		public Vec3() {}
+		/**Used to create 3D vectors for positioning calculations*/
+		public Vec3(Vec3 pos) {
+			posX = pos.posX;
+			posY = pos.posY;
+			posZ = pos.posZ;
+		}
 		/**Used to create 3D vectors for positioning calculations*/
 		public Vec3(Vec3d pos)
 		{

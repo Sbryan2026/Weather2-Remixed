@@ -364,11 +364,10 @@ public class WeatherManagerClient extends WeatherManager
 		float rainTarget = 0.0F;
 		StormObject storm = getStrongestClosestStormWithRain(pos, maxDistSq);
 		if (storm != null) {
-			//System.out.println(storm.getUUID() + " has humidity of " + storm.rain + " at " + storm.pos.toBlockPos().toString());
 			float rain = ((IWeatherRain)storm).getDownfall(pos) - IWeatherRain.MINIMUM_DRIZZLE;
 			if (rain > rainTarget) rainTarget = rain;
 		}
-		return Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F);
+		return Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 1.0F);
 	}
 
 	/**Gets the target overcast value based on the closest and worst storm in range**/

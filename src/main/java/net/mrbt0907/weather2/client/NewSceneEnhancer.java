@@ -110,6 +110,7 @@ public class NewSceneEnhancer implements Runnable
 	/**Determines how far the sky box should be from the player*/
 	public float renderDistance;
 	
+	private Vec3 playerPos = new Vec3(0, 0, 0);
 	NewSceneEnhancer()
 	{
 		MC = FMLClientHandler.instance().getClient();
@@ -138,7 +139,9 @@ public class NewSceneEnhancer implements Runnable
 	{
 		if (MC.world != null && MC.player != null && EZConfigParser.isEffectsEnabled(MC.world.provider.getDimension()))
 		{
-			Vec3 playerPos = new Vec3(MC.player.posX, MC.player.posY, MC.player.posZ);
+			playerPos.posX = MC.player.posX;
+			playerPos.posY = MC.player.posY;
+			playerPos.posZ = MC.player.posZ;
 			Vec playerPos2D = new Vec(MC.player.posX, MC.player.posZ);
 			
 			if (ticksThreadExisted % 2L == 0L)
@@ -218,57 +221,66 @@ public class NewSceneEnhancer implements Runnable
 	/**Finds block positions of where particles can spawn and caches the results*/
 	protected void tickQueueParticles()
 	{
-		if (ticksThreadExisted % 10L == 0L)
-		{
-			BlockPos pos, neighborPos;
-			IBlockState state;
-			Block block;
-			Material material;
-			int areaWidth = 20, areaHeight = (int) (areaWidth * 0.5F);
-			int posX = (int) MC.player.posX, posY = (int) MC.player.posY, posZ = (int) MC.player.posZ;
-			int meta;
-			List<BlockSESnapshot> snapshots = new ArrayList<BlockSESnapshot>();
-			
-			if (ConfigClient.enable_falling_leaves || ConfigClient.enable_waterfall_splash || ConfigClient.enable_fire_particle)
-			{
-				for (int x = posX - areaWidth; x < posX + areaWidth; x++)
-					for (int y = posY - areaHeight; y < posY + areaHeight; y++)
-						for (int z = posZ - areaWidth; z < posZ + areaWidth; z++)
-						{
-							state = getBlockState(x, y, z);
-							block = state.getBlock();
-							if (block.equals(Blocks.AIR)) continue;
-							
-							pos = new BlockPos(x, y, z);
-							neighborPos = getRandomNeighbor(pos);
-							
-							material = state.getMaterial();
-							meta = block.getMetaFromState(state);
-								
-							if (ConfigClient.enable_falling_leaves && (material.equals(Material.LEAVES) || material.equals(Material.VINE) || material.equals(Material.PLANTS)) && neighborPos != null)
-								snapshots.add(new BlockSESnapshot(state, pos, neighborPos, 0));
-							else if (ConfigClient.enable_waterfall_splash && material.equals(Material.WATER))
-							{
-								if ((meta & 8) != 0)
-								{
-									IBlockState state2 = getBlockState(x, y - 1, z);
-									IBlockState state3 = getBlockState(x, y + 10, z);
-									int meta2 = state2.getBlock().getMetaFromState(state2);
-									
-									if ((((state2 == null || !state2.getMaterial().equals(Material.WATER)) || (meta2 & 8) == 0) && (state3 != null && state3.getMaterial() == Material.WATER)))
-										snapshots.add(new BlockSESnapshot(state, pos, null, 1));
-								}
-							}
-							else if (ConfigClient.enable_fire_particle && block == Blocks.FIRE)
-								snapshots.add(new BlockSESnapshot(state, pos, null, 2));
-						}
-				
-				queue.clear();
-				queue.addAll(snapshots);
-			}
-			else if (!queue.isEmpty())
-				queue.clear();
-		}
+	    if (ticksThreadExisted % 10L == 0L)
+	    {
+	        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+	        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
+	        IBlockState state;
+	        Block block;
+	        Material material;
+	        int areaWidth = 20, areaHeight = (int) (areaWidth * 0.5F);
+	        int posX = (int) MC.player.posX, posY = (int) MC.player.posY, posZ = (int) MC.player.posZ;
+	        int meta;
+	        List<BlockSESnapshot> snapshots = new ArrayList<>();
+
+	        if (ConfigClient.enable_falling_leaves || ConfigClient.enable_waterfall_splash || ConfigClient.enable_fire_particle)
+	        {
+	            for (int x = posX - areaWidth; x < posX + areaWidth; x++) {
+	                for (int y = posY - areaHeight; y < posY + areaHeight; y++) {
+	                    for (int z = posZ - areaWidth; z < posZ + areaWidth; z++) {
+	                        pos.setPos(x, y, z);
+	                        state = getBlockState(pos.getX(), pos.getY(), pos.getZ());
+	                        block = state.getBlock();
+	                        if (block.equals(Blocks.AIR)) continue;
+
+	                        BlockPos neighborImmutable = getRandomNeighbor(pos);
+	                        boolean hasNeighbor = false;
+	                        if (neighborImmutable != null) {
+	                            neighborPos.setPos(neighborImmutable);
+	                            hasNeighbor = true;
+	                        }
+
+	                        material = state.getMaterial();
+	                        meta = block.getMetaFromState(state);
+
+	                        if (ConfigClient.enable_falling_leaves &&
+	                            (material.equals(Material.LEAVES) || material.equals(Material.VINE) || material.equals(Material.PLANTS))
+	                            && hasNeighbor) {
+	                            snapshots.add(new BlockSESnapshot(state, pos.toImmutable(), neighborPos.toImmutable(), 0));
+	                        } else if (ConfigClient.enable_waterfall_splash && material.equals(Material.WATER)) {
+	                            if ((meta & 8) != 0) {
+	                                IBlockState state2 = getBlockState(x, y - 1, z);
+	                                IBlockState state3 = getBlockState(x, y + 10, z);
+	                                int meta2 = state2.getBlock().getMetaFromState(state2);
+
+	                                if (((state2 == null || !state2.getMaterial().equals(Material.WATER)) || (meta2 & 8) == 0) &&
+	                                    (state3 != null && state3.getMaterial() == Material.WATER)) {
+	                                    snapshots.add(new BlockSESnapshot(state, pos.toImmutable(), null, 1));
+	                                }
+	                            }
+	                        } else if (ConfigClient.enable_fire_particle && block == Blocks.FIRE) {
+	                            snapshots.add(new BlockSESnapshot(state, pos.toImmutable(), null, 2));
+	                        }
+	                    }
+	                }
+	            }
+
+	            queue.clear();
+	            queue.addAll(snapshots);
+	        } else if (!queue.isEmpty()) {
+	            queue.clear();
+	        }
+	    }
 	}
 	
 	/**Finds block positions of where sounds can spawn and caches the results*/

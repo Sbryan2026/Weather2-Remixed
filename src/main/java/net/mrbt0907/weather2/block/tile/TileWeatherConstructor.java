@@ -79,14 +79,14 @@ public class TileWeatherConstructor extends TileEntity implements ITickable
 					lastTickStormObject.updateType();
 					break;
 				case 3:
-					lastTickStormObject.rain = 200.0F;
+					lastTickStormObject.rain = 300.0F;
 					lastTickStormObject.stormType = StormObject.StormType.LAND.ordinal();
 					lastTickStormObject.stage = Stage.THUNDER.getStage();
 					lastTickStormObject.intensity = 1.99F;
 					lastTickStormObject.updateType();
 					break;
 				case 4:
-					lastTickStormObject.rain = 300.0F;
+					lastTickStormObject.rain = 500.0F;
 					lastTickStormObject.stormType = StormObject.StormType.LAND.ordinal();
 					lastTickStormObject.stage = Stage.SEVERE.getStage();
 					lastTickStormObject.intensity = 2.99F;
