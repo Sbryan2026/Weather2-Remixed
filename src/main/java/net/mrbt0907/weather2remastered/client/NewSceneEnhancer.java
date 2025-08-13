@@ -239,28 +239,7 @@ public class NewSceneEnhancer implements Runnable
 			Vec3 pos = new Vec3(MC.player.position());
 			rainTarget = ClientTickHandler.weatherManager.getRainTarget(pos, renderDistance + 512F);
 			overcastTarget = ClientTickHandler.weatherManager.getOvercastTarget(pos, renderDistance + 512F);
-			if (iTesting <= 500) {	
-				long startTime, endTime;
-				int iterations = 1;
-				AbstractStormObject result;
 
-				// Benchmark stream version
-				startTime = System.nanoTime();
-				for (int i = 0; i < iterations; i++) {
-				    result = ClientTickHandler.weatherManager.getStrongestClosestStormWithRain(pos, 1024F);  // your original stream code
-				}
-				endTime = System.nanoTime();
-				System.out.println("Stream version time (ms): " + (endTime - startTime));
-
-				// Benchmark loop version
-				startTime = System.nanoTime();
-				for (int i = 0; i < iterations; i++) {
-				    result = ClientTickHandler.weatherManager.getStrongestClosestStormWithRain_loop(pos, 1024F);  // new loop code
-				}
-				endTime = System.nanoTime();
-				System.out.println("Loop version time (ms): " + (endTime - startTime));
-				iTesting++;
-			}
 			if (ConfigMisc.overcast_mode && ClientTickHandler.weatherManager.weatherID >= 1)
 			{
 				rainTarget = Math.max(rainTarget, ConfigStorm.min_overcast_rain);
