@@ -39,7 +39,6 @@ public class NewSceneEnhancer implements Runnable
 	private volatile boolean run = true;
 	private int errors = 0, errorsThreaded = 0;
 	
-	
 	//----- Local Variables -----\\
 	public final Minecraft MC;
 	/**The cached result of a weather object if it exists*/
@@ -76,7 +75,8 @@ public class NewSceneEnhancer implements Runnable
 	public float dampness;
 	/**Determines how far the sky box should be from the player*/
 	public float renderDistance;
-	
+
+	private Vec3 playerPos = new Vec3(0, 0, 0);
 	NewSceneEnhancer()
 	{
 		MC = Minecraft.getInstance().getSelf();
@@ -101,15 +101,20 @@ public class NewSceneEnhancer implements Runnable
 	 *- Cache requested fog color<br>
 	 *- Cache requested precipitation values<br>
 	 *- Cache storm results*/
+	@SuppressWarnings("static-access")
 	protected void tickThread()
 	{
 		if (MC.level != null && MC.player != null && EZConfigParser.isEffectsEnabled(MC.level.dimension().location().toString()))
 		{
-			Vec3 playerPos = new Vec3(MC.player.getX(), MC.player.getY(), MC.player.getZ());
+			playerPos.posX = MC.player.getX();
+			playerPos.posY = MC.player.getY();
+			playerPos.posZ = MC.player.getZ();
 			Vec playerPos2D = new Vec(MC.player.getX(), MC.player.getZ());
-			
-			if (ticksThreadExisted % 2L == 0L)
-				cachedSystem = ClientTickHandler.weatherManager != null ? ClientTickHandler.weatherManager.getClosestWeather(playerPos, renderDistance, 0, Integer.MAX_VALUE, WeatherEnum.Type.CLOUD) : null;
+
+			if (ticksThreadExisted % 2L == 0L && ClientTickHandler.weatherManager != null)
+			{
+				cachedSystem = ClientTickHandler.weatherManager != null ? ClientTickHandler.weatherManager.getClosestWeather(playerPos, renderDistance, 0, Integer.MAX_VALUE, WeatherEnum.Type.CLOUD) : null;				
+			}
 			
 			if (cachedSystem != null)
 			{
@@ -151,7 +156,8 @@ public class NewSceneEnhancer implements Runnable
 				fogBlueTarget = 0.10F;
 				return;
 			}
-			else*/ if (rainTarget != 0.0F)
+			else*/ 
+			if (rainTarget != 0.0F)
 			{
 				fogDensity = Maths.clamp(Math.max((Math.abs(rain + 0.125F)) / 0.69F, 0.0F) * max * (float) ConfigClient.fog_mult, 0.0F, max);
 				return;
@@ -159,36 +165,115 @@ public class NewSceneEnhancer implements Runnable
 		}
 		fogDensity = 0.0F;
 	}
-	
+
+	/**Finds block positions of where particles can spawn and caches the results*/
+	protected void tickQueueParticles()
+	{
+		/*if (ticksThreadExisted % 10L == 0L)
+	    {
+	        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+	        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
+	        IBlockState state;
+	        Block block;
+	        Material material;
+	        int areaWidth = 20, areaHeight = (int) (areaWidth * 0.5F);
+	        int posX = (int) MC.player.posX, posY = (int) MC.player.posY, posZ = (int) MC.player.posZ;
+	        int meta;
+	        List<BlockSESnapshot> snapshots = new ArrayList<>();
+
+	        if (ConfigClient.enable_falling_leaves || ConfigClient.enable_waterfall_splash || ConfigClient.enable_fire_particle)
+	        {
+	            for (int x = posX - areaWidth; x < posX + areaWidth; x++) {
+	                for (int y = posY - areaHeight; y < posY + areaHeight; y++) {
+	                    for (int z = posZ - areaWidth; z < posZ + areaWidth; z++) {
+	                        pos.setPos(x, y, z);
+	                        state = getBlockState(pos.getX(), pos.getY(), pos.getZ());
+	                        block = state.getBlock();
+	                        if (block.equals(Blocks.AIR)) continue;
+
+	                        BlockPos neighborImmutable = getRandomNeighbor(pos);
+	                        boolean hasNeighbor = false;
+	                        if (neighborImmutable != null) {
+	                            neighborPos.setPos(neighborImmutable);
+	                            hasNeighbor = true;
+	                        }
+
+	                        material = state.getMaterial();
+	                        meta = block.getMetaFromState(state);
+
+	                        if (ConfigClient.enable_falling_leaves &&
+	                            (material.equals(Material.LEAVES) || material.equals(Material.VINE) || material.equals(Material.PLANTS))
+	                            && hasNeighbor) {
+	                            snapshots.add(new BlockSESnapshot(state, pos.toImmutable(), neighborPos.toImmutable(), 0));
+	                        } else if (ConfigClient.enable_waterfall_splash && material.equals(Material.WATER)) {
+	                            if ((meta & 8) != 0) {
+	                                IBlockState state2 = getBlockState(x, y - 1, z);
+	                                IBlockState state3 = getBlockState(x, y + 10, z);
+	                                int meta2 = state2.getBlock().getMetaFromState(state2);
+
+	                                if (((state2 == null || !state2.getMaterial().equals(Material.WATER)) || (meta2 & 8) == 0) &&
+	                                    (state3 != null && state3.getMaterial() == Material.WATER)) {
+	                                    snapshots.add(new BlockSESnapshot(state, pos.toImmutable(), null, 1));
+	                                }
+	                            }
+	                        } else if (ConfigClient.enable_fire_particle && block == Blocks.FIRE) {
+	                            snapshots.add(new BlockSESnapshot(state, pos.toImmutable(), null, 2));
+	                        }
+	                    }
+	                }
+	            }
+
+	            queue.clear();
+	            queue.addAll(snapshots);
+	        } else if (!queue.isEmpty()) {
+	            queue.clear();
+	        }
+	    }*/
+	}
+
 	/**Finds if precipitation needs to be rendered and sets the target rain if needed*/
 	protected void tickQueuePrecipitation()
 	{
-//		System.out.println(MC.level.isThundering());
-		Vec3 pos = new Vec3(MC.player.position());
-		rainTarget = ClientTickHandler.weatherManager != null ? ClientTickHandler.weatherManager.getRainTargetValue(pos) : 0.0F;
-		overcastTarget = ClientTickHandler.weatherManager != null ? ClientTickHandler.weatherManager.getOvercastTargetValue(pos) : 0.0F;
-		if (ConfigMisc.overcast_mode && ClientTickHandler.weatherManager != null && ClientTickHandler.weatherManager.weatherID >= 1)
+		if (ClientTickHandler.weatherManager != null)
 		{
-			rainTarget = Math.max(rainTarget, ConfigStorm.min_overcast_rain);
-			overcastTarget = Math.max(overcastTarget, ConfigStorm.min_overcast_rain);
-		}
-		
-		if (WeatherUtil.getTemperature(MC.level, MC.player.blockPosition()) < 0.0F)
-			rainTarget = -rainTarget;
-			
-		if (overcastTarget != 0.0F)
-		{
-			MC.level.getLevelData().setRaining(true);
+			Vec3 pos = new Vec3(MC.player.position());
+			rainTarget = ClientTickHandler.weatherManager.getRainTarget(pos, renderDistance + 512F);
+			overcastTarget = ClientTickHandler.weatherManager.getOvercastTarget(pos, renderDistance + 512F);
+			if (iTesting <= 500) {	
+				long startTime, endTime;
+				int iterations = 1;
+				AbstractStormObject result;
+
+				// Benchmark stream version
+				startTime = System.nanoTime();
+				for (int i = 0; i < iterations; i++) {
+				    result = ClientTickHandler.weatherManager.getStrongestClosestStormWithRain(pos, 1024F);  // your original stream code
+				}
+				endTime = System.nanoTime();
+				System.out.println("Stream version time (ms): " + (endTime - startTime));
+
+				// Benchmark loop version
+				startTime = System.nanoTime();
+				for (int i = 0; i < iterations; i++) {
+				    result = ClientTickHandler.weatherManager.getStrongestClosestStormWithRain_loop(pos, 1024F);  // new loop code
+				}
+				endTime = System.nanoTime();
+				System.out.println("Loop version time (ms): " + (endTime - startTime));
+				iTesting++;
+			}
+			if (ConfigMisc.overcast_mode && ClientTickHandler.weatherManager.weatherID >= 1)
+			{
+				rainTarget = Math.max(rainTarget, ConfigStorm.min_overcast_rain);
+				overcastTarget = Math.max(overcastTarget, ConfigStorm.min_overcast_rain);
+			}
+
+			if (WeatherUtil.getTemperature(MC.level, MC.player.blockPosition()) < 0.0F)
+				rainTarget = -rainTarget;
+
+			MC.level.getLevelData().setRaining(rainTarget != 0.0F);
 			MC.level.setThunderLevel(overcast * 1.25F);
 		}
-		else
-		{
-			rainTarget = 0.0F;
-			MC.level.getLevelData().setRaining(false);
-			MC.level.setRainLevel(0.0F);
-			MC.level.setThunderLevel(0.0F);
-		}
-		
+        else reset();
 	}
 	//----- Other -----\\
 		@Override
@@ -436,8 +521,8 @@ public class NewSceneEnhancer implements Runnable
 		{
 			if (event.phase.equals(Phase.START) && MC.level != null)
 			{
-				MC.level.setRainLevel(Math.abs(rain));
-				MC.level.setThunderLevel(overcast * 1.25F);
+				MC.level.setRainLevel(Math.abs(rain)*1.25F);
+				MC.level.setThunderLevel(overcastTarget * 1.25F);
 //				System.out.println("Overcast "+ overcast);
 			}
 		}

@@ -164,15 +164,14 @@ public class WeatherUtilEntity {
 	    {
 	    	//System.out.println("Checking distance");
 	        double player_distance = FartsyUtil.sqrtf((float) entity.distanceToSqr(posX, posY, posZ));
-	        
 	        if (player_distance <= radius && (player_distance < min_radius || player == null))
 	        {
 	            player = entity;
 	            min_radius = player_distance;
-//	            System.out.println("Closest returns " + player_distance);
+	            
 	        }
 	    }
-
+	    //System.out.println("Closest returns " + min_radius);
 	    return player;
 	}
 /* Fix this	

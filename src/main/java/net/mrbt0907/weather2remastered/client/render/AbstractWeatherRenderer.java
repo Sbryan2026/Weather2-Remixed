@@ -96,7 +96,7 @@ public abstract class AbstractWeatherRenderer
 			if (worldDelta != ClientTickHandler.weatherManager.getWorld().getGameTime())
 			{
 				worldDelta = ClientTickHandler.weatherManager.getWorld().getGameTime();
-				renderDebugInfo.clear();
+			/*	renderDebugInfo.clear();
 				renderDebugInfo.add("Renderer: " + String.valueOf(WeatherAPI.getParticleRendererId()));
 				renderDebugInfo.add("Delta: " + delta + "si");
 				if (ConfigClient.max_particles > 0)
@@ -108,7 +108,7 @@ public abstract class AbstractWeatherRenderer
 				{
 					renderDebugInfo.add("Particle Count: " + this.particles.size());
 					renderDebugInfo.add("Global Particle Count: " + ClientTickHandler.weatherManager.getParticleCount());
-				}
+				}*/
 				List<String> extraDebugInfo = null;
 				
 				attempts = 0;

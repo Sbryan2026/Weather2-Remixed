@@ -43,7 +43,7 @@ public class ConfigWind implements IConfigEX
 	@ServerSide
 	@DoubleRange(min=0.0D)
     @Comment("Max wind speed to maintain for storms and clouds. Higher means faster storms.")
-    public static double windSpeedMax = 2.5D;
+    public static double windSpeedMax = 0.75D;
 	@ServerSide
 	@IntegerRange(min=0)
     @Comment("The minimum amount of time in ticks it can take for wind to change speed and direction.")

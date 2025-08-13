@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 
@@ -33,8 +34,8 @@ public class AbstractWeatherManager
 	
 	//fronts
 	protected AbstractFrontObject globalFront;
-	protected Map<UUID, AbstractFrontObject> fronts = new LinkedHashMap<UUID, AbstractFrontObject>();
-	protected Map<UUID, AbstractWeatherObject> systems = new LinkedHashMap<UUID, AbstractWeatherObject>();
+	protected Map<UUID, AbstractFrontObject> fronts = new ConcurrentHashMap<UUID, AbstractFrontObject>();
+	protected Map<UUID, AbstractWeatherObject> systems = new ConcurrentHashMap<UUID, AbstractWeatherObject>();
 
 	public AbstractWeatherManager(@Nonnull World world)
 	{
@@ -325,5 +326,141 @@ public class AbstractWeatherManager
 	public boolean isClient()
 	{
 		return getWorld().isClientSide();
+	}
+
+	/** Checks if violent weather exists in range of the provided distance - provided by Miyu **/
+	public boolean hasViolentStorm(Vec3 pos, float maxDistanceSq)
+	{
+		AbstractWeatherObject violentStorm = systems.values().stream().filter(s ->{
+			if (s instanceof AbstractStormObject)
+			{
+				return ((AbstractStormObject)s).isViolent && Maths.distanceSq(s.pos.posX, s.pos.posZ,pos.posX, pos.posZ) < maxDistanceSq;
+			}
+			return false;
+		})
+		.findFirst().orElse(null);
+
+		return violentStorm != null;
+	}
+
+	/** Grabs the closest strongest storm in range of the provided distance - inspired by Miyu **/
+	public AbstractStormObject getStrongestClosestStorm(Vec3 pos, float maxDistanceSq)
+	{
+	    return systems.values().stream()
+	        .filter(s -> s instanceof AbstractStormObject)
+	        .map(s -> (AbstractStormObject) s)
+	        .filter(storm ->
+	        storm instanceof IWeatherStaged &&
+	        Maths.distanceSq(storm.pos.posX, storm.pos.posZ, pos.posX, pos.posZ) < maxDistanceSq)
+	        .min((a, b) -> {
+	            // Higher stage should be first → invert compare for min()
+	            int stageCompare = Integer.compare(b.stage, a.stage);
+	            if (stageCompare != 0) return stageCompare;
+
+	            // Violent storms with stage > Thunder outrank non-violent
+	            boolean aPriority = a.isViolent && a.stage > WeatherEnum.Stage.THUNDER.getStage();
+	            boolean bPriority = b.isViolent && b.stage > WeatherEnum.Stage.THUNDER.getStage();
+	            if (aPriority != bPriority) {
+	                return aPriority ? -1 : 1;
+	            }
+
+	            // Now grab the closest storm
+	            double distA = Maths.distanceSq(a.pos.posX, a.pos.posZ, pos.posX, pos.posZ);
+	            double distB = Maths.distanceSq(b.pos.posX, b.pos.posZ, pos.posX, pos.posZ);
+	            return Double.compare(distA, distB);
+	        })
+	        .orElse(null);
+	}
+
+	/** Gets the closest strongest storm with rain - inspired by Miyu **/
+	public AbstractStormObject getStrongestClosestStormWithRain(Vec3 pos, float maxDistanceSq) {
+	    return systems.values().stream()
+	            .filter(s -> s instanceof AbstractStormObject)
+	            .map(s -> (AbstractStormObject) s)
+	            .filter(storm -> storm instanceof IWeatherRain && 
+	            Maths.distanceSq(storm.pos.posX, storm.pos.posZ, pos.posX, pos.posZ) < maxDistanceSq
+	            && storm.rain >= IWeatherRain.MINIMUM_DRIZZLE)
+	            .min((a, b) -> {
+	                // 1 → Compare stage (higher first)
+	                int stageCompare = Integer.compare(b.stage, a.stage);
+	                if (stageCompare != 0) return stageCompare;
+
+	                // 2 → Violent bonus if stage >= Rain
+	                boolean aHasViolentBonus = a.isViolent && a.stage > WeatherEnum.Stage.RAIN.getStage();
+	                boolean bHasViolentBonus = b.isViolent && b.stage > WeatherEnum.Stage.RAIN.getStage();
+	                if (aHasViolentBonus != bHasViolentBonus) {
+	                    return aHasViolentBonus ? -1 : 1; // violent bonus always wins
+	                }
+
+	                // 3 → Compare rain (higher first)
+	                int rainCompare = Integer.compare((int) b.rain, (int) a.rain);
+	                if (rainCompare != 0) return rainCompare;
+
+	                // 4 → Compare distance (closer first)
+	                double distA = Maths.distanceSq(a.pos.posX, a.pos.posZ, pos.posX, pos.posZ);
+	                double distB = Maths.distanceSq(b.pos.posX, b.pos.posZ, pos.posX, pos.posZ);
+	                return Double.compare(distA, distB);
+	            })
+	            .orElse(null);
+	}
+	public AbstractStormObject getStrongestClosestStormWithRain_loop(Vec3 pos, float maxDistanceSq) {
+		AbstractStormObject bestStorm = null;
+
+	    for (AbstractWeatherObject s : systems.values()) {
+	        if (!(s instanceof AbstractStormObject)) continue;
+
+	        AbstractStormObject storm = (AbstractStormObject) s;
+
+	        // Check rain interface and minimum rain threshold
+	        if (!(storm instanceof IWeatherRain)) continue;
+	        if (storm.rain < IWeatherRain.MINIMUM_DRIZZLE) continue;
+
+	        // Check distance
+	        double distSq = Maths.distanceSq(storm.pos.posX, storm.pos.posZ, pos.posX, pos.posZ);
+	        if (distSq >= maxDistanceSq) continue;
+
+	        if (bestStorm == null) {
+	            bestStorm = storm;
+	            continue;
+	        }
+
+	        // Comparator logic (returning negative means storm beats bestStorm)
+	        int stageCompare = Integer.compare(storm.stage, bestStorm.stage);
+	        if (stageCompare > 0) {
+	            bestStorm = storm;
+	            continue;
+	        }
+	        else if (stageCompare < 0) {
+	            continue;
+	        }
+
+	        // Stages are equal, check violent bonus
+	        boolean stormViolentBonus = storm.isViolent && storm.stage > WeatherEnum.Stage.RAIN.getStage();
+	        boolean bestViolentBonus = bestStorm.isViolent && bestStorm.stage > WeatherEnum.Stage.RAIN.getStage();
+
+	        if (stormViolentBonus != bestViolentBonus) {
+	            if (stormViolentBonus) {
+	                bestStorm = storm;
+	            }
+	            continue;
+	        }
+
+	        // Violent bonus tie, check rain (higher wins)
+	        int rainCompare = Integer.compare((int) storm.rain, (int) bestStorm.rain);
+	        if (rainCompare > 0) {
+	            bestStorm = storm;
+	            continue;
+	        }
+	        else if (rainCompare < 0) {
+	            continue;
+	        }
+
+	        // Rain tie, check distance (closer wins)
+	        if (distSq < Maths.distanceSq(bestStorm.pos.posX, bestStorm.pos.posZ, pos.posX, pos.posZ)) {
+	            bestStorm = storm;
+	        }
+	    }
+
+	    return bestStorm;
 	}
 }

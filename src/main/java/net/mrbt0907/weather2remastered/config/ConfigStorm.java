@@ -31,19 +31,19 @@ public class ConfigStorm implements IConfigEX
 	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("How big can storms expand up to? Allows funnels to grow larger depending on size.")
-	public static int max_storm_size = 1500;
+	public static int max_storm_size = 1280;
 	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("How small can storms expand up to? Allows funnels to grow smaller depending on size.")
-	public static int min_storm_size = 700;
+	public static int min_storm_size = 768;
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How big can tornadoes expand up to? Allows funnels to grow larger depending on size.")
-	public static int max_funnel_size = 900;
+	public static int max_funnel_size = 500;
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How small can tornadoes expand up to? Allows funnels to grow larger depending on size.")
-	public static int min_funnel_size = 300;
+	public static int min_funnel_size = 200;
 	@ServerSide
 	@IntegerRange(min=1)
 	@Comment("Tick delay for storms. Higher values means storms have slower development. DO NOT PUT 0")
@@ -51,7 +51,7 @@ public class ConfigStorm implements IConfigEX
 	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("How much water builds up in storms. Higher values = heavier rain faster")
-	public static int humidity_buildup_rate = 1;
+	public static int humidity_buildup_rate = 2;
 	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("How much water is lost in a storm when it rains. Higher values = shorter rain time")
@@ -91,11 +91,11 @@ public class ConfigStorm implements IConfigEX
 	@ServerSide
 	@IntegerRange(min=0, max=100)
 	@Comment("Minimum chance of any cloud to become a storm. Range is 0 to 100")
-	public static int storm_spawn_chance_min = 20;
+	public static int storm_spawn_chance_min = 50;
 	@ServerSide
 	@IntegerRange(min=0, max=100)
 	@Comment("Maximum chance of any cloud to become a storm. Range is 0 to 100.")
-	public static int storm_spawn_chance_max = 40;
+	public static int storm_spawn_chance_max = 100;
 	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("The time in ticks it takes for all weather to spawn")
@@ -141,7 +141,7 @@ public class ConfigStorm implements IConfigEX
 	@ServerSide
 	@FloatRange(min=0.0F)
 	@Comment("Minimum amount of visual rain shown when its raining globally during overcast mode")
-    public static float min_overcast_rain = 0.01F;
+    public static float min_overcast_rain = 0.1F;
 	@ServerSide
 	@IntegerRange(min=1)
 	@Comment("A storm in overcast mode has a 1 in x chance to start raining")
@@ -233,7 +233,7 @@ public class ConfigStorm implements IConfigEX
 	@ServerSide
 	@DoubleRange(min=0.0D)
 	@Comment("How fast storms may progress at a minimum. Higher values = faster development")
-	public static double storm_lifespan_min = 0.003D;
+	public static double storm_lifespan_min = 0.009D;
 	@ServerSide
 	@DoubleRange(min=0.0D)
 	@Comment("How fast storms may progress at a maximum. Higher values = faster development")

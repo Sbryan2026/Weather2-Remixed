@@ -60,7 +60,6 @@ public class WeatherManagerClient extends AbstractWeatherManager
 	public void tick()
 	{
 		super.tick();
-		
 		Particle particle;
 		for (int i = 0; i < weatherParticles.size(); i++)
 		{
@@ -379,5 +378,33 @@ public class WeatherManagerClient extends AbstractWeatherManager
 		super.reset(fullReset);
 		effectedParticles.clear();
 		closestStormCached = null;
+	}
+
+	/**Gets the target rain value based on the closest raining storm in range**/
+	public float getRainTarget(Vec3 pos, float maxDistSq) {
+		float rainTarget = 0.0F;
+		AbstractStormObject storm = getStrongestClosestStormWithRain(pos, maxDistSq);
+		if (storm != null) {
+			System.out.println(storm.getUUID() + " has humidity of " + storm.rain + " at " + storm.pos.toBlockPos().toString());
+			float rain = ((IWeatherRain)storm).getDownfall(pos) - IWeatherRain.MINIMUM_DRIZZLE;
+			if (rain > rainTarget) rainTarget = rain;
+		}
+		if (rainTarget != 0.0F)System.out.println("GetRainTarget returned " + Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F));
+		return Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F);
+	}
+
+	/**Gets the target overcast value based on the closest and worst storm in range**/
+	public float getOvercastTarget(Vec3 pos, float maxDistSq) {
+		float overcastTarget = 0.0F;
+		AbstractStormObject storm = getStrongestClosestStorm(pos, maxDistSq);
+		if (storm != null) {
+			float distance = (float) Maths.distanceSq(pos.posX, pos.posZ, storm.pos.posX, storm.pos.posZ);
+			float distanceMult = 1.0F - Math.min(Math.max(distance - storm.size, 0.0F) / (storm.size * 0.25F), 1.0F);
+			float stageMult = 0.25F + Math.min(((IWeatherStaged)storm).getStage() * 0.25F, 0.5F) + (storm.isViolent ? 0.5F : 0.0F);
+			float overcast = stageMult * distanceMult;
+			if (overcast > overcastTarget) overcastTarget = overcast;
+		}
+		if (overcastTarget != 0.0F)System.out.println("getOvercast returned: " + overcastTarget);
+		return Maths.clamp(overcastTarget, 0.0F, 1.0F);
 	}
 }
