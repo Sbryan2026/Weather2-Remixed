@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
+import net.mrbt0907.weather2remastered.util.fartsy.FartsyUtil;
 
 public class PacketBase
 {
@@ -28,6 +29,7 @@ public class PacketBase
 		}
 		else
 		{
+			FartsyUtil.prettyPrintNBT(nbt);
 			if (target.length == 0)
 				Weather2Remastered.CHANNEL.send(PacketDistributor.ALL.noArg(), new PacketNBT(nbt));
 			else if (target[0] instanceof String)
