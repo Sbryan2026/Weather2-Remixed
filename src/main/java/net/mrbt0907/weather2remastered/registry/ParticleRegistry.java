@@ -11,7 +11,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.particle.CloudParticleData;
-import net.mrbt0907.weather2remastered.particle.CloudParticleFactory;
 @Mod.EventBusSubscriber(modid = Weather2Remastered.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ParticleRegistry {
 
@@ -59,9 +58,6 @@ public class ParticleRegistry {
     	
         if (cloudSprite == null) {
             Weather2Remastered.fatal("cloudSprite is null after stitching!");
-        } else {
-            net.minecraft.client.Minecraft.getInstance().particleEngine.register(CloudParticleType, sprite -> new CloudParticleFactory(cloudSprite));
-            System.out.println("REGISTERED PARTICLE FACTORY");
         }
     }
 }
