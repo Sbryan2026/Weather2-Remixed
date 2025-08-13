@@ -3,6 +3,7 @@ package net.mrbt0907.weather2remastered.config;
 import net.mrbt0907.configex.api.ConfigAnnotations.*;
 import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
+import net.mrbt0907.weather2remastered.api.WeatherAPI;
 
 import java.io.File;
 
@@ -277,6 +278,8 @@ public class ConfigStorm implements IConfigEX
 	@Override
 	public void onConfigChanged(Phase phase, int variables)
 	{
+		if (phase.equals(Phase.END))
+			WeatherAPI.refreshStages();
 	}
 
 	@Override

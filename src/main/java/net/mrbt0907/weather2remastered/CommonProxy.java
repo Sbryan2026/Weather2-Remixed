@@ -19,5 +19,6 @@ public class CommonProxy
 	public static void postInit()
 	{
 		WeatherAPI.refreshGrabRules();
+		WeatherAPI.refreshStages();
 	}
 }

@@ -23,8 +23,10 @@ import net.mrbt0907.weather2remastered.client.render.AbstractWeatherRenderer;
 import net.mrbt0907.weather2remastered.client.render.NormalStormRenderer;
 import net.mrbt0907.weather2remastered.config.ConfigClient;
 import net.mrbt0907.weather2remastered.config.ConfigGrab;
+import net.mrbt0907.weather2remastered.config.ConfigStorm;
 import net.mrbt0907.weather2remastered.event.EventRegisterGrabLists;
 import net.mrbt0907.weather2remastered.event.EventRegisterParticleRenderer;
+import net.mrbt0907.weather2remastered.event.EventRegisterStages;
 import net.mrbt0907.weather2remastered.gui.EZConfigParser;
 import net.mrbt0907.weather2remastered.util.ConfigList;
 import net.minecraftforge.common.MinecraftForge;
@@ -327,5 +329,20 @@ public class WeatherAPI
 	{
 		EZConfigParser.refreshDimensionRules();
 	}
-
+	/**Refreshes every stage list, which each is used for rolling storm stages*/
+	public static void refreshStages()
+	{
+		EventRegisterStages event = new EventRegisterStages(tornadoStageList, hurricaneStageList);
+		event.tornadoStageList.clear();
+		event.hurricaneStageList.clear();
+		
+		MinecraftForge.EVENT_BUS.post(event);
+		
+		String stagesA = ConfigStorm.chances_for_tornados.replaceAll("[^\\d\\.\\s\\,\\=]*", ""), stagesB = ConfigStorm.chances_for_hurricanes.replaceAll("[^\\d\\.\\s\\,\\=]*", "");
+		
+		event.tornadoStageList.parse(stagesA);
+		event.hurricaneStageList.parse(stagesB);
+		
+		Weather2Remastered.debug("Cyclonic stages have been updated:\n- Tornado Stage List = " + tornadoStageList.size() + "\nHurricane Stage List = " + hurricaneStageList.size());
+	}
 }
