@@ -135,7 +135,7 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 	public int updateLCG = (new Random()).nextInt();
 	public Vec3 pos_funnel_base = new Vec3(pos.posX, pos.posY, pos.posZ);
 	public int flyingBlocks;
-	
+
 	public AbstractStormObject(AbstractFrontObject front)
 	{
 		super(front);
@@ -231,35 +231,34 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 		super.tickRender(partialTick);
 	}
 	
-	public void tick()
+	public void tick(boolean isClientTick)
 	{
-		super.tick();
+		super.tick(isClientTick);
 		//adjust posGround to be pos with the ground Y pos for convinient usage
 		posGround = new Vec3(pos.posX, pos.posY, pos.posZ);
 		posGround.posY = currentTopYBlock;
-		if (manager.getWorld() == null) {
-			Weather2Remastered.error("World was null, trying again...");
-			return;
-		}
-		if(FartsyUtil.isClientWorldSafe(manager.getWorld()))
+		if (isClientTick)
 		{
 			if (!WeatherUtil.isPaused())
 			{
 				tickClient();
-				if (isDeadly())
+				
+				//if (isDeadly())
 					//NewTornadoHelper.tick(this, world);
-					Weather2Remastered.error("Trying to tick deadly storm but fartsy didn't load the new tornado helper yet!");
 
 				tickMovementClient();
 			}
 		}
-		if (isDeadly())
-			Weather2Remastered.error("Trying to tick deadly storm but fartsy didn't load the new tornado helper yet!");
+		else
+		{
+			//if (isDeadly())
+				//NewTornadoHelper.tick(this, world);
 
-		tickMovement();
-		tickWeatherEvents();
-		tickProgressionNormal();
-		tickSnowFall();
+			tickMovement();
+			tickWeatherEvents();
+			tickProgressionNormal();
+			tickSnowFall();
+		}
 		
 		if (layer == 0)
 		{
@@ -652,7 +651,7 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 					if (intensify && (stage < stageMax || alwaysProgresses))
 					{
 						stageNext();
-						Weather2Remastered.debug("Storm " + getUUID().toString() + " has intensified to stage " + stage);
+						Weather2Remastered.debug("Storm " + getUUID().toString() + " has intensified to stage " + stage + "At pos " + pos.toBlockPos().toString());
 						
 						if (ConfigStorm.storms_aim_at_player && front.isGlobal() && stage == Stage.TORNADO.getStage())
 						{
@@ -753,7 +752,9 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 		shouldBuildHumidity = true;
 		sizeRate = Maths.random(0.75F, 1.35F);
 		isViolent = Maths.chance(ConfigStorm.chance_for_violent_storm * 0.01D * 0.25D);
-		stageMax = Math.max(rollDiceOnMaxIntensity(), WeatherEnum.Stage.TORNADO.getStage());
+		int intense = rollDiceOnMaxIntensity();
+		System.out.println("Intensity for new storm returned " + intense);
+		stageMax = Math.max(intense, WeatherEnum.Stage.TORNADO.getStage());
 		intensityRate = Maths.random(ConfigStorm.storm_lifespan_min <= 0.0D ? 0.003F : (float)ConfigStorm.storm_lifespan_min, ConfigStorm.storm_lifespan_max <= 0.0D ? 0.06F : (float)ConfigStorm.storm_lifespan_max);
 
 		Biome biome = world.getBiome(new BlockPos(MathHelper.floor(pos.posX), 0, MathHelper.floor(pos.posZ)));
@@ -785,9 +786,11 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 
 		lightning = Maths.random(0.01F, 0.5F);
 		
-		if (stageMax < 1)
-			stageMax = rollDiceOnMaxIntensity();
-		
+		if (stageMax < 1) {
+			int intense = rollDiceOnMaxIntensity();
+			System.out.println("Intensity for new storm returned " + intense);
+			stageMax = intense;
+		}
 		if (sizeRate < 0.0F)
 			sizeRate = (float) Maths.random(ConfigStorm.min_size_growth, ConfigStorm.max_size_growth);
 		
@@ -811,7 +814,7 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 			Weather2Remastered.debug("New Deadly Storm: \nIs Violent: " + isViolent + "\nMax Stage: " + stageMax + " (EF" + (stageMax - 4) + ")\nSize Multiplier: " + sizeRate * 100 + "%\nLifespan Multiplier: " + intensityRate * 100);
 		}
 		else
-			Weather2Remastered.debug("New Normal Storm: \nIs Violent: " + isViolent + "\nMax Stage: " + stageMax + "\nSize Multiplier: " + sizeRate * 100 + "%");
+			Weather2Remastered.debug("New Normal Storm: \nIs Violent: " + isViolent + "\nMax Stage: " + stageMax + "\nSize Multiplier: " + sizeRate * 100 + "%" + " at " + pos.posX + " " + pos.posY + " " + pos.posZ);
 		canProgress = true;
 		updateType();
 	}
@@ -1133,7 +1136,7 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 		
 		if (spawnBolt)
 		{
-			Weather2Remastered.error("UUID: " + getUUID() + "Can't spawn new EntityLightningEX as it does not exist. Storm pos " + pos.posX + " " + pos.posZ);
+			Weather2Remastered.debug("UUID: " + getUUID() + "Can't spawn new EntityLightningEX as it does not exist. Storm pos " + pos.posX + " " + pos.posZ);
 			LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(world);
 		    if (lightning != null) {
 		        lightning.moveTo(x + 0.5, y, z + 0.5);

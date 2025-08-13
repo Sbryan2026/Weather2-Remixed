@@ -48,7 +48,7 @@ public abstract class AbstractWeatherObject implements IWeatherDetectable
 		id = UUID.randomUUID();
 	}
 
-	public void tick()
+	public void tick(boolean isClientTick)
 	{
 		ticks++;
 		if (ticks < 0) ticks = 0;

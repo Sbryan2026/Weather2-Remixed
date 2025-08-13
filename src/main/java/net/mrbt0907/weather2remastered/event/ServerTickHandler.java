@@ -9,9 +9,6 @@ import java.util.stream.StreamSupport;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.LogicalSide;
@@ -75,7 +72,7 @@ public class ServerTickHandler
 			if (dimensionSystems.containsKey(dimension))
 			{
 				if (EZConfigParser.isWeatherEnabled(dimension))
-					dimensionSystems.get(dimension).tick();
+					dimensionSystems.get(dimension).tick(false);
 				else
 					removedManagers.add(dimension);
 			}

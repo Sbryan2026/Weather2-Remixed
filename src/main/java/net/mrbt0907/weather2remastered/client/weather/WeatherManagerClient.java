@@ -57,9 +57,9 @@ public class WeatherManagerClient extends AbstractWeatherManager
 	}
 	
 	@Override
-	public void tick()
+	public void tick(boolean isClientTick)
 	{
-		super.tick();
+		super.tick(true);
 		Particle particle;
 		for (int i = 0; i < weatherParticles.size(); i++)
 		{
@@ -389,8 +389,8 @@ public class WeatherManagerClient extends AbstractWeatherManager
 			float rain = ((IWeatherRain)storm).getDownfall(pos) - IWeatherRain.MINIMUM_DRIZZLE;
 			if (rain > rainTarget) rainTarget = rain;
 		}
-		if (rainTarget != 0.0F)System.out.println("GetRainTarget returned " + Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F));
-		return Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F);
+		if (rainTarget != 0.0F)System.out.println("GetRainTarget returned " + ((rainTarget > ConfigStorm.min_overcast_rain) ? Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F) : 0.0F));
+		return rainTarget > ConfigStorm.min_overcast_rain ? Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F) : 0.0F;
 	}
 
 	/**Gets the target overcast value based on the closest and worst storm in range**/

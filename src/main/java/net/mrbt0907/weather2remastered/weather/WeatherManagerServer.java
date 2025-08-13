@@ -88,9 +88,9 @@ public class WeatherManagerServer extends AbstractWeatherManager
 	}
 	
 	@Override
-	public void tick()
+	public void tick(boolean isClientTick)
 	{
-		super.tick();
+		super.tick(false);
 		if (getWorld() != null)
 		{
 			tickWeatherCoverage(ticks);

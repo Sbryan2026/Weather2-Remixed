@@ -51,7 +51,7 @@ public class AbstractFrontObject implements IWeatherDetectable
 	public int storms;
 	public int activeStorms;
 	public int deathTicks;
-	
+
 	public AbstractFrontObject(AbstractWeatherManager manager, Vec3 pos, int layer)
 	{
 		this.manager = manager;
@@ -88,7 +88,7 @@ public class AbstractFrontObject implements IWeatherDetectable
 		nbt = new CompoundNBT();
 	}
 
-	public void tick()
+	public void tick(boolean isClientTick)
 	{
 		if (maxStorms > -1 && storms >= maxStorms)
 		{
@@ -104,20 +104,18 @@ public class AbstractFrontObject implements IWeatherDetectable
 			}
 		}
 		
-		tickMovement();
+		tickMovement(isClientTick);
 		
 		if (manager.getWorld() != null) {
-			if(!manager.getWorld().isClientSide()) {
-				tickProgressionNormal();
-			}
-		systems.forEach((uuid, system) -> {if (!system.isDead) {system.tick();}});
+			if(!isClientTick) tickProgressionNormal();
+		systems.forEach((uuid, system) -> {if (!system.isDead) {system.tick(isClientTick);}});
 		}
 	}
 	
-	public void tickMovement()
+	public void tickMovement(boolean isClientTick)
 	{
 		if (pos != null) {
-			if (world.isClientSide())
+			if (isClientTick)
 			{
 				pos.posX += motion.posX;
 				pos.posZ += motion.posZ;

@@ -66,12 +66,11 @@ public class AbstractWeatherManager
 		}
 	}
 
-	public void tick()
+	public void tick(boolean isClientTick)
 	{
 		if (world != null)
 		{
-			fronts.forEach((uuid, front) -> {if (!front.isDead) {front.tick();}});
-//			systems.forEach((uuid, system) -> system.tick()); // Why were we ticking systems here??? FrontObjects and StormObjects are the only thing that should do this!
+			fronts.forEach((uuid, front) -> {if (!front.isDead) {front.tick(isClientTick);}});
 			//volcanoObjects.forEach(vo -> vo.tick());
 			windManager.tick();
 			ticks++;

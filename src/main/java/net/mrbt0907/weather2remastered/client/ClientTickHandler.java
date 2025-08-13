@@ -67,7 +67,7 @@ public class ClientTickHandler
     	if (world != null)
 		{
 			checkClientWeather();
-			weatherManager.tick();
+			weatherManager.tick(true);
 			if (!ConfigMisc.aesthetic_mode && ConfigMisc.enable_forced_clouds_off && world.dimension().location().toString().equals("minecraft:overworld"))
 				mc.options.renderClouds = CloudOption.OFF;
 			if (EZConfigParser.isEffectsEnabled(world.dimension().location().toString()))
