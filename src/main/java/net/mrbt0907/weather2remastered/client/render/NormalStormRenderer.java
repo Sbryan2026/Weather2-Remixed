@@ -1,5 +1,6 @@
 package net.mrbt0907.weather2remastered.client.render;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -8,17 +9,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.weather.AbstractStormObject;
 import net.mrbt0907.weather2remastered.api.weather.AbstractStormObject.StormType;
 import net.mrbt0907.weather2remastered.api.weather.AbstractWeatherObject;
-import net.mrbt0907.weather2remastered.client.render.AbstractWeatherRenderer;
 import net.mrbt0907.weather2remastered.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2remastered.client.NewSceneEnhancer;
 import net.mrbt0907.weather2remastered.client.weather.WeatherManagerClient;
@@ -162,9 +160,10 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 				if (manager.getWorld().getGameTime() % (delay + ConfigClient.cloud_particle_delay) == 0) {
 					for (int i = 0; i < loopSize && shouldSpawn(0); i++)
 					{
+						
 //						if (storm.isStorm() && !storm.isRaining()) storm.rain = 500.0F;
 //						if (storm.isStorm() && storm.isRaining()) System.out.println(storm.getPos().posX + " " + storm.type.toString() + " " + storm.getPos().posZ);
-						if (listParticlesCloud.size() < (storm.size * 1.2 + extraSpawning))
+						if (listParticlesCloud.size() < (storm.size * 1.2 + extraSpawning) / 2F)
 						{
 							double spawnRad = storm.size * 1.2D;
 							Vec3 tryPos = new Vec3(storm.pos.posX + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad), layerHeight + (rand.nextDouble() * 40.0F) + (storm.stage >= Stage.RAIN.getStage() ? 30.0F : 60.0D), storm.pos.posZ + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad));
@@ -206,7 +205,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 											}
 									}
 									particle.setRoll(Maths.random(80.0F, 100.0F));
-									particle.scale(1250.0F * sizeCloudMult);
+									particle.scale(1750.0F * sizeCloudMult);
 									listParticlesCloud.add(particle);
 								}
 							}

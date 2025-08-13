@@ -500,8 +500,8 @@ public class NewSceneEnhancer implements Runnable
 		{
 			if (event.phase.equals(Phase.START) && MC.level != null)
 			{
-				MC.level.setRainLevel(Math.abs(rain)*1.25F);
-				MC.level.setThunderLevel(overcastTarget * 1.25F);
+				MC.level.setRainLevel(Math.abs(rain));
+				MC.level.setThunderLevel(overcast);
 //				System.out.println("Overcast "+ overcast);
 			}
 		}
