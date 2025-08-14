@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.weather.AbstractFrontObject;
 import net.mrbt0907.weather2remastered.api.weather.AbstractStormObject;
@@ -47,7 +49,7 @@ public class WeatherManagerClient extends AbstractWeatherManager
 
 	public WeatherManagerClient(ClientWorld world)
 	{
-		super((World) world);
+		super(world);
 	}
 	
 	@Override
@@ -193,21 +195,17 @@ public class WeatherManagerClient extends AbstractWeatherManager
 				int posXS = mainNBT.getInt("posX");
 				int posYS = mainNBT.getInt("posY");
 				int posZS = mainNBT.getInt("posZ");
-				if (mainNBT.contains("entityID"))
-				{/*
-					double posX = (double)posXS;
-					double posY = (double)posYS;
-					double posZ = (double)posZS;
-					Entity ent = new EntityLightningEX(world, posX, posY, posZ);
-					ent.serverPosX = posXS;
-					ent.serverPosY = posYS;
-					ent.serverPosZ = posZS;
-					ent.rotationYaw = 0.0F;
-					ent.rotationPitch = 0.0F;
-					ent.setEntityId(mainNBT.getInt("entityID"));
-					world.addWeatherEffect(ent);
-					*/
-					Weather2Remastered.error("Couldn't spawn lightningEX just yet!");
+				if (mainNBT.getBoolean("withBolt") == true) {
+					LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD));
+					if (lightning == null) {
+						System.out.println("WHAT");
+					}
+				    if (lightning != null) {
+				        lightning.moveTo(posXS + 0.5, posYS, posZS + 0.5);
+				        lightning.setVisualOnly(false); // false = real lightning, true = visual only
+				        ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD).addFreshEntity(lightning);
+				        System.out.println("SPAWNED AT " + posXS + " " + posYS + " " + posZS);
+				    }
 				}
 				else
 				{

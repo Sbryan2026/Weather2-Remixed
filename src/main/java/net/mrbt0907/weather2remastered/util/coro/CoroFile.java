@@ -17,11 +17,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 /**CoroFile - Interacts with game folders, etc. Patched up by Fartsy!**/
 public class CoroFile {
 public static String lastWorldFolder = "";
-private static boolean isClientSide = (!(ServerLifecycleHooks.getCurrentServer() instanceof DedicatedServer));    
+private static final boolean isClientSide = FMLEnvironment.dist == Dist.CLIENT; 
 	public static CompoundNBT getExtraWorldNBT(String fileName, World world) {
 		CompoundNBT data = new CompoundNBT();
 		//try load

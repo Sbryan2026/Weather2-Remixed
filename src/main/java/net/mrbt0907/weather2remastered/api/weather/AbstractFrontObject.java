@@ -75,9 +75,10 @@ public class AbstractFrontObject implements IWeatherDetectable
 		{
 			System.out.println("Created @ " + pos.posX + " " + pos.posZ);
 			maxStorms = Maths.random(1, 35);
-			temperature = WeatherUtil.getTemperature(world, pos.toBlockPos());
-			humidity = WeatherUtil.getTemperature(world, pos.toBlockPos());
-			pressure = WeatherUtil.getPressure(world, pos.toBlockPos());
+			System.out.println("Attempting to get the temperature in " + getWorld());
+			temperature = WeatherUtil.getTemperature(getWorld(), pos.toBlockPos());
+			humidity = WeatherUtil.getTemperature(getWorld(), pos.toBlockPos());
+			pressure = WeatherUtil.getPressure(getWorld(), pos.toBlockPos());
 			if (temperature > 0.5 || Maths.chance(25))
 				type = 1;
 			else
@@ -151,9 +152,9 @@ public class AbstractFrontObject implements IWeatherDetectable
 			if (pos != null)
 			{
 				BlockPos pos = this.pos.toBlockPos();
-				float temperature = WeatherUtil.getTemperature(world, pos);
-				float humidity = WeatherUtil.getHumidity(world, pos);
-				float pressure = WeatherUtil.getPressure(world, pos);
+				float temperature = WeatherUtil.getTemperature(getWorld(), pos);
+				float humidity = WeatherUtil.getHumidity(getWorld(), pos);
+				float pressure = WeatherUtil.getPressure(getWorld(), pos);
 				
 				
 				if (type == 2 && temperature < 0.5F)

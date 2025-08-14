@@ -2,6 +2,8 @@ package net.mrbt0907.weather2remastered.event;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogColors;
@@ -14,18 +16,34 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.event.world.WorldEvent.Save;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.client.ClientTickHandler;
 import net.mrbt0907.weather2remastered.client.NewSceneEnhancer;
 import net.mrbt0907.weather2remastered.config.ConfigMisc;
+import net.mrbt0907.weather2remastered.config.ConfigSimulation;
 
 public class EventsForge
 {
+	private static boolean worldReady = false;
+	private static long worldReadyTimer = 0;
+	@SubscribeEvent
+	public static void onWorldTick(TickEvent.WorldTickEvent event) {
+	    if (event.world instanceof ServerWorld && ((ServerWorld)event.world).dimension() == World.OVERWORLD && event.phase == TickEvent.Phase.END) {
+	        if (event.world.getGameTime() > 0) {
+	        	if (worldReadyTimer++ > ConfigSimulation.core_init_delay) worldReady=true;
+	        }
+	    }
+	}
 	@SubscribeEvent
 	public static void onServerTick(ServerTickEvent event)
 	{
-		if (event.phase == Phase.START)
-			ServerTickHandler.onTickInGame();
+		if (ServerLifecycleHooks.getCurrentServer() == null) return;
+		if (ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD) == null) return;
+	    if (ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD).getChunkSource().chunkMap == null) return;
+	    if (!worldReady) return;
+		if (event.phase == Phase.START) ServerTickHandler.onTickInGame();
 	}
 	@SubscribeEvent
 	public static void serverStarting(FMLServerStartingEvent event)
@@ -34,7 +52,13 @@ public class EventsForge
 		System.out.println("THE SERVER IS STARTING. REFRESH THE DIMENSION RULES.");
 		net.mrbt0907.weather2remastered.api.WeatherAPI.refreshDimensionRules();
 	}
-
+	@SubscribeEvent
+	public static void serverStopping(FMLServerStoppingEvent event)
+	{
+		//event.registerServerCommand(new CommandWeather2());
+		System.out.println("THE SERVER IS STOPPING.");
+		worldReady = false;
+	}
 	@SubscribeEvent
 	public static void onWorldSave(WorldEvent.Save event)
 	{

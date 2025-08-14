@@ -10,6 +10,12 @@ import java.io.File;
 public class ConfigSimulation implements IConfigEX
 {
 	@ServerSide
+	@Enforce
+	@Permission(4)
+	@IntegerRange(min=200, max=6000)
+	@Comment("The delay in ticks before the weather managers, storms, fronts, etc initialize. There are 20 ticks in a second. Max 5 minutes (6000 ticks).")
+	public static int core_init_delay = 200;
+	@ServerSide
 	@IntegerRange(min=0)
 	@Comment("Distance storms can go to from players before they are deleted")
 	public static int max_storm_distance = 3072;

@@ -3,7 +3,6 @@ package net.mrbt0907.weather2remastered.client;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.settings.CloudOption;
@@ -11,7 +10,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.mrbt0907.configex.ConfigManager;
 import net.mrbt0907.weather2remastered.Weather2Remastered;
 import net.mrbt0907.weather2remastered.api.WindReader;
@@ -162,6 +160,11 @@ public class ClientTickHandler
     	try
     	{
 			ClientWorld world = net.minecraft.client.Minecraft.getInstance().level;
+			if (world == null) { 
+				System.out.println("NOT READY, WORLD NULL");
+				return;
+			}
+			
     		if (weatherManager == null || world != lastWorld) {
     			if (weatherManager == null) {
     				System.out.println("Initialising because weather manager is null!");
@@ -179,6 +182,7 @@ public class ClientTickHandler
     }
     public static void init(ClientWorld world)
     {
+    	System.out.println("INITIALIZING THE CLIENT WITH WORLD " + world);
 		//this is generally triggered when they teleport to another dimension
 		if (weatherManager != null)
 		{

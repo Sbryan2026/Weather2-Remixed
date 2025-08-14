@@ -28,10 +28,6 @@ public class ServerTickHandler
 	
 	public static void onTickInGame()
 	{
-		if (LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER) == null)
-		{
-			return;
-		}
 		MinecraftServer server = LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER);
 		World world = server.getLevel(World.OVERWORLD);
 		
@@ -41,9 +37,7 @@ public class ServerTickHandler
 		}
 		
 		//regularly save data
-		if (world != null)
-			if (world.getGameTime() % ConfigMisc.auto_save_interval == 0)
-				Weather2Remastered.writeOutData(false);
+		//if (world != null) if (world.getGameTime() % ConfigMisc.auto_save_interval == 0) Weather2Remastered.writeOutData(false);
 		
 		ServerWorld[] worlds = StreamSupport.stream(server.getAllLevels().spliterator(), false).toArray(ServerWorld[]::new);
 		ServerWorld dim;
@@ -53,8 +47,9 @@ public class ServerTickHandler
 		
 		for (int i = 0; i < size; i++)
 		{
-			dim = worlds[i];
-			String dimension = World.OVERWORLD.location().toString();
+			dim = worlds[i].getLevel();
+			if (worlds[i] == null) return;
+			String dimension = dim.dimension().location().toString();
 
 			if (!dimensionSystems.containsKey(dimension))
 			{
@@ -63,14 +58,15 @@ public class ServerTickHandler
 				}
 				if (!EZConfigParser.dimNames.containsValue(dimension))
 				{
-					EZConfigParser.dimNames.put(i, dim.dimension().getRegistryName().toString());
-					EZConfigParser.nbtServerData.getCompound("dimData").putString("dima_" + i, dim.dimension().getRegistryName().toString());
+					EZConfigParser.dimNames.put(i, dim.dimension().location().toString());
+					EZConfigParser.nbtServerData.getCompound("dimData").putString("dima_" + i, dim.dimension().location().toString());
 					EZConfigParser.nbtSaveDataServer();
 				}
 			}
 			
 			if (dimensionSystems.containsKey(dimension))
 			{
+				
 				if (EZConfigParser.isWeatherEnabled(dimension))
 					dimensionSystems.get(dimension).tick(false);
 				else
@@ -118,6 +114,7 @@ public class ServerTickHandler
 		{
 			if (wm != null)
 			{
+				System.out.println("wm null");
 				dimensionSystems.remove(i);
 				wm.writeToFile();
 				wm.reset(true);

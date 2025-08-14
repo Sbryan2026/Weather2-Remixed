@@ -72,7 +72,7 @@ public class WeatherManagerServer extends AbstractWeatherManager
 
 	@OnlyIn(Dist.CLIENT)
 	private World getClientWorldSafe() {
-	    net.minecraft.world.World clientWorld = ServerLifecycleHooks.getCurrentServer().getLevel(world.dimension());
+	    net.minecraft.world.World clientWorld = net.minecraft.client.Minecraft.getInstance().level;
 	    if (clientWorld != null && clientWorld.dimension().location().toString().equals(dimension)) {
 	        return clientWorld;
 	    }

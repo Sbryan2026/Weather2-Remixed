@@ -27,7 +27,7 @@ public class PacketNBT {
     }
 
     public static void handle(PacketNBT pkt, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> { if (ctx.get().getDirection().getReceptionSide().isClient() || pkt.tag.getInt("command") < 8 || pkt.tag.getInt("command") == 9 || pkt.tag.getInt("command") == 11 || pkt.tag.getInt("command") == 12) handleClient(pkt); else handleServer(pkt, ctx); });
+        ctx.get().enqueueWork(() -> { if (ctx.get().getDirection().getReceptionSide().isClient() || pkt.tag.getInt("command") < 8 || pkt.tag.getInt("command") == 9 || pkt.tag.getInt("command") == 11 || pkt.tag.getInt("command") == 12 || pkt.tag.getInt("command") == 25) handleClient(pkt); else handleServer(pkt, ctx); });
         ctx.get().setPacketHandled(true);
     }
 
@@ -59,6 +59,7 @@ public class PacketNBT {
 				break;
 			case 18:
 				break;
+				
 			default: Weather2Remastered.error("Recieved an invalid network packet from the server");
 		}
 	}

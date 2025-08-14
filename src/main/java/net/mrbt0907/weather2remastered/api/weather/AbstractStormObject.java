@@ -11,6 +11,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -27,6 +28,7 @@ import net.mrbt0907.weather2remastered.client.render.AbstractWeatherRenderer;
 import net.mrbt0907.weather2remastered.config.ConfigMisc;
 import net.mrbt0907.weather2remastered.config.ConfigSnow;
 import net.mrbt0907.weather2remastered.config.ConfigStorm;
+import net.mrbt0907.weather2remastered.network.PacketBase;
 import net.mrbt0907.weather2remastered.registry.StormNames;
 import net.mrbt0907.weather2remastered.util.CachedNBTTagCompound;
 import net.mrbt0907.weather2remastered.util.ChunkUtils;
@@ -1135,9 +1137,14 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 	
 	public void createLightning(double x, double y, double z, boolean spawnBolt)
 	{
-		if (world.isClientSide()) return;
-		
-		if (spawnBolt)
+		CompoundNBT lightning = new CompoundNBT();
+		lightning.putDouble("posX", x);
+		lightning.putDouble("posY", y);
+		lightning.putDouble("posZ", z);
+		lightning.putBoolean("withBolt", spawnBolt);
+		PacketBase.send(7, lightning);
+		System.out.println("Sending lightning packet "+ FartsyUtil.prettyPrintNBT(lightning));
+		/*if (spawnBolt)
 		{
 			Weather2Remastered.debug("UUID: " + getUUID() + "Can't spawn new EntityLightningEX as it does not exist. Storm pos " + pos.posX + " " + pos.posZ);
 			LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(world);
@@ -1150,7 +1157,7 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 			manager.getWorld().weatherEffects.add(lightning);
 			PacketLightning.spawnLightning(manager.getDimension(), lightning);
 			*/
-		}
+		//}
 		//else
 		//	PacketLightning.spawnInvisibleLightning(manager.getDimension(), x, y, z);
 	}
