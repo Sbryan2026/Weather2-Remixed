@@ -7,6 +7,7 @@ public class PacketData extends PacketBase
 	public static void sync()
 	{
 		CompoundNBT nbt = new CompoundNBT();
-		send(1, nbt);
+		nbt.putInt("command", 21);
+		send(21, nbt);
 	}
 }

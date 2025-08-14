@@ -347,9 +347,9 @@ public class WeatherManagerServer extends AbstractWeatherManager
 			if (new File(saveFolder + "WeatherData_" + dimension.replace(":", "_") + ".dat").exists())
 			{
 				mainNBT = CompressedStreamTools.readCompressed(new FileInputStream(saveFolder + "WeatherData_" + dimension.replace(":", "_") + ".dat"));
-				File tmp = (new File(saveFolder + "WeatherData_" + dimension + "_BACKUP0.dat"));
+				File tmp = (new File(saveFolder + "WeatherData_" + dimension.replace(":", "_") + "_BACKUP0.dat"));
 				if (tmp.exists()) FileUtils.copyFile(tmp, (new File(saveFolder + "WeatherData_" + dimension.replace(":", "_") + "_BACKUP1.dat")));
-				if ((new File(saveFolder + "WeatherData_" + dimension.replace(":", "_") + ".dat").exists())) FileUtils.copyFile((new File(saveFolder + "WeatherData_" + dimension + ".dat")), (new File(saveFolder + "WeatherData_" + dimension + "_BACKUP0.dat")));
+				if ((new File(saveFolder + "WeatherData_" + dimension.replace(":", "_") + ".dat").exists())) FileUtils.copyFile((new File(saveFolder + "WeatherData_" + dimension.replace(":", "_") + ".dat")), (new File(saveFolder + "WeatherData_" + dimension.replace(":", "_") + "_BACKUP0.dat")));
 			}
 		}
 		catch (Exception ex)
@@ -587,10 +587,10 @@ public class WeatherManagerServer extends AbstractWeatherManager
 	
 	public void playerJoinedWorldSyncFull(ServerPlayerEntity entP)
 	{
-		Weather2Remastered.debug((entP == null ? "An unknown player " : "Player " + entP.getDisplayName().toString() + "'s client requested for a full sync"));
-		
+	//	Weather2Remastered.debug((entP == null ? "An unknown player " : "Player " + entP.getDisplayName().toString() + "'s client requested for a full sync"));
 		//sync storms
-		fronts.forEach((uuid, front) -> {PacketFrontObject.create(entP, front); front.getWeatherObjects().forEach(wo -> PacketWeatherObject.create(entP, wo));});
+		fronts.forEach((uuid, front) -> {PacketFrontObject.create(entP, front);
+		front.getWeatherObjects().forEach(wo -> PacketWeatherObject.create(entP, wo));});
 					
 		//sync volcanos
 		//volcanoObjects.forEach(vo -> PacketVolcanoObject.create(entP, vo));

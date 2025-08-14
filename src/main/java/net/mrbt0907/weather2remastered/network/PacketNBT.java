@@ -27,7 +27,7 @@ public class PacketNBT {
     }
 
     public static void handle(PacketNBT pkt, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> { if (ctx.get().getDirection().getReceptionSide().isClient()) handleClient(pkt); else handleServer(pkt, ctx); });
+        ctx.get().enqueueWork(() -> { if (ctx.get().getDirection().getReceptionSide().isClient() || pkt.tag.getInt("command") < 8 || pkt.tag.getInt("command") == 9 || pkt.tag.getInt("command") == 11 || pkt.tag.getInt("command") == 12) handleClient(pkt); else handleServer(pkt, ctx); });
         ctx.get().setPacketHandled(true);
     }
 
@@ -59,11 +59,6 @@ public class PacketNBT {
 				break;
 			case 18:
 				break;
-			case 20: {
-				if (ClientTickHandler.weatherManager == null) break;
-				ClientTickHandler.weatherManager.nbtSyncFromServer(nbt);
-				break;
-			}
 			default: Weather2Remastered.error("Recieved an invalid network packet from the server");
 		}
 	}
@@ -82,11 +77,11 @@ public class PacketNBT {
     					sendNBT.putBoolean("op", FartsyUtil.isPlayerOp(player.getGameProfile()));
     					PacketEZGUI.syncResponse(sendNBT);
     					break;
-    				case 11:
+    				case 21:
     					ServerTickHandler.playerClientRequestsFullSync(player);
     					break;
     				case 10:
-    					if (FartsyUtil.isPlayerOp(player.getGameProfile()));
+    					if (FartsyUtil.isPlayerOp(player.getGameProfile()))
     						EZConfigParser.nbtReceiveServer(msg.tag);
     					break;
     			}
