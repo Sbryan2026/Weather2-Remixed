@@ -505,4 +505,13 @@ public class NewSceneEnhancer implements Runnable
 //				System.out.println("Overcast "+ overcast);
 			}
 		}
+		public boolean shouldChangeFogColor()
+		{
+			return fogRedTarget >= 0.0F || fogGreenTarget >= 0.0F || fogBlueTarget >= 0.0F || fogRed >= 0.0F || fogGreen >= 0.0F || fogBlue >= 0.0F;
+		}
+
+		public boolean seesWeatherObject()
+		{
+			return cachedSystem != null;
+		}
 }
