@@ -48,7 +48,7 @@ public class ClientTickHandler
 	
 		//this constructor gets called multiple times when created from proxy, this prevents multiple inits
 		new Thread(NewSceneEnhancer.instance(), "W2R NewSceneEnhancer").start();
-		this.rotEffRenderer = new CoroRotatingParticleManager();
+		rotEffRenderer = new CoroRotatingParticleManager();
 		/*
 		if (foliageEnhancer == null)
 		{
@@ -68,8 +68,7 @@ public class ClientTickHandler
 		{
 			checkClientWeather();
 			weatherManager.tick(true);
-			if (!ConfigMisc.aesthetic_mode && ConfigMisc.enable_forced_clouds_off && world.dimension().location().toString().equals("minecraft:overworld"))
-				mc.options.renderClouds = CloudOption.OFF;
+			if (!ConfigMisc.aesthetic_mode && ConfigMisc.enable_forced_clouds_off && world.dimension().location().toString().equals("minecraft:overworld")) mc.options.renderClouds = CloudOption.OFF;
 			if (EZConfigParser.isEffectsEnabled(world.dimension().location().toString()))
 				NewSceneEnhancer.instance().tick();
 			if (!EZConfigParser.isWeatherEnabled(world.dimension().location().toString()) && weatherManager.getFronts().size() > 1)
@@ -157,13 +156,21 @@ public class ClientTickHandler
 			weatherManager = null;
 		}
 	}
-    public static void checkClientWeather()
+    public static
+    void checkClientWeather()
     {
     	try
     	{
 			ClientWorld world = net.minecraft.client.Minecraft.getInstance().level;
-    		if (weatherManager == null || world != lastWorld)
+    		if (weatherManager == null || world != lastWorld) {
+    			if (weatherManager == null) {
+    				System.out.println("Initialising because weather manager is null!");
+    			}
+    			else if (world != lastWorld) {
+    				System.out.println("Initialising because world is not = lastWorld");
+    			}
     			init(world);
+    		}
     	} 
     	catch (Exception ex)
     	{
