@@ -78,9 +78,10 @@ public class CoroEntParticle {
 	private static double getMotionXParticle(Object obj) {
 	    try {
 	        // 'zd' is the field name for motionZ in 1.16.5 Particle class
-	        Field xdField = obj.getClass().getSuperclass().getDeclaredField("xd");
-	        xdField.setAccessible(true);
-	        return xdField.getDouble(obj);
+	        //Field xdField = obj.getClass().getSuperclass().getDeclaredField("xd");
+	        //xdField.setAccessible(true);
+	        //return xdField.getDouble(obj);
+	    	return 0.0d;
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        return 0.0;
@@ -98,11 +99,12 @@ public class CoroEntParticle {
 	private static double getMotionYParticle(Object obj) {
 	    try {
 	        // 'zd' is the field name for motionZ in 1.16.5 Particle class
-	        Field ydField = obj.getClass().getSuperclass().getDeclaredField("yd");
-	        ydField.setAccessible(true);
-	        return ydField.getDouble(obj);
+	        //Field ydField = obj.getClass().getSuperclass().getDeclaredField("yd");
+	     //   ydField.setAccessible(true);
+	        return 0.0d;
+	        //return ydField.getDouble(obj);
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        //e.printStackTrace();
 	        return 0.0;
 	    }
 	}
@@ -111,16 +113,18 @@ public class CoroEntParticle {
 		if (obj instanceof Entity) {
 			return ((Entity)obj).getDeltaMovement().z;
 		} else {
-			return getMotionZParticle(obj);
+			return 0.0d;
+//			return getMotionZParticle(obj);
 		}
 	}
 
 	private static double getMotionZParticle(Object obj) {
 	    try {
 	        // 'zd' is the field name for motionZ in 1.16.5 Particle class
-	        Field zdField = obj.getClass().getSuperclass().getDeclaredField("zd");
-	        zdField.setAccessible(true);
-	        return zdField.getDouble(obj);
+	      //  Field zdField = obj.getClass().getSuperclass().getDeclaredField("zd");
+	       // zdField.setAccessible(true);
+	       // return zdField.getDouble(obj);
+	    	return 0.0;
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        return 0.0;
@@ -140,11 +144,11 @@ public class CoroEntParticle {
 	private static void setMotionXParticle(Object obj, double val) {
 		try {
 	        // Get the 'xd' field from the Particle class (or its superclass)
-	        Field xdField = obj.getClass().getSuperclass().getDeclaredField("xd");
-	        xdField.setAccessible(true);
-	        xdField.setDouble(obj, val);
+	        //Field xdField = obj.getClass().getSuperclass().getDeclaredField("xd");
+	        //xdField.setAccessible(true);
+	        //xdField.setDouble(obj, val);
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        //e.printStackTrace();
 	    }
 	}
 	
@@ -154,18 +158,18 @@ public class CoroEntParticle {
 		    Vector3d velocity = entity.getDeltaMovement();
 		    entity.setDeltaMovement(velocity.x, val, velocity.z);
 		} else {
-			setMotionYParticle(obj, val);
+//			setMotionYParticle(obj, val);
 		}
 	}
 
 	private static void setMotionYParticle(Object obj, double val) {
 		try {
 	        // Get the 'xd' field from the Particle class (or its superclass)
-	        Field ydField = obj.getClass().getSuperclass().getDeclaredField("yd");
-	        ydField.setAccessible(true);
-	        ydField.setDouble(obj, val);
+	        //Field ydField = obj.getClass().getSuperclass().getDeclaredField("yd");
+	        //ydField.setAccessible(true);
+	        //ydField.setDouble(obj, val);
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        //e.printStackTrace();
 	    }
 	}
 	
@@ -173,21 +177,21 @@ public class CoroEntParticle {
 		if (obj instanceof Entity) {
 			Entity entity = (Entity) obj;
 		    Vector3d velocity = entity.getDeltaMovement();
-		    entity.setDeltaMovement(velocity.x, velocity.y, val);
+		 //   entity.setDeltaMovement(velocity.x, velocity.y, val);
 		} else {
-			setMotionZParticle(obj, val);
+			//setMotionZParticle(obj, val);
 		}
 	}
 
 	private static void setMotionZParticle(Object obj, double val) {
-		try {
+	/*	try {
 	        // Get the 'xd' field from the Particle class (or its superclass)
 	        Field zdField = obj.getClass().getSuperclass().getDeclaredField("zd");
 	        zdField.setAccessible(true);
 	        zdField.setDouble(obj, val);
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	    }
+	    }*/
 	}
 	
 	public static World getWorld(Object obj) {
