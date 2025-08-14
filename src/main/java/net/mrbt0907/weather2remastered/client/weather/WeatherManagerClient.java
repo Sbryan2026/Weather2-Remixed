@@ -385,11 +385,11 @@ public class WeatherManagerClient extends AbstractWeatherManager
 		float rainTarget = 0.0F;
 		AbstractStormObject storm = getStrongestClosestStormWithRain(pos, maxDistSq);
 		if (storm != null) {
-			System.out.println(storm.getUUID() + " has humidity of " + storm.rain + " at " + storm.pos.toBlockPos().toString());
+			//System.out.println(storm.getUUID() + " has humidity of " + storm.rain + " at " + storm.pos.toBlockPos().toString());
 			float rain = ((IWeatherRain)storm).getDownfall(pos) - IWeatherRain.MINIMUM_DRIZZLE;
 			if (rain > rainTarget) rainTarget = rain;
 		}
-		if (rainTarget != 0.0F)System.out.println("GetRainTarget returned " + ((rainTarget > ConfigStorm.min_overcast_rain) ? Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F) : 0.0F));
+		//if (rainTarget != 0.0F)System.out.println("GetRainTarget returned " + ((rainTarget > ConfigStorm.min_overcast_rain) ? Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F) : 0.0F));
 		return rainTarget > ConfigStorm.min_overcast_rain ? Maths.clamp(rainTarget / IWeatherRain.MINIMUM_HEAVY_RAIN, 0.0F, 10.0F) : 0.0F;
 	}
 
@@ -404,7 +404,7 @@ public class WeatherManagerClient extends AbstractWeatherManager
 			float overcast = stageMult * distanceMult;
 			if (overcast > overcastTarget) overcastTarget = overcast;
 		}
-		if (overcastTarget != 0.0F)System.out.println("getOvercast returned: " + overcastTarget);
+		//if (overcastTarget != 0.0F)System.out.println("getOvercast returned: " + overcastTarget);
 		return Maths.clamp(overcastTarget, 0.0F, 1.0F);
 	}
 }

@@ -132,6 +132,7 @@ public class ServerTickHandler
 	public static void playerClientRequestsFullSync(ServerPlayerEntity entP) {
 		WeatherManagerServer wm = dimensionSystems.get(entP.level.dimension().location().toString());
 		if (wm != null) {
+			//System.out.println("Player joined world, syncing data to them!");
 			wm.playerJoinedWorldSyncFull(entP);
 		}
 	}

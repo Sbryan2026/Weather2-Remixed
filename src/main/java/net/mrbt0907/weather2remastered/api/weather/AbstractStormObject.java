@@ -397,7 +397,7 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 							EntityIceBall hail = new EntityIceBall(world);
 							hail.setPosition(x, getLayerHeight(), z);
 							world.spawnEntity(hail);*/
-							Weather2Remastered.error("Can't spawn new EntityIceBall, it doesn't exist. -Fartsy");
+							Weather2Remastered.debug("Can't spawn new EntityIceBall, it doesn't exist. -Fartsy");
 						}
 					}
 				}
@@ -828,15 +828,18 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 		ConfigList list = new ConfigList();
 		if (stormType == StormType.LAND.ordinal())
 		{
-			if (!ConfigStorm.disable_tornados)
+			System.out.println("STORM IS LAND!");
+			if (!ConfigStorm.disable_tornados) {
+				System.out.println("TORNADOES ARE ENABLED");
 				list = WeatherAPI.getTornadoStageList();
+			}
 		}
 		else
 		{
 			if (!ConfigStorm.disable_cyclones)
 				list = WeatherAPI.getHurricaneStageList();
 		}
-		
+		System.out.println("TORNADO LIST AND HURRICANE LIST ARE " + list.size());
 		for (Entry<String, Object[]> entry : list.toMap().entrySet())
 		{
 			String key = entry.getKey();
