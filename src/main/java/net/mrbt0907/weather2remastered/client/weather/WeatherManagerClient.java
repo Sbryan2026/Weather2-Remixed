@@ -10,8 +10,11 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -195,15 +198,17 @@ public class WeatherManagerClient extends AbstractWeatherManager
 				int posXS = mainNBT.getInt("posX");
 				int posYS = mainNBT.getInt("posY");
 				int posZS = mainNBT.getInt("posZ");
+				ServerWorld dim = ServerLifecycleHooks.getCurrentServer().getLevel(RegistryKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(mainNBT.getString("dimension"))));
 				if (mainNBT.getBoolean("withBolt") == true) {
-					LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD));
+					//System.out.println("Creating lightning in dimension " + mainNBT.getString("dimension") + " ServerWorld: " + dim);
+					LightningBoltEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(dim);
 					if (lightning == null) {
 						System.out.println("WHAT");
 					}
 				    if (lightning != null) {
 				        lightning.moveTo(posXS + 0.5, posYS, posZS + 0.5);
-				        lightning.setVisualOnly(false); // false = real lightning, true = visual only
-				        ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD).addFreshEntity(lightning);
+				        lightning.setVisualOnly(false);
+				        dim.addFreshEntity(lightning);
 				        System.out.println("SPAWNED AT " + posXS + " " + posYS + " " + posZS);
 				    }
 				}

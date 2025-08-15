@@ -87,7 +87,7 @@ public class ConfigManager
 
 	public static void save()
 	{
-		Weather2Remastered.error("Can't save from ConfigManager just yet...");
+		Weather2Remastered.debug("[ERROR] Can't save from ConfigManager just yet...");
 	}
 
 	@OnlyIn(Dist.CLIENT)

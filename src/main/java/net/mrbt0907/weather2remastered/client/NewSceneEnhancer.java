@@ -502,7 +502,7 @@ public class NewSceneEnhancer implements Runnable
 			{
 				MC.level.setRainLevel(Math.abs(rain));
 				MC.level.setThunderLevel(overcast);
-//				System.out.println("Overcast "+ overcast);
+				//System.out.println("Overcast "+ overcast + " Rain " + rainTarget);
 			}
 		}
 		public boolean shouldChangeFogColor()

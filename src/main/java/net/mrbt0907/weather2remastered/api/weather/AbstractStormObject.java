@@ -1142,8 +1142,9 @@ public class AbstractStormObject extends AbstractWeatherObject implements IWeath
 		lightning.putDouble("posY", y);
 		lightning.putDouble("posZ", z);
 		lightning.putBoolean("withBolt", spawnBolt);
+		lightning.putString("dimension", manager.getWorld().dimension().location().toString());
 		PacketBase.send(7, lightning);
-		System.out.println("Sending lightning packet "+ FartsyUtil.prettyPrintNBT(lightning));
+		//System.out.println("Sending lightning packet "+ FartsyUtil.prettyPrintNBT(lightning));
 		/*if (spawnBolt)
 		{
 			Weather2Remastered.debug("UUID: " + getUUID() + "Can't spawn new EntityLightningEX as it does not exist. Storm pos " + pos.posX + " " + pos.posZ);
