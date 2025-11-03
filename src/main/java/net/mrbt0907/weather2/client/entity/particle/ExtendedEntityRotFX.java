@@ -8,12 +8,14 @@ import net.mrbt0907.weather2.util.Maths;
 public class ExtendedEntityRotFX extends EntityRotFX
 {
 	protected int ticksExisted;
+	private float invMax;
 	protected float startRed, startGreen, startBlue, startMult, finalRed, finalBlue, finalGreen, finalAdj, finalMult;
 	
 	public ExtendedEntityRotFX(World world, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, TextureAtlasSprite texture)
 	{
 		super(world, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn - 0.5D, zSpeedIn);
         setParticleTexture(texture);
+		invMax = 1.0F / (particleMaxAge * startMult);
         particleGravity = 1F;
         particleScale = 1F;
         setMaxAge(100);
@@ -28,9 +30,11 @@ public class ExtendedEntityRotFX extends EntityRotFX
 		
 		if (finalAdj < 1.0F)
 		{
-			finalAdj = Math.min(((float) ticksExisted / (particleMaxAge * startMult)) + finalMult, 1.0F);
-			float f = finalAdj, f1 = 1.0F - finalAdj;
-			setRBGColorF(startRed * f1 + finalRed * f, startGreen * f1 + finalGreen * f, startBlue * f1 + finalBlue * f);
+			finalAdj = ticksExisted * invMax + finalMult;
+			finalAdj = finalAdj > 1.0F ? 1.0F : finalAdj;
+
+			float f = 1.0F - finalAdj;
+			setRBGColorF(startRed * f + finalRed * finalAdj, startGreen * f + finalGreen * finalAdj, startBlue * f + finalBlue * finalAdj);
 		}
 		
 		ticksExisted++;
@@ -58,8 +62,16 @@ public class ExtendedEntityRotFX extends EntityRotFX
 	public void setColorFade(float percent)
 	{
 		startMult = Maths.clamp(percent, 0.0F, 1.0F);
+		invMax = 1.0F / (particleMaxAge * startMult);
 	}
 	
+	@Override
+	public void setMaxAge(int particleLifeTime)
+    {
+        super.setMaxAge(particleLifeTime);
+		invMax = 1.0F / (particleMaxAge * startMult);
+    }
+
     @Override
     public int getFXLayer()
     {
