@@ -51,7 +51,7 @@ public class ParticleManagerEX extends RotatingParticleManager
 		if (pA == null) return 0;
 		if (pB == null) return 0;
 		double a = Maths.distance(ParticleManagerEX.MC.player.posX, ParticleManagerEX.MC.player.posY, ParticleManagerEX.MC.player.posZ, pA.posX, pA.posY, pA.posZ);
-		double b = Maths.distance(ParticleManagerEX.MC.player.posX, ParticleManagerEX.MC.player.posY, ParticleManagerEX.MC.player.posZ, pB.posX, pA.posY, pB.posZ);
+		double b = Maths.distance(ParticleManagerEX.MC.player.posX, ParticleManagerEX.MC.player.posY, ParticleManagerEX.MC.player.posZ, pB.posX, pB.posY, pB.posZ);
 		return a > b ? -1 : a == b ? 0 : 1;
 	};
     private final List<Particle> layerA = new ArrayList<Particle>(10000);
@@ -119,168 +119,172 @@ public class ParticleManagerEX extends RotatingParticleManager
 	 * Renders all current particles. Args player, partialTickTime
 	 */
 	@Override
-	public void renderParticles(Entity entityIn, float partialTicks)
-	{
-		if (ConfigClient.enable_legacy_rendering)
-		{
-			super.renderParticles(entityIn, partialTicks);
-			return;
-		}
-		
-		boolean useParticleShaders = false;//RotatingParticleManager.useShaders && ConfigCoroUtil.particleShaders;
-		Particle.interpPosX = entityIn.lastTickPosX + (entityIn.posX - entityIn.lastTickPosX) * (double)partialTicks;
-		Particle.interpPosY = entityIn.lastTickPosY + (entityIn.posY - entityIn.lastTickPosY) * (double)partialTicks;
-		Particle.interpPosZ = entityIn.lastTickPosZ + (entityIn.posZ - entityIn.lastTickPosZ) * (double)partialTicks;
-		Particle.cameraViewDir = entityIn.getLook(partialTicks);
-		
+	public void renderParticles(Entity entityIn, float partialTicks) {
+	    if (ConfigClient.enable_legacy_rendering) {
+	        super.renderParticles(entityIn, partialTicks);
+	        return;
+	    }
 
-		RotatingParticleManager.debugParticleRenderCount = 0;
+	    // Precompute player interpolation
+	    Particle.interpPosX = entityIn.lastTickPosX + (entityIn.posX - entityIn.lastTickPosX) * partialTicks;
+	    Particle.interpPosY = entityIn.lastTickPosY + (entityIn.posY - entityIn.lastTickPosY) * partialTicks;
+	    Particle.interpPosZ = entityIn.lastTickPosZ + (entityIn.posZ - entityIn.lastTickPosZ) * partialTicks;
+	    Particle.cameraViewDir = entityIn.getLook(partialTicks);
+	    RotatingParticleManager.debugParticleRenderCount = 0;
 
-		if (useParticleShaders)
-		{
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.cloud256_test);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.cloud256_fire);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.cloud256);
-			//foreground stuff
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.downfall3);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.cloud256_6);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.rain_white);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.snow);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.leaf);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.debris_1);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.debris_2);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.debris_3);
-			MeshBufferManagerParticle.setupMeshForParticleIfMissing(ParticleRegistry.tumbleweed);
-		}
+	    boolean useParticleShaders = false; // RotatingParticleManager.useShaders && ConfigCoroUtil.particleShaders;
+	    // Initialize shader context (reused buffers)
+	    Matrix4fe viewMatrix = null;
+	    Transformation transformation = null;
+	    ShaderProgram shaderProgram = null;
 
-		Transformation transformation = null;
-		Matrix4fe viewMatrix = null;
+	    if (useParticleShaders) {
+	        shaderProgram = ShaderEngine.renderer.getShaderProgram("particle");
+	        transformation = ShaderEngine.renderer.transformation;
+	        shaderProgram.bind();
 
+	        if (projectionBuffer == null) {
+	            projectionBuffer = BufferUtils.createFloatBuffer(16);
+	            modelViewBuffer = BufferUtils.createFloatBuffer(16);
+	        }
 
-		int glCalls = 0;
-		int trueRenderCount = 0;
-		int particles = 0;
+	        projectionBuffer.clear();
+	        GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionBuffer);
+	        projectionBuffer.rewind();
 
-		if (useParticleShaders)
-		{
-			ShaderProgram shaderProgram = ShaderEngine.renderer.getShaderProgram("particle");
-			transformation = ShaderEngine.renderer.transformation;
-			shaderProgram.bind();
-			Matrix4fe projectionMatrix = new Matrix4fe();
-			FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-			GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, buf);
-			buf.rewind();
-			Matrix4fe.get(projectionMatrix, 0, buf);
+	        Matrix4fe projectionMatrix = new Matrix4fe();
+	        Matrix4fe.get(projectionMatrix, 0, projectionBuffer);
 
+	        viewMatrix = new Matrix4fe();
+	        modelViewBuffer.clear();
+	        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelViewBuffer);
+	        modelViewBuffer.rewind();
+	        Matrix4fe.get(viewMatrix, 0, modelViewBuffer);
 
-			//testing determined i can save frames by baking projectionMatrix into modelViewMatrixCamera, might have to revert for more complex shaders
-			//further testing its just barely faster, if at all...
-			boolean alternateCameraCapture = true;
-			if (alternateCameraCapture)
-			{
-				viewMatrix = new Matrix4fe();
-				FloatBuffer buf2 = BufferUtils.createFloatBuffer(16);
-				GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, buf2);
-				buf2.rewind();
-				Matrix4fe.get(viewMatrix, 0, buf2);
-			}
+	        Matrix4fe modelViewMatrix = projectionMatrix.mul(viewMatrix);
+	        shaderProgram.setUniformEfficient("modelViewMatrixCamera", modelViewMatrix, RotatingParticleManager.viewMatrixBuffer);
+	        shaderProgram.setUniform("texture_sampler", 0);
+	        int glFogMode = GL11.glGetInteger(GL11.GL_FOG_MODE);
+	        int modeIndex = (glFogMode == GL11.GL_EXP2) ? 0 : (glFogMode == GL11.GL_EXP ? 1 : 0);
+	        shaderProgram.setUniform("fogmode", modeIndex);
+	    }
 
-			Matrix4fe modelViewMatrix = projectionMatrix.mul(viewMatrix);
-			shaderProgram.setUniformEfficient("modelViewMatrixCamera", modelViewMatrix, RotatingParticleManager.viewMatrixBuffer);
-			shaderProgram.setUniform("texture_sampler", 0);
-			int glFogMode = GL11.glGetInteger(GL11.GL_FOG_MODE);
-			int modeIndex = glFogMode == GL11.GL_EXP2 ? 0 : glFogMode == GL11.GL_EXP ? 1 : 0;
-			shaderProgram.setUniform("fogmode", modeIndex);
-		}
+	    // Gather and classify particles
+	    layerA.clear();
+	    layerB.clear();
+	    layerC.clear();
+	    layerD.clear();
+	    layerMesh.clear();
 
-		
-		
-		for (Map.Entry<TextureAtlasSprite, List<ArrayDeque<Particle>[][]>> entry1 : fxLayers.entrySet())
-		{
-			if (entry1.getKey() == null)
-				continue;
-			InstancedMeshParticle mesh = null;
-			if (useParticleShaders)
-			{
-				mesh = MeshBufferManagerParticle.getMesh(entry1.getKey());
-				if (mesh == null)
-				{
-					MeshBufferManagerParticle.setupMeshForParticle(entry1.getKey());
-					mesh = MeshBufferManagerParticle.getMesh(entry1.getKey());
-				}
-			}
+	    for (Map.Entry<TextureAtlasSprite, List<ArrayDeque<Particle>[][]>> entry1 : fxLayers.entrySet()) {
+	        TextureAtlasSprite key = entry1.getKey();
+	        if (key == null) continue;
+	
+	        InstancedMeshParticle mesh = useParticleShaders ? MeshBufferManagerParticle.getMesh(key) : null;
+	        if (useParticleShaders && mesh == null) {
+	            MeshBufferManagerParticle.setupMeshForParticle(key);
+	            mesh = MeshBufferManagerParticle.getMesh(key);
+	        }
 
-			if (mesh != null || !useParticleShaders)
-				for (ArrayDeque<Particle>[][] entry : entry1.getValue())
-					for(int i = 0; i < 3; i++)
-						for (int j = 0; j < 2; j++)
-							if (!entry[i][j].isEmpty())
-							{
-								for (final Particle particle : entry[i][j])
-								{
-									if (i != 1)
-									{
-										if (j == 1)
-											layerA.add(particle);
-										else
-											layerC.add(particle);
-									}
-									else
-									{
-										if (j == 1)
-											layerB.add(particle);
-										else
-											layerD.add(particle);
-									}
-									
-									if (mesh != null)
-										layerMesh.put(particle, mesh);
-								}
-							}
-		}
-		
+	        for (ArrayDeque<Particle>[][] entry : entry1.getValue()) {
+	            for (int i = 0; i < 3; i++) {
+	                for (int j = 0; j < 2; j++) {
+	                    if (entry[i][j].isEmpty()) continue;
+	                    for (Particle particle : entry[i][j]) {
+	                        if (i != 1) {
+	                            if (j == 1) layerA.add(particle);
+	                            else layerC.add(particle);
+	                        } else {
+	                            if (j == 1) layerB.add(particle);
+	                            else layerD.add(particle);
+	                        }
+	                        if (mesh != null) layerMesh.put(particle, mesh);
+	                    }
+	                }
+	            }
+	        }
+	    }
 
-		GlStateManager.pushMatrix();
-		if (!layerA.isEmpty())
-		{
-			GlStateManager.depthMask(true);
-			renderer.bindTexture(ParticleManagerEX.PARTICLE_TEXTURES);
-			layerA.sort(COMPARE_DISTANCE);
-			render(entityIn, viewMatrix, transformation, layerA, layerMesh, useParticleShaders, partialTicks);
-		}
-		if (!layerB.isEmpty())
-		{
-			GlStateManager.depthMask(true);
-			renderer.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			layerB.sort(COMPARE_DISTANCE);
-			render(entityIn, viewMatrix, transformation, layerB, layerMesh, useParticleShaders, partialTicks);
-		}
-		if (!layerC.isEmpty())
-		{
-			GlStateManager.depthMask(false);
-			renderer.bindTexture(ParticleManagerEX.PARTICLE_TEXTURES);
-			layerC.sort(COMPARE_DISTANCE);
-			render(entityIn, viewMatrix, transformation, layerC, layerMesh, useParticleShaders, partialTicks);
-		}
-		if (!layerD.isEmpty())
-		{
-			GlStateManager.depthMask(false);
-			renderer.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			layerD.sort(COMPARE_DISTANCE);
-			render(entityIn, viewMatrix, transformation, layerD, layerMesh, useParticleShaders, partialTicks);
-		}
-		
-		GlStateManager.popMatrix();
-		
-		if (useParticleShaders)
-			ShaderEngine.renderer.getShaderProgram("particle").unbind();
+	    // Compute distance cache for all layers
+	    computeDistanceCache(entityIn, layerA, layerB, layerC, layerD);
 
-		if (ConfigCoroUtil.debugShaders && world.getTotalWorldTime() % 60 == 0)
-		{
-			System.out.println("particles: " + particles);
-			System.out.println("debugParticleRenderCount: " + RotatingParticleManager.debugParticleRenderCount);
-			System.out.println("trueRenderCount: " + trueRenderCount);
-			System.out.println("glCalls: " + glCalls);
-		}
+	    // Render all layers efficiently
+	    GlStateManager.pushMatrix();
+	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerA, PARTICLE_TEXTURES, true, useParticleShaders);
+	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerB, TextureMap.LOCATION_BLOCKS_TEXTURE, true, useParticleShaders);
+	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerC, PARTICLE_TEXTURES, false, useParticleShaders);
+	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerD, TextureMap.LOCATION_BLOCKS_TEXTURE, false, useParticleShaders);
+	    GlStateManager.popMatrix();
+
+	    if (useParticleShaders && shaderProgram != null)
+	        shaderProgram.unbind();
+	}
+
+	// Buffers reused each frame
+	private FloatBuffer projectionBuffer;
+	private FloatBuffer modelViewBuffer;
+
+	// Distance cache to avoid re-computing during sort
+	private final Map<Particle, Double> distanceCache = new HashMap<>(8192);
+
+	private void computeDistanceCache(Entity player, List<Particle>... layers) {
+	    distanceCache.clear();
+	    double px = player.posX, py = player.posY, pz = player.posZ;
+	    for (List<Particle> list : layers) {
+	        for (Particle p : list) {
+	            distanceCache.put(p, Maths.distance(px, py, pz, p.posX, p.posY, p.posZ));
+	        }
+	    }
+	}
+
+	private void renderLayer(Entity entity, float partialTicks, Matrix4fe viewMatrix, Transformation transformation, List<Particle> particles, ResourceLocation texture, boolean depthMask, boolean useParticleShaders) {
+	    if (particles.isEmpty()) return;
+
+	    GlStateManager.depthMask(depthMask);
+	    renderer.bindTexture(texture);
+
+	    // Sort using cached distances (descending)
+	    particles.sort((a, b) -> Double.compare(distanceCache.get(b), distanceCache.get(a)));
+
+	    if (useParticleShaders) {
+	        // Group particles by mesh to minimize GL calls
+	        Map<InstancedMeshParticle, List<Particle>> grouped = new HashMap<>();
+	        for (Particle p : particles) {
+	            InstancedMeshParticle mesh = layerMesh.get(p);
+	            if (mesh == null) continue;
+	            grouped.computeIfAbsent(mesh, k -> new ArrayList<>()).add(p);
+	        }
+
+	        for (Map.Entry<InstancedMeshParticle, List<Particle>> e : grouped.entrySet()) {
+	            InstancedMeshParticle mesh = e.getKey();
+	            mesh.initRender();
+	            mesh.initRenderVBO1();
+	            mesh.instanceDataBuffer.clear();
+	            mesh.curBufferPos = 0;
+
+	            for (Particle p : e.getValue()) {
+	                if (p instanceof EntityRotFX)
+	                    ((EntityRotFX) p).renderParticleForShader(mesh, transformation, viewMatrix, entity, partialTicks, ActiveRenderInfo.getRotationX(), ActiveRenderInfo.getRotationXZ(), ActiveRenderInfo.getRotationZ(), ActiveRenderInfo.getRotationYZ(), ActiveRenderInfo.getRotationXY());
+	            }
+
+	            mesh.instanceDataBuffer.limit(mesh.curBufferPos * InstancedMeshParticle.INSTANCE_SIZE_FLOATS);
+	            OpenGlHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, mesh.instanceDataVBO);
+	            ShaderManager.glBufferData(GL15.GL_ARRAY_BUFFER, mesh.instanceDataBuffer, GL15.GL_DYNAMIC_DRAW);
+	            ShaderManager.glDrawElementsInstanced(GL11.GL_TRIANGLES, mesh.getVertexCount(), GL11.GL_UNSIGNED_INT, 0, mesh.curBufferPos);
+	            OpenGlHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+	            mesh.endRenderVBO1();
+	            mesh.endRender();
+	        }
+	    } else {
+	        BufferBuilder vertexbuffer = TESSELLATOR.getBuffer();
+	        vertexbuffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+	        for (Particle p : particles) {
+	            p.renderParticle(vertexbuffer, entity, partialTicks, ActiveRenderInfo.getRotationX(), ActiveRenderInfo.getRotationXZ(), ActiveRenderInfo.getRotationZ(), ActiveRenderInfo.getRotationYZ(), ActiveRenderInfo.getRotationXY());
+	            RotatingParticleManager.debugParticleRenderCount++;
+	        }
+	        TESSELLATOR.draw();
+	    }
+
+	    particles.clear();
 	}
 }
