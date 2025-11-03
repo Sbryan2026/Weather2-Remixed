@@ -8,7 +8,7 @@ public class ChunkUtils
 {
 	public static IBlockState getBlockState(World world, int x, int y, int z)
 	{
-		return getBlockState(world, new BlockPos(x, y, z));
+		return ChunkUtils.getBlockState(world, new BlockPos(x, y, z));
 	}
 	
 	public static IBlockState getBlockState(World world, BlockPos pos)
@@ -18,12 +18,12 @@ public class ChunkUtils
 	
 	public static void setBlockState(World world, int x, int y, int z, IBlockState newState)
 	{
-		setBlockState(world, new BlockPos(x, y, z), newState);
+		ChunkUtils.setBlockState(world, new BlockPos(x, y, z), newState);
 	}
 	
 	public static void setBlockState(World world, BlockPos pos, IBlockState newState)
 	{
-		world.setBlockState(pos, newState);
+		world.setBlockState(pos, newState, 2 | 16);
 	}
 	
 	public static boolean isValidPos(World world, int y)

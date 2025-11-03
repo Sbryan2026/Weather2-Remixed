@@ -1,17 +1,37 @@
 package net.mrbt0907.weather2;
 
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.mrbt0907.configex.ConfigModEX;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.command.CommandWeather2;
-import net.mrbt0907.weather2.config.*;
+import net.mrbt0907.weather2.config.ConfigClient;
+import net.mrbt0907.weather2.config.ConfigFoliage;
+import net.mrbt0907.weather2.config.ConfigFront;
+import net.mrbt0907.weather2.config.ConfigGrab;
+import net.mrbt0907.weather2.config.ConfigMisc;
+import net.mrbt0907.weather2.config.ConfigSand;
+import net.mrbt0907.weather2.config.ConfigSeason;
+import net.mrbt0907.weather2.config.ConfigSimulation;
+import net.mrbt0907.weather2.config.ConfigSnow;
+import net.mrbt0907.weather2.config.ConfigStorm;
+import net.mrbt0907.weather2.config.ConfigVolume;
+import net.mrbt0907.weather2.config.ConfigWind;
+import net.mrbt0907.weather2.config.EZConfigParser;
 import net.mrbt0907.weather2.event.EventHandlerFML;
 import net.mrbt0907.weather2.event.EventHandlerForge;
 import net.mrbt0907.weather2.event.EventHandlerPacket;
@@ -20,28 +40,26 @@ import net.mrbt0907.weather2.player.PlayerData;
 import net.mrbt0907.weather2.registry.BlockRegistry;
 import net.mrbt0907.weather2.weather.WeatherManagerServer;
 
-import org.apache.logging.log4j.Logger;
-
 @Mod(modid = Weather2.MODID, name=Weather2.MOD, version=Weather2.VERSION, acceptedMinecraftVersions="[1.12.2]", dependencies="required-after:coroutil@[1.12.1-1.2.37,);required-after:configex@[1.0,);required-after:forge@[14.23.5.2860,);", guiFactory = "net.mrbt0907.configex.gui.AdvancedGuiFactory")
 public class Weather2
 {
 	public static final String MOD = "Weather 2 - Remastered";
 	public static final String MODID = "weather2remaster";
 	public static final String OLD_MODID = "weather2";
-	public static final String VERSION = "2.9.6";
-	public static final FMLEventChannel event_channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(MODID);
-	public static final CreativeTabs TAB = new CreativeTabs(MODID) {@Override public ItemStack createIcon() {return new ItemStack(BlockRegistry.tornado_sensor);}};
-	@Mod.Instance( value = Weather2.MODID )
+	public static final String VERSION = "2.9.10";
+	public static final FMLEventChannel event_channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(Weather2.MODID);
+	public static final CreativeTabs TAB = new CreativeTabs(Weather2.MODID) {@Override public ItemStack createIcon() {return new ItemStack(BlockRegistry.tornado_sensor);}};
+	@Mod.Instance(value = Weather2.MODID)
 	public static Weather2 instance;
-	public static Logger log;
+	private static Logger log;
 	@SidedProxy(modId = Weather2.MODID, clientSide = "net.mrbt0907.weather2.ClientProxy", serverSide = "net.mrbt0907.weather2.CommonProxy")
 	public static CommonProxy proxy;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		log = event.getModLog();
-		event_channel.register(new EventHandlerPacket());
+		Weather2.log = event.getModLog();
+		Weather2.event_channel.register(new EventHandlerPacket());
 		MinecraftForge.EVENT_BUS.register(new EventHandlerFML());
 		MinecraftForge.EVENT_BUS.register(new EventHandlerForge());
 		ConfigModEX.register(new ConfigMisc());
@@ -57,36 +75,36 @@ public class Weather2
 		ConfigModEX.register(new ConfigSnow());
 		ConfigModEX.register(new ConfigFoliage());
 		EZConfigParser.loadNBT();
-		info("Starting Weather2 - Remastered...");
-		debug("Running preInit...");
-		proxy.preInit();
-		debug("Finished preInit");
+		Weather2.info("Starting Weather2 - Remastered...");
+		Weather2.debug("Running preInit...");
+		Weather2.proxy.preInit();
+		Weather2.debug("Finished preInit");
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		debug("Running init...");
-		proxy.init();
-		debug("Finished init");
+		Weather2.debug("Running init...");
+		Weather2.proxy.init();
+		Weather2.debug("Finished init");
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		debug("Running postInit...");
-		proxy.postInit();
+		Weather2.debug("Running postInit...");
+		Weather2.proxy.postInit();
 		//setting last state to track after configs load, but before ticking that uses it
 		EventHandlerFML.extraGrassLast = ConfigFoliage.enable_extra_grass;
 		
-		debug("Finished postInit");
-		info("Weather2 - Remastered is online!");
+		Weather2.debug("Finished postInit");
+		Weather2.info("Weather2 - Remastered is online!");
 	}
 
 	@Mod.EventHandler
 	public void postPostInit(FMLLoadCompleteEvent event)
 	{
-		proxy.postPostInit();	
+		Weather2.proxy.postPostInit();	
 	}
 	
 	@Mod.EventHandler
@@ -102,7 +120,7 @@ public class Weather2
 	@Mod.EventHandler
 	public void serverStop(FMLServerStoppedEvent event)
 	{
-		writeOutData(true);
+		Weather2.writeOutData(true);
 		ServerTickHandler.reset();
 	}
 	
@@ -126,21 +144,21 @@ public class Weather2
 	
 	public static void info(Object message)
 	{
-		log.info(message);
+		Weather2.log.info(message);
 	}
 	
 	public static void debug(Object message)
 	{
 		boolean isDebug = ConfigMisc.debug_mode;
 		if (isDebug)
-			log.info("[DEBUG] " + message);
+			Weather2.log.info("[DEBUG] " + message);
 	}
 	
 	public static void warn(Object message)
 	{
 		boolean isDebug = ConfigMisc.debug_mode;
 		if (isDebug)
-			log.warn(message);
+			Weather2.log.warn(message);
 	}
 
 	public static void error(Object message)

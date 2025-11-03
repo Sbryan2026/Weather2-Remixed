@@ -13,6 +13,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.item.ItemPocketSand;
 import net.mrbt0907.weather2.item.ItemSandLayer;
@@ -21,7 +22,7 @@ import net.mrbt0907.weather2.item.ItemWeatherRecipe;
 
 public class ItemRegistry
 {
-	private static RegistryEvent.Register<Item> registry;
+	private static IForgeRegistry<Item> registry;
 	private static final List<Block> item_blocks = new ArrayList<Block>();
 	
 	public static final Item sensor = new ItemSensor(0);
@@ -50,51 +51,51 @@ public class ItemRegistry
 	
 	public static void add(Block block)
 	{
-		item_blocks.add(block);
+		ItemRegistry.item_blocks.add(block);
 	}
 	
 	public static void register(RegistryEvent.Register<Item> event)
 	{
 		Weather2.debug("Registering items...");
-		registry = event;
-		add("sand_layer_placeable", itemSandLayer);
-		add("weather_item", itemWeatherRecipe);
-		add("pocket_sand", itemPocketSand);
+		ItemRegistry.registry = event.getRegistry();
+		ItemRegistry.add("sand_layer_placeable", ItemRegistry.itemSandLayer);
+		ItemRegistry.add("weather_item", ItemRegistry.itemWeatherRecipe);
+		ItemRegistry.add("pocket_sand", ItemRegistry.itemPocketSand);
 		
 
-		add("handheld_thermometer", thermometer);
-		add("handheld_hygrometer", hygrometer);
-		add("handheld_anemometer", anemometer);
+		ItemRegistry.add("handheld_thermometer", ItemRegistry.thermometer);
+		ItemRegistry.add("handheld_hygrometer", ItemRegistry.hygrometer);
+		ItemRegistry.add("handheld_anemometer", ItemRegistry.anemometer);
 		
-		add("motor", itemMotor);
-		add("speaker", itemSpeaker);
-		add("antenna_0", itemAntenna0);
-		add("antenna_1", itemAntenna1);
-		add("antenna_2", itemAntenna2);
-		add("cpu_0", itemCPU0);
-		add("cpu_1", itemCPU1);
-		add("cpu_2", itemCPU2);
-		add("bulb", itemBulb);
-		add("bulb_dry", itemDryBulb);
-		add("bulb_wet", itemWetBulb);
-		add("lcd_0", itemLCD0);
-		add("lcd_1", itemLCD1);
+		ItemRegistry.add("motor", ItemRegistry.itemMotor);
+		ItemRegistry.add("speaker", ItemRegistry.itemSpeaker);
+		ItemRegistry.add("antenna_0", ItemRegistry.itemAntenna0);
+		ItemRegistry.add("antenna_1", ItemRegistry.itemAntenna1);
+		ItemRegistry.add("antenna_2", ItemRegistry.itemAntenna2);
+		ItemRegistry.add("cpu_0", ItemRegistry.itemCPU0);
+		ItemRegistry.add("cpu_1", ItemRegistry.itemCPU1);
+		ItemRegistry.add("cpu_2", ItemRegistry.itemCPU2);
+		ItemRegistry.add("bulb", ItemRegistry.itemBulb);
+		ItemRegistry.add("bulb_dry", ItemRegistry.itemDryBulb);
+		ItemRegistry.add("bulb_wet", ItemRegistry.itemWetBulb);
+		ItemRegistry.add("lcd_0", ItemRegistry.itemLCD0);
+		ItemRegistry.add("lcd_1", ItemRegistry.itemLCD1);
 		
-		for (Block block : item_blocks)
-			add(block.getRegistryName().getPath(), new ItemBlock(block));
+		for (Block block : ItemRegistry.item_blocks)
+			ItemRegistry.add(block.getRegistryName().getPath(), new ItemBlock(block));
 		
-		registry = null;
+		ItemRegistry.registry = null;
 		Weather2.debug("Finished registering items");
 	}
 	
 	public static void add(String name, Item item)
 	{
-		add(name, null, item);
+		ItemRegistry.add(name, null, item);
 	}
 	
 	public static void add(String name, String ore_dict_name, Item item)
 	{
-		if (registry != null)
+		if (ItemRegistry.registry != null)
 		{
 			item.setRegistryName(new ResourceLocation(Weather2.OLD_MODID, name));
 			item.setTranslationKey(name);
@@ -102,12 +103,12 @@ public class ItemRegistry
 			if (ore_dict_name != null)
 				OreDictionary.registerOre(ore_dict_name, item);
 			item.setCreativeTab(Weather2.TAB);
-			registry.getRegistry().register(item);
+			ItemRegistry.registry.register(item);
 			
 			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 				ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
 			
-			Weather2.debug("Registered item " + item.getRegistryName().getNamespace() +  ":" + item.getRegistryName().getPath());
+			Weather2.debug("Registered item " + item.getRegistryName());
 			return;
 		}
 		Weather2.error("Registry event returned null");

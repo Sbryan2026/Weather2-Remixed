@@ -7,14 +7,37 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.mrbt0907.weather2.Weather2;
-import net.mrbt0907.weather2.block.*;
-import net.mrbt0907.weather2.block.tile.*;
+import net.mrbt0907.weather2.block.BlockAnemometer;
+import net.mrbt0907.weather2.block.BlockMachine;
+import net.mrbt0907.weather2.block.BlockNewRadar;
+import net.mrbt0907.weather2.block.BlockNewSensor;
+import net.mrbt0907.weather2.block.BlockNewSiren;
+import net.mrbt0907.weather2.block.BlockNewWeatherConstructor;
+import net.mrbt0907.weather2.block.BlockNewWeatherDeflector;
+import net.mrbt0907.weather2.block.BlockRadio;
+import net.mrbt0907.weather2.block.BlockSandLayer;
+import net.mrbt0907.weather2.block.BlockSensor;
+import net.mrbt0907.weather2.block.BlockSiren;
+import net.mrbt0907.weather2.block.BlockTSirenManual;
+import net.mrbt0907.weather2.block.BlockWeatherConstructor;
+import net.mrbt0907.weather2.block.BlockWeatherDeflector;
+import net.mrbt0907.weather2.block.BlockWindVane;
+import net.mrbt0907.weather2.block.tile.TileAnemometer;
+import net.mrbt0907.weather2.block.tile.TileEntityTSirenManual;
+import net.mrbt0907.weather2.block.tile.TileMachine;
+import net.mrbt0907.weather2.block.tile.TileRadar;
+import net.mrbt0907.weather2.block.tile.TileRadioTransmitter;
+import net.mrbt0907.weather2.block.tile.TileSiren;
+import net.mrbt0907.weather2.block.tile.TileWeatherConstructor;
+import net.mrbt0907.weather2.block.tile.TileWeatherDeflector;
+import net.mrbt0907.weather2.block.tile.TileWindVane;
 
 @SuppressWarnings("unused")
 public class BlockRegistry
 {
-	private static RegistryEvent.Register<Block> registry;
+	private static IForgeRegistry<Block> registry;
 	
 	public static final Block wire = new BlockSensor();
 	public static final BlockRadio radio = new BlockRadio(Material.CLAY);
@@ -54,38 +77,38 @@ public class BlockRegistry
 	public static void register(RegistryEvent.Register<Block> event)
 	{
 		Weather2.debug("Registering blocks...");
-		registry = event;
-		addBlock("tornado_sensor", tornado_sensor);
-		addBlock("tornado_siren", emergency_siren);
-		addBlock("tornado_siren_manual", emergency_siren_manual);
-		addBlock("wind_vane", wind_vane);
-		addBlock("weather_forecast", weather_radar);
-		addBlock("weather_forecast_2", weather_doppler_radar);
-		addBlock("weather_forecast_3", weather_pulse_radar);
-		addBlock("weather_machine", weather_constructor);
-		addBlock("weather_deflector", weather_deflector);
-		addBlock("anemometer", anemometer);
-		addBlock("sand_layer", sand_layer, false);
+		BlockRegistry.registry = event.getRegistry();
+		BlockRegistry.addBlock("tornado_sensor", BlockRegistry.tornado_sensor);
+		BlockRegistry.addBlock("tornado_siren", BlockRegistry.emergency_siren);
+		BlockRegistry.addBlock("tornado_siren_manual", BlockRegistry.emergency_siren_manual);
+		BlockRegistry.addBlock("wind_vane", BlockRegistry.wind_vane);
+		BlockRegistry.addBlock("weather_forecast", BlockRegistry.weather_radar);
+		BlockRegistry.addBlock("weather_forecast_2", BlockRegistry.weather_doppler_radar);
+		BlockRegistry.addBlock("weather_forecast_3", BlockRegistry.weather_pulse_radar);
+		BlockRegistry.addBlock("weather_machine", BlockRegistry.weather_constructor);
+		BlockRegistry.addBlock("weather_deflector", BlockRegistry.weather_deflector);
+		BlockRegistry.addBlock("anemometer", BlockRegistry.anemometer);
+		BlockRegistry.addBlock("sand_layer", BlockRegistry.sand_layer, false);
 		
-		addBlock("machine_case", machineCase);
-		addBlock("storm_sensor", stormSensor);
-		addBlock("humidity_sensor", humiditySensor);
-		addBlock("rain_sensor", rainSensor);
-		addBlock("temperature_sensor", temperatureSensor);
-		addBlock("wind_sensor", windSensor);
-		addBlock("barometer_sensor", barometerSensor);
-		addBlock("radio_transmitter", radio);
+		BlockRegistry.addBlock("machine_case", BlockRegistry.machineCase);
+		BlockRegistry.addBlock("storm_sensor", BlockRegistry.stormSensor);
+		BlockRegistry.addBlock("humidity_sensor", BlockRegistry.humiditySensor);
+		BlockRegistry.addBlock("rain_sensor", BlockRegistry.rainSensor);
+		BlockRegistry.addBlock("temperature_sensor", BlockRegistry.temperatureSensor);
+		BlockRegistry.addBlock("wind_sensor", BlockRegistry.windSensor);
+		BlockRegistry.addBlock("barometer_sensor", BlockRegistry.barometerSensor);
+		BlockRegistry.addBlock("radio_transmitter", BlockRegistry.radio);
 		
-		addTileEntity("tornado_siren", TileSiren.class);
-		addTileEntity("tornado_siren_manual", TileEntityTSirenManual.class);
-		addTileEntity("wind_vane", TileWindVane.class);
-		addTileEntity("weather_forecast", TileRadar.class);
-		addTileEntity("weather_machine", TileWeatherConstructor.class);
-		addTileEntity("weather_deflector", TileWeatherDeflector.class);
-		addTileEntity("anemometer", TileAnemometer.class);
-		addTileEntity("machine_case", TileMachine.class);
-		addTileEntity("radio_transmitter", TileRadioTransmitter.class);
-		registry = null;
+		BlockRegistry.addTileEntity("tornado_siren", TileSiren.class);
+		BlockRegistry.addTileEntity("tornado_siren_manual", TileEntityTSirenManual.class);
+		BlockRegistry.addTileEntity("wind_vane", TileWindVane.class);
+		BlockRegistry.addTileEntity("weather_forecast", TileRadar.class);
+		BlockRegistry.addTileEntity("weather_machine", TileWeatherConstructor.class);
+		BlockRegistry.addTileEntity("weather_deflector", TileWeatherDeflector.class);
+		BlockRegistry.addTileEntity("anemometer", TileAnemometer.class);
+		BlockRegistry.addTileEntity("machine_case", TileMachine.class);
+		BlockRegistry.addTileEntity("radio_transmitter", TileRadioTransmitter.class);
+		BlockRegistry.registry = null;
 		Weather2.debug("Finished registering blocks");
 	}
 	
@@ -97,23 +120,23 @@ public class BlockRegistry
 	
 	private static void addBlock(String registry_name, Block block)
 	{
-		addBlock(registry_name, null, block, true);
+		BlockRegistry.addBlock(registry_name, null, block, true);
 	}
 	
 	
 	private static void addBlock(String registry_name, Block block, boolean creative_tab)
 	{
-		addBlock(registry_name, null, block, creative_tab);
+		BlockRegistry.addBlock(registry_name, null, block, creative_tab);
 	}
 	
 	private static void addBlock(String registry_name, String ore_dict_name, Block block)
 	{
-		addBlock(registry_name, ore_dict_name, block, true);
+		BlockRegistry.addBlock(registry_name, ore_dict_name, block, true);
 	}
 	
 	private static void addBlock(String registry_name, String ore_dict_name, Block block, boolean creative_tab)
 	{
-		if (registry != null)
+		if (BlockRegistry.registry != null)
 		{
 			block.setRegistryName(new ResourceLocation(Weather2.OLD_MODID, registry_name));
 			block.setTranslationKey(registry_name);
@@ -123,10 +146,10 @@ public class BlockRegistry
 			if (creative_tab)
 				block.setCreativeTab(Weather2.TAB);
 			
-			registry.getRegistry().register(block);			
+			BlockRegistry.registry.register(block);			
 			
 			ItemRegistry.add(block);
-			Weather2.debug("Registered block " + block.getRegistryName().getNamespace() + ":" + block.getRegistryName().getPath());
+			Weather2.debug("Registered block " + block.getRegistryName());
 			return;
 		}
 		

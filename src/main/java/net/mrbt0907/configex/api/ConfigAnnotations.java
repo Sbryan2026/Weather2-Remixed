@@ -105,4 +105,13 @@ public class ConfigAnnotations
 		double min() default -Double.MAX_VALUE;
 		double max() default Double.MAX_VALUE;
 	}
+
+	/**Gives this variable a slider for ease of use with a settable minimum bound and maximum bound. Users can hold ctrl to edit the value manually. Automatically clamps to the min and max of this variable's range annotation*/
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.FIELD)
+	public static @interface Slider
+	{
+		double min() default -Double.MAX_VALUE;
+		double max() default Double.MAX_VALUE;
+	}
 }
