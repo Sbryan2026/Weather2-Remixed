@@ -279,7 +279,7 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 								}
 							}
 							// If not, then check if we are hitting the bottom of a block. If so, cause this block to stop ascending
-							else if (EnumFacing.DOWN.equals(raytrace.sideHit))
+							else if (EnumFacing.UP.equals(raytrace.sideHit))
 							{
 								motionY = motionY < 0.0D ? motionY : 0.0D;
 								SoundType sound = block.getSoundType(state, world, pos, null);
