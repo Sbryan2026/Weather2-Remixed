@@ -17,7 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer;
-import net.mrbt0907.weather2.api.weather.WeatherEnum;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
@@ -26,9 +25,9 @@ import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.util.ChunkUtils;
 import net.mrbt0907.weather2.util.Maths;
+import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.util.WeatherUtil;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
-import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 import net.mrbt0907.weather2.weather.storm.StormObject.StormType;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
@@ -37,7 +36,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 {
 	/**List of particles that make up the clouds above*/
 	@SideOnly(Side.CLIENT)
-	public List<EntityRotFX> listParticlesCloud,
+	public List<ExtendedEntityRotFX> listParticlesCloud,
 	/**List of funnel particles that a tornado makes*/
 	listParticlesFunnel,
 	/**List of mesocyclone particles that any supercell generates*/
@@ -54,12 +53,12 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 	public NormalStormRenderer(WeatherObject system)
 	{
 		super(system);
-		listParticlesCloud = new ArrayList<EntityRotFX>();
-		listParticlesGround = new ArrayList<EntityRotFX>();
-		listParticlesRain = new ArrayList<EntityRotFX>();
-		listParticlesFunnel = new ArrayList<EntityRotFX>();
-		listParticlesMeso = new ArrayList<EntityRotFX>();
-		listParticlesMesoAlt = new ArrayList<EntityRotFX>();
+		listParticlesCloud = new ArrayList<ExtendedEntityRotFX>();
+		listParticlesGround = new ArrayList<ExtendedEntityRotFX>();
+		listParticlesRain = new ArrayList<ExtendedEntityRotFX>();
+		listParticlesFunnel = new ArrayList<ExtendedEntityRotFX>();
+		listParticlesMeso = new ArrayList<ExtendedEntityRotFX>();
+		listParticlesMesoAlt = new ArrayList<ExtendedEntityRotFX>();
 	}
 
 	@Override

@@ -2,7 +2,10 @@ package net.mrbt0907.weather2.client.entity.particle;
 
 import extendedrenderer.particle.entity.EntityRotFX;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.mrbt0907.weather2.util.Maths;
 
 public class ExtendedEntityRotFX extends EntityRotFX
@@ -24,6 +27,7 @@ public class ExtendedEntityRotFX extends EntityRotFX
 		startMult = 1.0F;
 	}
 	
+	@Override
 	public void onUpdate()
 	{
 		super.onUpdate();
@@ -76,5 +80,24 @@ public class ExtendedEntityRotFX extends EntityRotFX
     public int getFXLayer()
     {
         return 1;
+    }
+
+	@Override
+	public int getBrightnessForRender(float partialTick)
+    {
+		Chunk chunk = world.getChunk((int) posX >> 4, (int) posZ >> 4);
+		if (chunk == null) return 0;
+		int x = (int) posX & 15;
+        int y = (int) posY;
+        int z = (int) posZ & 15;
+		if (y > 255) y = 255;
+		if (y < 0) y = 0;
+		ExtendedBlockStorage[] storageArray = chunk.getBlockStorageArray();
+		if (storageArray == null) return EnumSkyBlock.SKY.defaultLightValue;
+		ExtendedBlockStorage storage = storageArray[y >> 4];
+		if (storage == null) return EnumSkyBlock.SKY.defaultLightValue;
+		int sky_light = !world.provider.hasSkyLight() ? 0 : storage.getSkyLight(x, y & 15, z);
+		int block_light = storage.getBlockLight(x, y & 15, z);
+        return sky_light << 20 | block_light << 4;
     }
 }
