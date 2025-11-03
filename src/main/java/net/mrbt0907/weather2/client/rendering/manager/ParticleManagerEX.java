@@ -12,8 +12,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 
-import CoroUtil.config.ConfigCoroUtil;
-import extendedrenderer.particle.ParticleRegistry;
 import extendedrenderer.particle.ShaderManager;
 import extendedrenderer.particle.entity.EntityRotFX;
 import extendedrenderer.render.RotatingParticleManager;
@@ -210,9 +208,9 @@ public class ParticleManagerEX extends RotatingParticleManager
 
 	    // Render all layers efficiently
 	    GlStateManager.pushMatrix();
-	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerA, PARTICLE_TEXTURES, true, useParticleShaders);
+	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerA, ParticleManagerEX.PARTICLE_TEXTURES, true, useParticleShaders);
 	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerB, TextureMap.LOCATION_BLOCKS_TEXTURE, true, useParticleShaders);
-	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerC, PARTICLE_TEXTURES, false, useParticleShaders);
+	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerC, ParticleManagerEX.PARTICLE_TEXTURES, false, useParticleShaders);
 	    renderLayer(entityIn, partialTicks, viewMatrix, transformation, layerD, TextureMap.LOCATION_BLOCKS_TEXTURE, false, useParticleShaders);
 	    GlStateManager.popMatrix();
 
@@ -225,7 +223,7 @@ public class ParticleManagerEX extends RotatingParticleManager
 	private FloatBuffer modelViewBuffer;
 
 	// Distance cache to avoid re-computing during sort
-	private final Map<Particle, Double> distanceCache = new HashMap<>(8192);
+	private final Map<Particle, Double> distanceCache = new HashMap<>(10000);
 
 	private void computeDistanceCache(Entity player, List<Particle>... layers) {
 	    distanceCache.clear();
@@ -276,13 +274,13 @@ public class ParticleManagerEX extends RotatingParticleManager
 	            mesh.endRender();
 	        }
 	    } else {
-	        BufferBuilder vertexbuffer = TESSELLATOR.getBuffer();
+	        BufferBuilder vertexbuffer = ParticleManagerEX.TESSELLATOR.getBuffer();
 	        vertexbuffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 	        for (Particle p : particles) {
 	            p.renderParticle(vertexbuffer, entity, partialTicks, ActiveRenderInfo.getRotationX(), ActiveRenderInfo.getRotationXZ(), ActiveRenderInfo.getRotationZ(), ActiveRenderInfo.getRotationYZ(), ActiveRenderInfo.getRotationXY());
 	            RotatingParticleManager.debugParticleRenderCount++;
 	        }
-	        TESSELLATOR.draw();
+	        ParticleManagerEX.TESSELLATOR.draw();
 	    }
 
 	    particles.clear();

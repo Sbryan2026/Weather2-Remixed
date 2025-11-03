@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.mrbt0907.weather2.Weather2;
-
 public class ConfigList
 {
 	private Map<String, Object[]> map = new LinkedHashMap<String, Object[]>();
@@ -65,7 +63,6 @@ public class ConfigList
 		{
 			if (!id.contains(":"))
 				id = "minecraft:" + id;
-			Weather2.info("REMOVING: " + id);
 			map.remove(id);
 		}
 		

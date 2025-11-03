@@ -2,10 +2,10 @@ package net.mrbt0907.weather2.client.entity.particle;
 
 import extendedrenderer.particle.entity.EntityRotFX;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.mrbt0907.weather2.util.Maths;
 
 public class ExtendedEntityRotFX extends EntityRotFX
@@ -18,13 +18,13 @@ public class ExtendedEntityRotFX extends EntityRotFX
 	{
 		super(world, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn - 0.5D, zSpeedIn);
         setParticleTexture(texture);
-		invMax = 1.0F / (particleMaxAge * startMult);
         particleGravity = 1F;
         particleScale = 1F;
         setMaxAge(100);
         setCanCollide(false);
 		finalMult = 1.0F;
 		startMult = 1.0F;
+		invMax = 1.0F / (particleMaxAge * startMult);
 	}
 	
 	@Override
@@ -88,17 +88,10 @@ public class ExtendedEntityRotFX extends EntityRotFX
 		Chunk chunk = world.getChunk((int) posX >> 4, (int) posZ >> 4);
 		boolean has_sky_light = world.provider.hasSkyLight();
 		if (chunk == null) return has_sky_light ? EnumSkyBlock.SKY.defaultLightValue : 0;
-		int x = (int) posX & 15;
-        int y = (int) posY;
-        int z = (int) posZ & 15;
-		if (y > 255) y = 255;
-		if (y < 0) y = 0;
-		ExtendedBlockStorage[] storageArray = chunk.getBlockStorageArray();
-		if (storageArray == null) return has_sky_light ? EnumSkyBlock.SKY.defaultLightValue : 0;
-		ExtendedBlockStorage storage = storageArray[y >> 4];
-		if (storage == null) return has_sky_light ? EnumSkyBlock.SKY.defaultLightValue : 0;
-		int sky_light = !world.provider.hasSkyLight() ? 0 : storage.getSkyLight(x, y & 15, z);
-		int block_light = storage.getBlockLight(x, y & 15, z);
+		double y = posY;
+		if (y > 255.0D) y = 255.0D; if (y < 0.0D) y = 0.0D;
+		int sky_light = chunk.getLightFor(EnumSkyBlock.SKY, new BlockPos(posX, y, posZ));
+		int block_light = chunk.getLightFor(EnumSkyBlock.BLOCK, new BlockPos(posX, y, posZ));
         return sky_light << 20 | block_light << 4;
     }
 }
