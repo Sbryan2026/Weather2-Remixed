@@ -1,6 +1,7 @@
 package net.mrbt0907.weather2.weather.storm;
 
 import java.util.ArrayList;
+
 import CoroUtil.block.TileEntityRepairingBlock;
 import CoroUtil.util.CoroUtilBlock;
 import CoroUtil.util.UtilMining;
@@ -41,8 +42,8 @@ public class NewTornadoHelper
 	{
 		if (storm == null || world == null) return;
 
-		float size = getTornadoBaseSize(storm), radius = size * 0.5F;
-		forceRotate(storm, world, size * 0.85F + 32.0F);
+		float size = NewTornadoHelper.getTornadoBaseSize(storm), radius = size * 0.5F;
+		NewTornadoHelper.forceRotate(storm, world, size * 0.85F + 32.0F);
 		
 		if (!world.isRemote)
 		{
@@ -63,18 +64,14 @@ public class NewTornadoHelper
 					z = (int) (storm.pos_funnel_base.posZ + Maths.random(-radius, radius));
 					
 					
-					blockPos = new BlockPos(x, 0, z);
-					blockPos = WeatherUtilBlock.getPrecipitationHeightSafe(world, blockPos).down();
-					if (blockPos.getY() < 0)
-						blockPos = new BlockPos(x, 0 ,z);
+					blockPos = new BlockPos(x, maxHeight, z);
+					blockPos = WeatherUtilBlock.getHeightSafe(world, blockPos).down();
 					
-					if (blockPos.getY() <= maxHeight)
-					{
-						if (grabbed <= ConfigGrab.max_grabbed_blocks && grabBlock(storm, world, blockPos))
-							grabbed++;
-						else if (replaced <= ConfigGrab.max_replaced_blocks && replaceBlock(storm, world, blockPos))
-							replaced++;
-					}
+					if (grabbed <= ConfigGrab.max_grabbed_blocks && NewTornadoHelper.grabBlock(storm, world, blockPos))
+						grabbed++;
+					else if (replaced <= ConfigGrab.max_replaced_blocks && NewTornadoHelper.replaceBlock(storm, world, blockPos))
+						replaced++;
+					
 				}
 			}
 			
@@ -87,7 +84,7 @@ public class NewTornadoHelper
 					BlockPos posUp = new BlockPos(storm.posGround.posX, storm.posGround.posY + Maths.random(30), storm.posGround.posZ);
 					IBlockState state = ChunkUtils.getBlockState(world, posUp);
 					if (CoroUtilBlock.isAir(state.getBlock())) {
-						EntityMovingBlock mBlock = new EntityMovingBlock(world, posUp.getX(), posUp.getY(), posUp.getZ(), FIRE, storm);
+						EntityMovingBlock mBlock = new EntityMovingBlock(world, posUp.getX(), posUp.getY(), posUp.getZ(), NewTornadoHelper.FIRE, storm);
 						mBlock.metadata = 15;
 						double speed = 2D;
 						mBlock.motionX += (Maths.random(1.0D) - Maths.random(1.0D)) * speed;
@@ -114,7 +111,7 @@ public class NewTornadoHelper
 					Block blockUp = ChunkUtils.getBlockState(world, posUp).getBlock();
 
 					if (!CoroUtilBlock.isAir(block) && CoroUtilBlock.isAir(blockUp))
-						ChunkUtils.setBlockState(world, posUp, FIRE);
+						ChunkUtils.setBlockState(world, posUp, NewTornadoHelper.FIRE);
 				}
 			}
 		}
@@ -123,7 +120,7 @@ public class NewTornadoHelper
 	public static void forceRotate(StormObject storm, World world, float size)
 	{
 		new ArrayList<Entity>(world.loadedEntityList).forEach(entity -> {
-			if ((!world.isRemote || entity instanceof EntityPlayer) && canGrabEntity(entity) && Maths.distanceSq(storm.pos_funnel_base.posX, storm.pos_funnel_base.posZ, entity.posX, entity.posZ) < size)
+			if (NewTornadoHelper.canGrabEntity(entity) && Maths.distanceSq(storm.pos_funnel_base.posX, storm.pos_funnel_base.posZ, entity.posX, entity.posZ) < size && entity.posY < storm.pos.posY)
 			{
 				if (entity instanceof EntityMovingBlock && !((EntityMovingBlock)entity).collideFalling || WeatherUtilEntity.isEntityOutside(entity, !(entity instanceof EntityPlayer)))
 					storm.spinEntity(entity);
@@ -137,10 +134,11 @@ public class NewTornadoHelper
 			return false;
 		
 		IBlockState state = world.getBlockState(pos);
+		Block block = state.getBlock();
 		if (!WeatherUtilBlock.canGrabBlock(storm, pos, state))
 			return false;
 		
-		String id = state.getBlock().getRegistryName().toString();
+		String id = block.getRegistryName().toString();
 		String metaID = id + "#" + state.getBlock().getMetaFromState(state);
 		
 		if (ConfigGrab.enable_grab_list ? (WeatherAPI.getGrabList().exists(metaID) || WeatherAPI.getGrabList().exists(id)) : !ConfigGrab.enable_replace_list)
@@ -150,7 +148,7 @@ public class NewTornadoHelper
 			
 			if (ConfigGrab.enable_repair_block_mode)
 			{
-				if (state != AIR && UtilMining.canConvertToRepairingBlockNew(world, pos, false))
+				if (state != NewTornadoHelper.AIR && UtilMining.canConvertToRepairingBlockNew(world, pos, false))
 				{
 					TileEntityRepairingBlock.replaceBlockAndBackup(world, pos, ConfigGrab.Storm_Tornado_TicksToRepairBlock);
 					return true;
@@ -168,7 +166,8 @@ public class NewTornadoHelper
 					if (tile != null && tile instanceof IInventory)
 						((IInventory)tile).clear();
 				}
-				ChunkUtils.setBlockState(world, pos.getX(), pos.getY(), pos.getZ(), AIR);
+
+				ChunkUtils.setBlockState(world, pos, NewTornadoHelper.AIR);
 				world.spawnEntity(entity);
 				storm.flyingBlocks++;
 				return true;
@@ -208,7 +207,9 @@ public class NewTornadoHelper
         			catch (Exception e) {metadata = 0;}
 					replacement = replacement.replaceAll("\\#.*", "");
 				}
-				world.setBlockState(pos, Block.getBlockFromName(replacement).getStateFromMeta(metadata));
+				Block block = Block.getBlockFromName(replacement);
+				ChunkUtils.setBlockState(world, pos, block.getStateFromMeta(metadata));
+				return true;
 			}
 		}
 		

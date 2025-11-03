@@ -44,14 +44,10 @@ public class ParticleManagerEX extends RotatingParticleManager
     protected static final Tessellator TESSELLATOR = Tessellator.getInstance();
     protected static final ResourceLocation PARTICLE_TEXTURES = new ResourceLocation("textures/particle/particles.png");
     protected final TextureManager renderer;
-    public final Comparator<? super Particle> COMPARE_DISTANCE = (pA, pB) ->
-	{
-		if (pA == null) return 0;
-		if (pB == null) return 0;
-		double a = Maths.distance(ParticleManagerEX.MC.player.posX, ParticleManagerEX.MC.player.posY, ParticleManagerEX.MC.player.posZ, pA.posX, pA.posY, pA.posZ);
-		double b = Maths.distance(ParticleManagerEX.MC.player.posX, ParticleManagerEX.MC.player.posY, ParticleManagerEX.MC.player.posZ, pB.posX, pB.posY, pB.posZ);
-		return a > b ? -1 : a == b ? 0 : 1;
-	};
+	private FloatBuffer projectionBuffer;
+	private FloatBuffer modelViewBuffer;
+	private final Map<Particle, Double> distanceCache = new HashMap<>(10000);
+	public final Comparator<? super Particle> COMPARE_DISTANCE = (a, b) -> Double.compare(distanceCache.get(b), distanceCache.get(a));
     private final List<Particle> layerA = new ArrayList<Particle>(10000);
 	private final List<Particle> layerB = new ArrayList<Particle>(10000);
 	private final List<Particle> layerC = new ArrayList<Particle>(10000);
@@ -63,55 +59,6 @@ public class ParticleManagerEX extends RotatingParticleManager
         super(world, renderer);
         this.renderer = renderer;
     }
-
-    private void render(Entity entity, Matrix4fe viewMatrix, Transformation transformation, List<Particle> particles, Map<Particle, InstancedMeshParticle> meshes, boolean useParticleShaders, float partialTicks)
-	{
-		float f = ActiveRenderInfo.getRotationX();
-		float f1 = ActiveRenderInfo.getRotationZ();
-		float f2 = ActiveRenderInfo.getRotationYZ();
-		float f3 = ActiveRenderInfo.getRotationXY();
-		float f4 = ActiveRenderInfo.getRotationXZ();
-		
-		if (useParticleShaders)
-		{
-            InstancedMeshParticle mesh;
-			for (Particle particle : particles)
-			{
-				mesh = meshes.get(particle);
-				if (mesh == null) continue;
-				
-				mesh.initRender();
-				mesh.initRenderVBO1();
-
-				//also resets position
-				mesh.instanceDataBuffer.clear();
-				mesh.curBufferPos = 0;
-				if (particle instanceof EntityRotFX)
-					((EntityRotFX) particle).renderParticleForShader(mesh, transformation, viewMatrix, entity, partialTicks, f, f4, f1, f2, f3);
-
-				mesh.instanceDataBuffer.limit(mesh.curBufferPos * InstancedMeshParticle.INSTANCE_SIZE_FLOATS);
-				OpenGlHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, mesh.instanceDataVBO);
-				ShaderManager.glBufferData(GL15.GL_ARRAY_BUFFER, mesh.instanceDataBuffer, GL15.GL_DYNAMIC_DRAW);
-				ShaderManager.glDrawElementsInstanced(GL11.GL_TRIANGLES, mesh.getVertexCount(), GL11.GL_UNSIGNED_INT, 0, mesh.curBufferPos);
-				OpenGlHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-				mesh.endRenderVBO1();
-				mesh.endRender();
-			}
-		}
-		else
-		{
-			
-			BufferBuilder vertexbuffer = ParticleManagerEX.TESSELLATOR.getBuffer();
-			vertexbuffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
-			for (Particle particle : particles)
-			{
-				particle.renderParticle(vertexbuffer, entity, partialTicks, f, f4, f1, f2, f3);
-				RotatingParticleManager.debugParticleRenderCount++;
-			}
-			ParticleManagerEX.TESSELLATOR.draw();
-		}
-        particles.clear();
-	}
 
     /**
 	 * Renders all current particles. Args player, partialTickTime
@@ -218,12 +165,7 @@ public class ParticleManagerEX extends RotatingParticleManager
 	        shaderProgram.unbind();
 	}
 
-	// Buffers reused each frame
-	private FloatBuffer projectionBuffer;
-	private FloatBuffer modelViewBuffer;
-
-	// Distance cache to avoid re-computing during sort
-	private final Map<Particle, Double> distanceCache = new HashMap<>(10000);
+	
 
 	private void computeDistanceCache(Entity player, List<Particle>... layers) {
 	    distanceCache.clear();
@@ -242,7 +184,7 @@ public class ParticleManagerEX extends RotatingParticleManager
 	    renderer.bindTexture(texture);
 
 	    // Sort using cached distances (descending)
-	    particles.sort((a, b) -> Double.compare(distanceCache.get(b), distanceCache.get(a)));
+	    particles.sort(COMPARE_DISTANCE);
 
 	    if (useParticleShaders) {
 	        // Group particles by mesh to minimize GL calls

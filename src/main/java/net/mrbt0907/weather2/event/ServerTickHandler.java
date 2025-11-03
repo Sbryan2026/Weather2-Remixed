@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import modconfig.ConfigMod;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.EZConfigParser;
+import net.mrbt0907.weather2.entity.EntityMovingBlock;
 import net.mrbt0907.weather2.network.packets.PacketEZGUI;
 import net.mrbt0907.weather2.weather.WeatherManagerServer;
 
@@ -33,9 +35,9 @@ public class ServerTickHandler
 		MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 		World world = server.getWorld(0);
 		
-		if (world != null && lastWorld != world)
+		if (world != null && ServerTickHandler.lastWorld != world)
 		{
-			lastWorld = world;
+			ServerTickHandler.lastWorld = world;
 		}
 		
 		//regularly save data
@@ -54,10 +56,13 @@ public class ServerTickHandler
 		{
 			dim = worlds[i];
 			dimension = dim.provider.getDimension();
-			if (!dimensionSystems.containsKey(dimension))
+
+			// Redo loaded entities list for Moving Blocks so they can see the new entities
+			EntityMovingBlock.updateEntities(dim);
+			if (!ServerTickHandler.dimensionSystems.containsKey(dimension))
 			{
 				if (EZConfigParser.isWeatherEnabled(dimension))
-					addWeatherSystem(dim);
+					ServerTickHandler.addWeatherSystem(dim);
 				if (!EZConfigParser.dimNames.containsKey(dimension))
 				{
 					EZConfigParser.dimNames.put(dimension, dimension + ":>  " + dim.provider.getDimensionType().getName());
@@ -66,17 +71,17 @@ public class ServerTickHandler
 				}
 			}
 			
-			if (dimensionSystems.containsKey(dimension))
+			if (ServerTickHandler.dimensionSystems.containsKey(dimension))
 			{
 				if (EZConfigParser.isWeatherEnabled(dimension))
-					dimensionSystems.get(dimension).tick();
+					ServerTickHandler.dimensionSystems.get(dimension).tick();
 				else
 					removedManagers.add(dimension);
 			}
 		}
 
 		for (int i : removedManagers)
-			removeWeatherSystem(i);
+			ServerTickHandler.removeWeatherSystem(i);
 		
 		if (ConfigMisc.aesthetic_mode)
 		{
@@ -86,13 +91,13 @@ public class ServerTickHandler
 				Weather2.debug("detected Aesthetic_Only_Mode on, setting overcast mode on");
 				EZConfigParser.setOvercastModeServerSide(ConfigMisc.overcast_mode);
 				ConfigMod.forceSaveAllFilesFromRuntimeSettings();
-				syncServerConfigToClient();
+				ServerTickHandler.syncServerConfigToClient();
 			}
 		}
 
 		//TODO: only sync when things change? is now sent via PlayerLoggedInEvent at least
 		if (world.getTotalWorldTime() % 200 == 0)
-			syncServerConfigToClient();
+			ServerTickHandler.syncServerConfigToClient();
 	}
 	
 	//must only be used when world is active, soonest allowed is TickType.WORLDLOAD
@@ -101,20 +106,20 @@ public class ServerTickHandler
 		int dim = world.provider.getDimension();
 		Weather2.debug("Registering Weather2 manager for dim: " + dim);
 		WeatherManagerServer wm = new WeatherManagerServer(world);
-		dimensionSystems.put(dim, wm);
+		ServerTickHandler.dimensionSystems.put(dim, wm);
 		wm.readFromFile();
 	}
 	
 	public static void removeWeatherSystem(int dim)
 	{
 		Weather2.debug("Weather2: Unregistering manager for dim: " + dim);
-		WeatherManagerServer wm = dimensionSystems.get(dim);
+		WeatherManagerServer wm = ServerTickHandler.dimensionSystems.get(dim);
 		
 		try
 		{
 			if (wm != null)
 			{
-				dimensionSystems.remove(dim);
+				ServerTickHandler.dimensionSystems.remove(dim);
 				wm.writeToFile();
 				wm.reset(true);
 			}
@@ -126,30 +131,32 @@ public class ServerTickHandler
 	}
 
 	public static void playerClientRequestsFullSync(EntityPlayerMP entP) {
-		WeatherManagerServer wm = dimensionSystems.get(entP.world.provider.getDimension());
+		WeatherManagerServer wm = ServerTickHandler.dimensionSystems.get(entP.world.provider.getDimension());
 		if (wm != null) {
 			wm.playerJoinedWorldSyncFull(entP);
 		}
 	}
 	
-	public static void reset() {
+	public static void reset()
+	{
 		Weather2.debug("Weather2: ServerTickHandler resetting");
-		int size = dimensionSystems.size();
-		Object[] set = dimensionSystems.keySet().toArray();
+		int size = ServerTickHandler.dimensionSystems.size();
+		Object[] set = ServerTickHandler.dimensionSystems.keySet().toArray();
 		
 		for (int i = 0; i < size; i++)
-				removeWeatherSystem((int) set[i]);
+			ServerTickHandler.removeWeatherSystem((int) set[i]);
 
+		EntityMovingBlock.resetEntities();
 		//should never happen
-		if (dimensionSystems.size() > 0)
+		if (ServerTickHandler.dimensionSystems.size() > 0)
 		{
-			Weather2.debug("Weather2: reset state failed to manually clear lists, dimensionSystems.size(): " + dimensionSystems.size() + " - forcing a full clear of lists");
-			dimensionSystems.clear();
+			Weather2.debug("Weather2: reset state failed to manually clear lists, dimensionSystems.size(): " + ServerTickHandler.dimensionSystems.size() + " - forcing a full clear of lists");
+			ServerTickHandler.dimensionSystems.clear();
 		}
 	}
 	
 	public static WeatherManagerServer getWeatherSystemForDim(int dimID) {
-		return dimensionSystems.get(dimID);
+		return ServerTickHandler.dimensionSystems.get(dimID);
 	}
 
 	public static void syncServerConfigToClient() {

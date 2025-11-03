@@ -2,6 +2,7 @@ package net.mrbt0907.weather2.weather.storm;
 
 import java.util.Map.Entry;
 import java.util.Random;
+
 import CoroUtil.util.ChunkCoordinatesBlock;
 import CoroUtil.util.CoroUtilBlock;
 import CoroUtil.util.CoroUtilCompatibility;
@@ -39,8 +40,14 @@ import net.mrbt0907.weather2.entity.EntityIceBall;
 import net.mrbt0907.weather2.entity.EntityLightningEX;
 import net.mrbt0907.weather2.network.packets.PacketLightning;
 import net.mrbt0907.weather2.registry.StormNames;
-import net.mrbt0907.weather2.util.*;
+import net.mrbt0907.weather2.util.CachedNBTTagCompound;
+import net.mrbt0907.weather2.util.ChunkUtils;
+import net.mrbt0907.weather2.util.ConfigList;
+import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.Maths.Vec3;
+import net.mrbt0907.weather2.util.WeatherUtil;
+import net.mrbt0907.weather2.util.WeatherUtilBlock;
+import net.mrbt0907.weather2.util.WeatherUtilEntity;
 import net.mrbt0907.weather2.weather.WindManager;
 
 public class StormObject extends WeatherObject implements IWeatherRain, IWeatherLayered
@@ -509,9 +516,8 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 			Block checkID2 = world.getBlockState(new BlockPos(x, y-1, z)).getBlock();
 			
 			//make sure somethings underneath it - we shouldnt need to check deeper because we spread out while meta of snow is halfway, before it can start a second pile
-			if (CoroUtilBlock.isAir(checkID2))
-				return new ChunkCoordinatesBlock(0, 0, 0, Blocks.AIR, 0); 
-			else
+			if (CoroUtilBlock.isAir(checkID2)) {
+            } else
 				//return that its an open area to start snow at
 				return new ChunkCoordinatesBlock(x, y, z, Blocks.AIR, 0);
 		}
@@ -525,8 +531,6 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 			if (checkMeta < sourceMeta)
 				return new ChunkCoordinatesBlock(x, y, z, checkID, checkMeta);
 		}
-		else
-			return new ChunkCoordinatesBlock(0, 0, 0, Blocks.AIR, 0);
 		
 		return new ChunkCoordinatesBlock(0, 0, 0, Blocks.AIR, 0);
 	}
@@ -614,8 +618,8 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 					}
 				}
 				
-				if (rain < MINIMUM_DRIZZLE && stage > 0)
-					rain = MINIMUM_DRIZZLE;
+				if (rain < IWeatherRain.MINIMUM_DRIZZLE && stage > 0)
+					rain = IWeatherRain.MINIMUM_DRIZZLE;
 				
 				//force storms to die if its no longer raining while overcast mode is active
 				if (!isDying)
@@ -1061,14 +1065,6 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		else
 			pullY *= str * 0.085F;
 		
-		//prevent double+ pull on entities
-		if (obj instanceof Entity)
-		{
-			long lastPullTime = ent.getEntityData().getLong("lastPullTime");
-			if (lastPullTime == worldTime)
-				pullY = 0;
-			ent.getEntityData().setLong("lastPullTime", worldTime);
-		}
 		
 		setVel(obj, -moveX * rotationMult, pullY * heightMult, moveZ * rotationMult);
 	}
@@ -1171,17 +1167,17 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 
 	public boolean isDrizzling()
 	{
-		return rain >= MINIMUM_DRIZZLE && rain < MINIMUM_RAIN;
+		return rain >= IWeatherRain.MINIMUM_DRIZZLE && rain < IWeatherRain.MINIMUM_RAIN;
 	}
 	
 	public boolean isRaining()
 	{
-		return rain >= MINIMUM_RAIN;
+		return rain >= IWeatherRain.MINIMUM_RAIN;
 	}
 
 	public boolean hasDownfall()
 	{
-		return rain >= MINIMUM_DRIZZLE;
+		return rain >= IWeatherRain.MINIMUM_DRIZZLE;
 	}
 	
 	@Override

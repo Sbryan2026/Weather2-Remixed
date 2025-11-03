@@ -4,9 +4,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mrbt0907.weather2.entity.EntityMovingBlock;
+import net.mrbt0907.weather2.util.Maths;
 
 @SideOnly(Side.CLIENT)
 public class RenderFlyingBlock extends Render<Entity>
@@ -51,9 +52,9 @@ public class RenderFlyingBlock extends Render<Entity>
     public void doRender(Entity entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
 		IBlockState state = null;
-
 		if (entity instanceof EntityMovingBlock)
 			state = ((EntityMovingBlock) entity).state;
+		
 		else if (renderBlock != null)
 			state = renderBlock.getDefaultState();
 		
@@ -61,7 +62,8 @@ public class RenderFlyingBlock extends Render<Entity>
 		
 		EnumBlockRenderType renderType = state.getRenderType();
 		World world = entity.world;
-		float age = (entity.ticksExisted * 5.0F) + partialTicks;
+		float yaw = (float) Math.toDegrees(Maths.fastATan2(entity.motionZ, entity.motionX)) - 90F;
+		float pitch = (float) -Math.toDegrees(Maths.fastATan2(entity.motionY, Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ)));
 
 		if (renderType == EnumBlockRenderType.MODEL)
 		{
@@ -82,11 +84,15 @@ public class RenderFlyingBlock extends Render<Entity>
 				
 			GlStateManager.translate((float)(x), (float)(y), (float)(z));
 			bufferbuilder.setTranslation((double)((float)(-blockpos.getX()) - 0.5F), (double)(-blockpos.getY()), (double)((float)(-blockpos.getZ()) - 0.5F));
-			GlStateManager.rotate((float)(age * 0.1F * 180.0D / 12.566370964050293D - 0.0D), 1.0F, 0.0F, 0.0F);
-			GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 1.0F, 0.0F);
-			GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 0.0F, 1.0F);
-			if (!(entity instanceof EntityMovingBlock))
-				GlStateManager.scale(entity.width, entity.width, entity.width);
+			
+			// Rotate in the direction this block needs to be flying
+			//GlStateManager.rotate((float)(age * 0.1F * 180.0D / 12.566370964050293D - 0.0D), 1.0F, 0.0F, 0.0F);
+			//GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 1.0F, 0.0F);
+			//GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 0.0F, 1.0F);
+			
+			GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
+			GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
+			GlStateManager.scale(entity.width, entity.height, entity.width);
 			
 			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(state), state, blockpos, bufferbuilder, false, MathHelper.getPositionRandom(entity.getPosition()));
@@ -118,12 +124,18 @@ public class RenderFlyingBlock extends Render<Entity>
 						try
 						{
 							GlStateManager.pushMatrix();
+							GlStateManager.translate((float)(x), (float)(y), (float)(z));
+							GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
+							GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
+							GlStateManager.scale(entity.width, entity.height, entity.width);
 							if (this.renderOutlines)
 							{
 								GlStateManager.enableColorMaterial();
 								GlStateManager.enableOutlineMode(this.getTeamColor(entity));
 							}
-							TileEntityRendererDispatcher.instance.render(tile, x, y, z, partialTicks);
+
+							TileEntityRendererDispatcher.instance.render(tile, 0, 0, 0, partialTicks);
+							
 							
 							GlStateManager.popMatrix();
 						}
