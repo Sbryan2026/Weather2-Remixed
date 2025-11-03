@@ -21,16 +21,16 @@ import net.mrbt0907.weather2.block.tile.TileWeatherConstructor;
 import net.mrbt0907.weather2.block.tile.TileWeatherDeflector;
 import net.mrbt0907.weather2.block.tile.TileWindVane;
 import net.mrbt0907.weather2.client.block.RenderAnemometer;
-import net.mrbt0907.weather2.client.block.RenderSiren;
-import net.mrbt0907.weather2.client.block.RenderWeatherDeflector;
 import net.mrbt0907.weather2.client.block.RenderRadar;
+import net.mrbt0907.weather2.client.block.RenderSiren;
 import net.mrbt0907.weather2.client.block.RenderWeatherConstructor;
+import net.mrbt0907.weather2.client.block.RenderWeatherDeflector;
 import net.mrbt0907.weather2.client.block.RenderWindVane;
 import net.mrbt0907.weather2.client.entity.RenderFlyingBlock;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
 import net.mrbt0907.weather2.client.gui.GuiWeather;
-import net.mrbt0907.weather2.client.rendering.ParticleManagerEX;
+import net.mrbt0907.weather2.client.rendering.manager.ParticleManagerEX;
 import net.mrbt0907.weather2.client.sound.SoundHandler;
 import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.entity.EntityIceBall;
@@ -47,7 +47,7 @@ public class ClientProxy extends CommonProxy
 	
 	public ClientProxy()
 	{
-		clientTickHandler = new ClientTickHandler();
+		ClientProxy.clientTickHandler = new ClientTickHandler();
 	}
 
 	@Override
@@ -81,9 +81,9 @@ public class ClientProxy extends CommonProxy
 	public void postInit()
 	{
 		super.postInit();
-		guiWeather = new GuiWeather();
+		ClientProxy.guiWeather = new GuiWeather();
 		WeatherAPI.refreshRenders(true);
-		MinecraftForge.EVENT_BUS.register(guiWeather);
+		MinecraftForge.EVENT_BUS.register(ClientProxy.guiWeather);
 		if (WeatherUtil.isAprilFoolsDay())
 		{
 			ConfigClient.particle_renderer = "2";
@@ -102,8 +102,8 @@ public class ClientProxy extends CommonProxy
 	private void initEntities()
 	{
 		RenderingRegistry.registerEntityRenderingHandler(EntityIceBall.class, manager -> new RenderFlyingBlock(manager, Blocks.ICE));
-		RenderingRegistry.registerEntityRenderingHandler(EntityMovingBlock.class, manager -> new RenderFlyingBlock(manager));
-		RenderingRegistry.registerEntityRenderingHandler(EntityLightningEX.class, manager -> new RenderLightningBolt(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityMovingBlock.class, RenderFlyingBlock::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityLightningEX.class, RenderLightningBolt::new);
 		//RenderingRegistry.registerEntityRenderingHandler(EntityLightningBolt.class, manager -> new RenderLightningBolt(manager));
 		//RenderingRegistry.registerEntityRenderingHandler(EntityLightningBoltCustom.class, manager -> new RenderLightningBoltCustom(manager));
 	}
