@@ -21,7 +21,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.config.ConfigGrab;
@@ -192,7 +191,6 @@ public class NewTornadoHelper
 
 		if (ConfigGrab.enable_replace_list ? (replaceList.exists(metaID) || replaceList.exists(id)) : false)
 		{
-			Weather2.info("Hi: " + metaID);
 			if (ConfigGrab.replace_list_strength_match ? !(WeatherUtilBlock.checkResistance(storm, metaID) || WeatherUtilBlock.checkResistance(storm, id)) : false)
 				return false;
 

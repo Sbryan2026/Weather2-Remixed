@@ -972,7 +972,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		if (dist > 5D)
 			pull_direction = pull_direction * (radius / dist);
 
-		lift_force += (float)(config.tornadoLiftRate * 25.0D / weight);
+		lift_force += (float)((is_particle ? config.tornadoLiftRate * 25.0D : windSpeed * 0.1F) / weight);
 		double adjPull = 0.005D / ((weight * ((dist + 1D) / radius)));
 		if (is_particle)
 			lift_force *= 0.15F;
@@ -984,7 +984,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		center_direction = (float)((double)center_direction + profileAngle);
 		float pullX = (float)Maths.fastCos(-center_direction * 0.01745329F - (float)Math.PI);
 		float pullZ = (float)Maths.fastSin(-center_direction * 0.01745329F - (float)Math.PI);
-		float pull_force = is_particle ? config.tornadoPullRate : config.tornadoPullRate / (weight * 0.075F);
+		float pull_force = is_particle ? config.tornadoPullRate : windSpeed * 0.01F / (weight);
 		
 		if (entity != null)
 		{
@@ -994,7 +994,6 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 				lift_force *= 0.65D;
 			}
 				
-			pull_force *= Math.min(windSpeed * 0.04F, 3.0D);
 			pull_force *= 2.0D;
 		}
 
