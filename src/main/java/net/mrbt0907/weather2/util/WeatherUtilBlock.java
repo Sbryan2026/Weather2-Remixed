@@ -931,18 +931,16 @@ public class WeatherUtilBlock
 		if (chunk == null)
 			return pos.down(pos.getY());
 		
-		
-
 		IBlockState state;
 		BlockPos new_pos = new BlockPos(pos.getX(), Math.min(pos.getY(), chunk.getHeight(pos)), pos.getZ());
-		while (new_pos.getY() > -1)
+		while (new_pos.getY() < 255)
 		{
 			state = chunk.getBlockState(new_pos);
-			if (!WeatherUtilBlock.isReplacable(state, false))
+			if (WeatherUtilBlock.isReplacable(state, false))
 				break;
-			new_pos = new_pos.down();
+			new_pos = new_pos.up();
 		}
-		return new_pos.up();
+		return new_pos;
 	}
 
 	/**

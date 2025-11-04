@@ -1,6 +1,7 @@
 package net.mrbt0907.weather2.util;
 
 import net.minecraft.block.BlockAir;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -24,10 +25,17 @@ public class ChunkUtils
 	
 	public static void setBlockState(World world, BlockPos pos, IBlockState newState)
 	{
-		if (newState.getBlock() instanceof BlockAir && ChunkUtils.getBlockState(world, pos.up()).getMaterial().isLiquid())
-			world.setBlockState(pos, newState);
-		else
-			world.setBlockState(pos, newState, 2 | 16);
+		if (newState.getBlock() instanceof BlockAir)
+		{
+			IBlockState state = ChunkUtils.getBlockState(world, pos.up());
+			if (state.getMaterial().isLiquid() || !WeatherUtilBlock.isReplacable(state, false) || newState.getBlock() instanceof ITileEntityProvider)
+			{
+				world.setBlockState(pos, newState);
+				return;
+			}
+		}
+		
+		world.setBlockState(pos, newState, 2 | 16);
 	}
 	
 	public static boolean isValidPos(World world, int y)
