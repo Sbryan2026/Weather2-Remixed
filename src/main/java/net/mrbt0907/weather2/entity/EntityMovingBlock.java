@@ -281,28 +281,20 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 							// If not, then check if we are hitting the bottom of a block. If so, cause this block to stop ascending
 							else if (EnumFacing.UP.equals(raytrace.sideHit))
 							{
-								motionY = motionY < 0.0D ? motionY : 0.0D;
+								motionY = 0.0D;
 								SoundType sound = block.getSoundType(state, world, pos, null);
 								if (sound != null)
 									world.playSound(null, posX, posY, posZ, sound.getHitSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
 							}
 							// If all else fails, blockify where we landed at.
-							else
+							else if (EnumFacing.DOWN.equals(raytrace.sideHit))
 							{
-								while(end_point.y < 255.0D)
-								{
-									target_pos = new BlockPos((int) end_point.x, (int) end_point.y, (int) end_point.z);
-									target = world.getBlockState(target_pos);
-									target_block = target.getBlock();
+								target_pos = new BlockPos((int) end_point.x, (int) end_point.y, (int) end_point.z);
+								target = world.getBlockState(target_pos);
+								target_block = target.getBlock();
 
-									if (WeatherUtilBlock.isReplacable(target, true))
-									{
-										blockify((int) end_point.x, (int) end_point.y, (int) end_point.z);
-										break;
-									}
-									else
-										end_point = end_point.add(0, 1, 0);
-								}
+								if (WeatherUtilBlock.isReplacable(target, true) || tileEntityNBT != null)
+									blockify((int) end_point.x, (int) end_point.y, (int) end_point.z);
 							}
 						}
 					}

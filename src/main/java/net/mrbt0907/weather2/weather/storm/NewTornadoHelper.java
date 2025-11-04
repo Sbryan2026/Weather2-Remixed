@@ -120,7 +120,7 @@ public class NewTornadoHelper
 	public static void forceRotate(StormObject storm, World world, float size)
 	{
 		new ArrayList<Entity>(world.loadedEntityList).forEach(entity -> {
-			if (NewTornadoHelper.canGrabEntity(entity) && Maths.distanceSq(storm.pos_funnel_base.posX, storm.pos_funnel_base.posZ, entity.posX, entity.posZ) < size && entity.posY < storm.pos.posY)
+			if (NewTornadoHelper.canGrabEntity(entity) && Maths.distanceSq(storm.pos_funnel_base.posX, storm.pos_funnel_base.posZ, entity.posX, entity.posZ) < size)
 			{
 				if (entity instanceof EntityMovingBlock && !((EntityMovingBlock)entity).collideFalling || WeatherUtilEntity.isEntityOutside(entity, !(entity instanceof EntityPlayer)))
 					storm.spinEntity(entity);

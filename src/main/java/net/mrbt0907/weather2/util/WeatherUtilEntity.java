@@ -42,7 +42,10 @@ public class WeatherUtilEntity {
 		else if (world.isRemote && obj instanceof Particle)
 			return WeatherUtilParticle.getParticleWeight((Particle) obj);
 		else if (obj instanceof EntityMovingBlock)
-			return 15F + ((EntityMovingBlock) obj).block.blockHardness;
+		{
+			EntityMovingBlock block = (EntityMovingBlock) obj;
+			return 12F + (block.block.isToolEffective("axe", block.state) ? block.block.blockHardness : block.block.isToolEffective("shovel", block.state) ? block.block.blockHardness * 13 : block.block.blockHardness * 20);
+		}
 		else if (obj instanceof EntitySquid)
 			return 400F;
 		else if (obj instanceof EntityPlayer)
