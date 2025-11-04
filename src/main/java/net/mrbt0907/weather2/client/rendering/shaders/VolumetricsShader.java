@@ -41,6 +41,7 @@ public class VolumetricsShader
         {
             Weather2.error("Shader program " + program_id + " failed to link successfully. Skipping shader loading...");
             valid = false;
+            deleteShader();
             return;
         }
         valid = true;
@@ -87,6 +88,7 @@ public class VolumetricsShader
         if (GL20.glGetShaderi(shader_id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
         {
             Weather2.error("Shader " + path + " failed to compile successfully. Skipping shader loading...");
+            GL20.glDeleteShader(shader_id);
             return -1;
         }
         return shader_id;

@@ -1,14 +1,19 @@
 package net.mrbt0907.weather2.config;
 
-import net.mrbt0907.configex.api.ConfigAnnotations.*;
-import net.mrbt0907.configex.api.IConfigEX;
+import java.io.File;
+
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.mrbt0907.configex.api.ConfigAnnotations.Comment;
+import net.mrbt0907.configex.api.ConfigAnnotations.DoubleRange;
+import net.mrbt0907.configex.api.ConfigAnnotations.FloatRange;
+import net.mrbt0907.configex.api.ConfigAnnotations.Hidden;
+import net.mrbt0907.configex.api.ConfigAnnotations.IntegerRange;
+import net.mrbt0907.configex.api.ConfigAnnotations.Permission;
+import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
-
-import java.io.File;
 
 
 public class ConfigClient implements IConfigEX
@@ -16,6 +21,9 @@ public class ConfigClient implements IConfigEX
 	@Permission(0)
 	@Comment("Determines the renderer used for storms and clouds. Accepts number ids and renderer ids. Ex: 0 or " + Weather2.MODID + ":normal uses the default renderer.")
 	public static String particle_renderer = "0";
+	@Permission(0)
+	@Comment("Should the particles be rendered with volumetrics instead of particles?")
+	public static boolean enable_volumetrics = false;
 	@Hidden
 	@Comment("Enables on screen debug information about the current particle renderer")
 	public static boolean enable_debug_renderer = false;
@@ -180,7 +188,7 @@ public class ConfigClient implements IConfigEX
 	@Override
 	public void onConfigChanged(Phase phase, int variables)
 	{
-		if (phase.equals(Phase.END) && FMLCommonHandler.instance().getSide() == Side.CLIENT)
+		if (Phase.END.equals(phase) && FMLCommonHandler.instance().getSide() == Side.CLIENT)
     	{
     		WeatherAPI.refreshRenders(false);
     		if (ClientTickHandler.weatherManager != null)

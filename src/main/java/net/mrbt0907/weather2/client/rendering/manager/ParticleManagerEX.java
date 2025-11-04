@@ -35,6 +35,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.mrbt0907.weather2.client.rendering.shaders.VolumetricRenderer;
 import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.util.Maths;
 
@@ -64,8 +65,10 @@ public class ParticleManagerEX extends RotatingParticleManager
 	 * Renders all current particles. Args player, partialTickTime
 	 */
 	@Override
-	public void renderParticles(Entity entityIn, float partialTicks) {
-	    if (ConfigClient.enable_legacy_rendering) {
+	public void renderParticles(Entity entityIn, float partialTicks)
+	{
+	    if (ConfigClient.enable_legacy_rendering)
+		{
 	        super.renderParticles(entityIn, partialTicks);
 	        return;
 	    }
@@ -186,7 +189,10 @@ public class ParticleManagerEX extends RotatingParticleManager
 	    // Sort using cached distances (descending)
 	    particles.sort(COMPARE_DISTANCE);
 
-	    if (useParticleShaders) {
+		if (ConfigClient.enable_volumetrics)
+			VolumetricRenderer.render(entity, new ArrayList<>(particles), partialTicks);
+	    if (useParticleShaders)
+		{
 	        // Group particles by mesh to minimize GL calls
 	        Map<InstancedMeshParticle, List<Particle>> grouped = new HashMap<>();
 	        for (Particle p : particles) {
