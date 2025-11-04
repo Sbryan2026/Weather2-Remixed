@@ -990,7 +990,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		{
 			if (entity instanceof EntityLivingBase)
 			{
-				pull_force *=  Maths.random(1.25D, 5.0D);
+				pull_force *=  Maths.random(1.25D, 1.5D);
 				lift_force *= 0.65D;
 			}
 				
