@@ -70,7 +70,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		EntityPlayer entP = Minecraft.getMinecraft().player;
 		IBlockState state = ConfigCoroUtil.optimizedCloudRendering ? Blocks.AIR.getDefaultState() : ChunkUtils.getBlockState(manager.getWorld(), (int) storm.pos_funnel_base.posX, (int) storm.pos_funnel_base.posY - 1, (int) storm.pos_funnel_base.posZ);
 		Material material = state.getMaterial();
-		int layerHeight = storm.getLayerHeight() + 64;
+		int layerHeight = storm.getLayerHeight() + getAdjustedLayerHeight();
 		double maxRenderDistance = NewSceneEnhancer.instance().renderDistance + 64.0D;
 		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.01F);
 		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.008F, 0.35F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.0055F);
@@ -732,5 +732,9 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		debugInfo.add("Ground Particles: " + listParticlesGround.size() + "/" + particleLimitGround);
 		debugInfo.add("Rain Particles: " + listParticlesRain.size() + "/" + particleLimitRain);
 		return debugInfo;
+	}
+
+	public static int getAdjustedLayerHeight() {
+		return (ConfigClient.extended_render_distance > 512.0D ? 128 : 64);
 	}
 }
