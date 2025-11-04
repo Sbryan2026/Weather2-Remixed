@@ -1,10 +1,15 @@
 package net.mrbt0907.weather2.config;
 
-import net.mrbt0907.configex.api.ConfigAnnotations.*;
+import java.io.File;
+
+import net.mrbt0907.configex.api.ConfigAnnotations.Comment;
+import net.mrbt0907.configex.api.ConfigAnnotations.Enforce;
+import net.mrbt0907.configex.api.ConfigAnnotations.Hidden;
+import net.mrbt0907.configex.api.ConfigAnnotations.IntegerRange;
+import net.mrbt0907.configex.api.ConfigAnnotations.LongRange;
 import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WeatherAPI;
-import java.io.File;
 
 
 public class ConfigGrab implements IConfigEX
@@ -81,15 +86,15 @@ public class ConfigGrab implements IConfigEX
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How many blocks can be grabbed per tick")
-	public static int max_grabbed_blocks = 10;
+	public static int max_grabbed_blocks = 3;
 	@Enforce 
 	@IntegerRange(min=-1)
 	@Comment("How many flying blocks can any tornado have at a time?")
-	public static int max_flying_blocks = 60;
+	public static int max_flying_blocks = -1;
 	@Enforce
 	@IntegerRange(min=0)
 	@Comment("How many blocks can all tornados replace at a time?")
-	public static int max_replaced_blocks = 512;
+	public static int max_replaced_blocks = 50;
 	@Enforce
 	@Comment("Should blocks picked up by storms damage other entities and players?")
 	public static boolean grabbed_blocks_hurt = true;
@@ -109,7 +114,7 @@ public class ConfigGrab implements IConfigEX
 	@Enforce
 	@LongRange(min=1L)
 	@Comment("How often do storms process grabbed blocks in ticks?")
-	public static long grab_process_delay = 10L;
+	public static long grab_process_delay = 1L;
 	
 	@Override
     public String getName()
@@ -132,7 +137,7 @@ public class ConfigGrab implements IConfigEX
 	@Override
 	public void onConfigChanged(Phase phase, int variables)
 	{
-		if (phase.equals(Phase.END))
+		if (Phase.END.equals(phase))
 			WeatherAPI.refreshGrabRules();
 	}
 

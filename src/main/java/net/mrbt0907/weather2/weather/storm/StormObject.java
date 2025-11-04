@@ -944,7 +944,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 	public void spinEntity(Object obj)
 	{
 		float weight = WeatherUtilEntity.getWeight(obj);
-		if (weight < 0.0F) return;
+		if (weight <= 0.0F) return;
 		
 		// ----- Parameters -----\\
 		WeatherEntityConfig config = getWeatherEntityConfigForStorm();
@@ -958,6 +958,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		double dy = pos.posY - CoroUtilEntOrParticle.getPosY(obj);
 		double dz = pos.posZ - CoroUtilEntOrParticle.getPosZ(obj);
 		
+		// ----- Get Direction Of Funnel ----- \\
 		float center_direction = (float)((Maths.fastATan2(dz, dx) * 180D) / Math.PI) - 90F;
 		for (; center_direction < -180F; center_direction += 360F);
 		for (; center_direction >= 180F; center_direction -= 360F);
@@ -983,19 +984,20 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		center_direction = (float)((double)center_direction + profileAngle);
 		float pullX = (float)Maths.fastCos(-center_direction * 0.01745329F - (float)Math.PI);
 		float pullZ = (float)Maths.fastSin(-center_direction * 0.01745329F - (float)Math.PI);
-		float pull_force = config.tornadoPullRate;
+		float pull_force = is_particle ? config.tornadoPullRate : config.tornadoPullRate / (weight * 0.075F);
 		
 		if (entity != null)
 		{
 			if (entity instanceof EntityLivingBase)
 			{
-				pull_force *= 1.45D;
-				lift_force *= 0.5D;
+				pull_force *=  Maths.random(1.25D, 5.0D);
+				lift_force *= 0.65D;
 			}
 				
 			pull_force *= Math.min(windSpeed * 0.04F, 3.0D);
 			pull_force *= 2.0D;
 		}
+
 		if (config.type == 0)
 			lift_force *= 0.25F;
 		float moveX = pullX * pull_force;

@@ -70,11 +70,11 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		EntityPlayer entP = Minecraft.getMinecraft().player;
 		IBlockState state = ConfigCoroUtil.optimizedCloudRendering ? Blocks.AIR.getDefaultState() : ChunkUtils.getBlockState(manager.getWorld(), (int) storm.pos_funnel_base.posX, (int) storm.pos_funnel_base.posY - 1, (int) storm.pos_funnel_base.posZ);
 		Material material = state.getMaterial();
-		int layerHeight = storm.getLayerHeight() + getAdjustedLayerHeight();
+		int layerHeight = storm.getLayerHeight() + NormalStormRenderer.getAdjustedLayerHeight();
 		double maxRenderDistance = NewSceneEnhancer.instance().renderDistance + 64.0D;
 		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.01F);
-		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.008F, 0.35F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.0055F);
-		float sizeOtherMult = Math.min(Math.max(storm.size * 0.003F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.03F);
+		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.004F, 0.2F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.0055F);
+		float sizeOtherMult = Math.min(Math.max(storm.size * 0.002F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.03F);
 		float heightMult = layerHeight * 0.0055F;
 		if (Maths.random(0, 10) >= 5) heightMult = layerHeight * Maths.random(0.0054F, 0.0100F);
 		float rotationMult = Math.max(heightMult * 0.55F, 1.0F);

@@ -44,7 +44,7 @@ public class WeatherUtilEntity {
 		else if (obj instanceof EntityMovingBlock)
 		{
 			EntityMovingBlock block = (EntityMovingBlock) obj;
-			return 12F + (block.block.isToolEffective("axe", block.state) ? block.block.blockHardness : block.block.isToolEffective("shovel", block.state) ? block.block.blockHardness * 13 : block.block.blockHardness * 20);
+			return 12F + (block.block.isToolEffective("axe", block.state) ? block.block.blockHardness : block.block.isToolEffective("shovel", block.state) ? block.block.blockHardness * 6 : block.block.blockHardness * 13);
 		}
 		else if (obj instanceof EntitySquid)
 			return 400F;

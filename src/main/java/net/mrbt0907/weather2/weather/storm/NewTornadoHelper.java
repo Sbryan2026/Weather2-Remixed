@@ -21,6 +21,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.config.ConfigGrab;
@@ -180,16 +181,18 @@ public class NewTornadoHelper
 	@SuppressWarnings("deprecation")
 	public static boolean replaceBlock(StormObject storm, World world, BlockPos pos)
 	{
+		
 		IBlockState state = world.getBlockState(pos);
 		if (!WeatherUtilBlock.canGrabBlock(storm, pos, state))
 			return false;
-		
+			
 		String id = state.getBlock().getRegistryName().toString();
 		String metaID = id + "#" + state.getBlock().getMetaFromState(state);
 		ConfigList replaceList = WeatherAPI.getReplaceList();
 
 		if (ConfigGrab.enable_replace_list ? (replaceList.exists(metaID) || replaceList.exists(id)) : false)
 		{
+			Weather2.info("Hi: " + metaID);
 			if (ConfigGrab.replace_list_strength_match ? !(WeatherUtilBlock.checkResistance(storm, metaID) || WeatherUtilBlock.checkResistance(storm, id)) : false)
 				return false;
 
@@ -207,8 +210,7 @@ public class NewTornadoHelper
         			catch (Exception e) {metadata = 0;}
 					replacement = replacement.replaceAll("\\#.*", "");
 				}
-				Block block = Block.getBlockFromName(replacement);
-				ChunkUtils.setBlockState(world, pos, block.getStateFromMeta(metadata));
+				ChunkUtils.setBlockState(world, pos, Block.getBlockFromName(replacement).getStateFromMeta(metadata));
 				return true;
 			}
 		}
