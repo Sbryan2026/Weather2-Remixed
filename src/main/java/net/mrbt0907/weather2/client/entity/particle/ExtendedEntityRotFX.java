@@ -1,7 +1,9 @@
 package net.mrbt0907.weather2.client.entity.particle;
 
 import extendedrenderer.particle.entity.EntityRotFX;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
@@ -44,6 +46,14 @@ public class ExtendedEntityRotFX extends EntityRotFX
 		ticksExisted++;
 	}
 	
+	@Override
+	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
+    {
+		if (true)
+			super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+	}
+
+
 	public void setColor(float r, float g, float b)
 	{
 		startRed = r;
