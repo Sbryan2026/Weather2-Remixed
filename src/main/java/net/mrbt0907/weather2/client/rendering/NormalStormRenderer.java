@@ -73,9 +73,9 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		int layerHeight = storm.getLayerHeight() + NormalStormRenderer.getAdjustedLayerHeight();
 		double maxRenderDistance = NewSceneEnhancer.instance().renderDistance + 64.0D;
 		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.01F);
-		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.004F, 0.2F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.0055F);
+		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.008F, 0.2F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.0055F);
 		float sizeOtherMult = Math.min(Math.max(storm.size * 0.002F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.03F);
-		float heightMult = layerHeight * 0.0055F;
+		float heightMult = layerHeight * 0.0065F;
 		if (Maths.random(0, 10) >= 5) heightMult = layerHeight * Maths.random(0.0054F, 0.0100F);
 		float rotationMult = Math.max(heightMult * 0.55F, 1.0F);
 		float r = -1.0F, g = -1.0F, b = -1.0F;
@@ -155,6 +155,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 					particle.setColor(finalBright, finalBright, finalBright);
 					particle.setScale(400.0F * sizeCloudMult);
 					particle.setMaxAge(120);
+					particle.setVolumetric();
 					listParticlesCloud.add(particle);
 				}
 			}
@@ -206,6 +207,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 									}
 									particle.rotationPitch = Maths.random(80.0F, 100.0F);
 									particle.setScale(2250.0F * sizeCloudMult);
+									particle.setVolumetric();
 									listParticlesCloud.add(particle);
 								}
 							}
@@ -331,7 +333,8 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 							particle.setRBGColorF(1F, 1F, 1F);
 							particle.setScale(particle.getScale() * 0.7F);
 						}
-							
+						
+						particle.setVolumetric();
 						listParticlesFunnel.add(particle);
 					}
 					
@@ -451,6 +454,8 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		                    particle.rotationPitch = Maths.random(70.0F, 110.0F);
 		                    particle.setScale(1250.0F * sizeCloudMult);
 		                    particle2.setScale(2200.0F * sizeCloudMult);
+							particle.setVolumetric();
+							particle2.setVolumetric();
 		                    listParticlesMeso.add(particle);
 		                    listParticlesMesoAlt.add(particle2);
 		                }

@@ -8,10 +8,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.util.Maths;
 
 public class ExtendedEntityRotFX extends EntityRotFX
 {
+	protected boolean useVolumetrics;
 	protected int ticksExisted;
 	private float invMax;
 	protected float startRed, startGreen, startBlue, startMult, finalRed, finalBlue, finalGreen, finalAdj, finalMult;
@@ -49,10 +51,19 @@ public class ExtendedEntityRotFX extends EntityRotFX
 	@Override
 	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
-		if (true)
+		if (!ConfigClient.enable_volumetrics || !useVolumetrics)
 			super.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
 	}
 
+	public boolean isVolumetric()
+	{
+		return useVolumetrics;
+	}
+
+	public void setVolumetric()
+	{
+		useVolumetrics = true;
+	}
 
 	public void setColor(float r, float g, float b)
 	{

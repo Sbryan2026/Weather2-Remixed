@@ -16,6 +16,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.item.ItemPocketSand;
+import net.mrbt0907.weather2.item.ItemRadar;
 import net.mrbt0907.weather2.item.ItemSandLayer;
 import net.mrbt0907.weather2.item.ItemSensor;
 import net.mrbt0907.weather2.item.ItemWeatherRecipe;
@@ -25,11 +26,12 @@ public class ItemRegistry
 	private static IForgeRegistry<Item> registry;
 	private static final List<Block> item_blocks = new ArrayList<Block>();
 	
+	public static final Item radar = new ItemRadar();
 	public static final Item sensor = new ItemSensor(0);
 	public static final Item thermometer = new ItemSensor(1);
 	public static final Item hygrometer = new ItemSensor(2);
 	public static final Item anemometer = new ItemSensor(3);
-	public static final Item radio = new ItemPocketSand();
+	public static final Item radio = new Item();
 	
 	public static final Item itemMotor = new Item();
 	public static final Item itemSpeaker = new Item();
@@ -62,7 +64,7 @@ public class ItemRegistry
 		ItemRegistry.add("weather_item", ItemRegistry.itemWeatherRecipe);
 		ItemRegistry.add("pocket_sand", ItemRegistry.itemPocketSand);
 		
-
+		ItemRegistry.add("handheld_radar", ItemRegistry.radar);
 		ItemRegistry.add("handheld_thermometer", ItemRegistry.thermometer);
 		ItemRegistry.add("handheld_hygrometer", ItemRegistry.hygrometer);
 		ItemRegistry.add("handheld_anemometer", ItemRegistry.anemometer);

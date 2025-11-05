@@ -35,7 +35,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.mrbt0907.weather2.client.entity.particle.ExtendedEntityRotFX;
 import net.mrbt0907.weather2.client.rendering.shaders.VolumetricRenderer;
 import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.util.Maths;
@@ -192,6 +191,7 @@ public class ParticleManagerEX extends RotatingParticleManager
 
 		if (ConfigClient.enable_volumetrics)
 			VolumetricRenderer.render(entity, new ArrayList<>(particles), partialTicks);
+			
 	    if (useParticleShaders)
 		{
 	        // Group particles by mesh to minimize GL calls
@@ -225,9 +225,9 @@ public class ParticleManagerEX extends RotatingParticleManager
 	    } else {
 	        BufferBuilder vertexbuffer = ParticleManagerEX.TESSELLATOR.getBuffer();
 	        vertexbuffer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
-	        for (Particle p : particles) {
-				if (!(p instanceof ExtendedEntityRotFX) || !ConfigClient.enable_volumetrics)
-	            	p.renderParticle(vertexbuffer, entity, partialTicks, ActiveRenderInfo.getRotationX(), ActiveRenderInfo.getRotationXZ(), ActiveRenderInfo.getRotationZ(), ActiveRenderInfo.getRotationYZ(), ActiveRenderInfo.getRotationXY());
+	        for (Particle p : particles)
+			{
+	            p.renderParticle(vertexbuffer, entity, partialTicks, ActiveRenderInfo.getRotationX(), ActiveRenderInfo.getRotationXZ(), ActiveRenderInfo.getRotationZ(), ActiveRenderInfo.getRotationYZ(), ActiveRenderInfo.getRotationXY());
 	            RotatingParticleManager.debugParticleRenderCount++;
 	        }
 	        ParticleManagerEX.TESSELLATOR.draw();

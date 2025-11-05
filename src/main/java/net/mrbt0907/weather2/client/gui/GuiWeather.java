@@ -16,6 +16,7 @@ import net.mrbt0907.weather2.api.weather.AbstractWeatherRenderer;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.weather.WeatherManagerClient;
 import net.mrbt0907.weather2.config.ConfigClient;
+import net.mrbt0907.weather2.item.ItemRadar;
 import net.mrbt0907.weather2.item.ItemSensor;
 import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.WeatherUtil;
@@ -28,7 +29,7 @@ public class GuiWeather extends WeatherUtilGui
 	@SubscribeEvent
 	public void onRenderOverlay(RenderGameOverlayEvent.Pre event)
 	{
-		if (!event.getType().equals(ElementType.HOTBAR) || mc.world == null) return;
+		if (!ElementType.HOTBAR.equals(event.getType()) || mc.world == null) return;
 		GL11.glPushMatrix();
 		GL11.glEnable(2977);
 		GL11.glBlendFunc(770, 771);
@@ -43,36 +44,46 @@ public class GuiWeather extends WeatherUtilGui
 						drawString(mc.fontRenderer, AbstractWeatherRenderer.renderDebugInfo.get(i), 0, 2 + 10 * i, 0xFFFFFF00);
 				
 				if (stack.getItem() instanceof ItemSensor)
-				{
-					ItemSensor item = (ItemSensor) stack.getItem();
-					NBTTagCompound nbt = stack.getTagCompound();
-					boolean enabled = nbt == null ? false : nbt.getBoolean("enabled");
-					
-					if (enabled)
-					{
-						Maths.Vec3 pos = new Maths.Vec3(mc.player.posX, mc.player.posY, mc.player.posZ);
-						BlockPos bPos = new BlockPos(mc.player.posX, mc.player.posY, mc.player.posZ);
-							
-				    	switch(item.getType())
-						{
-							case 1:
-								this.drawString(mc.fontRenderer, String.format("Temperature: %.2f�F,  %.02f�C", WeatherUtil.toFahrenheit(WeatherUtil.getTemperature((World) mc.world, bPos)), WeatherUtil.toCelsius(WeatherUtil.getTemperature((World) mc.world, bPos))), 0, 2, 0xFFFFFFFF);
-								break;
-							case 2:
-									this.drawString(mc.fontRenderer, String.format("Humidity: %.02f%%", (WeatherUtil.getHumidity((World) mc.world, bPos) * 100.0F)), 0, 2, 0xFFFFFFFF);
-								break;
-							case 3:
-								float windAngle = WindReader.getWindAngle((World) mc.world, pos);
-								float windSpeed = WindReader.getWindSpeed((World) mc.world, pos);
-								this.drawString(mc.fontRenderer, String.format("Wind Speed: %.2f Mph, %.2f Kph, %.2f M/s  (%.2f) (%s)", WeatherUtil.toMph(windSpeed), WeatherUtil.toKph(windSpeed), WeatherUtil.toMps(windSpeed), windAngle, (windAngle >= 315 ? "South" : windAngle >= 225 ? "East" : windAngle >= 135 ? "North" : windAngle >= 45 ? "West" : "South")), 0, 2, 0xFFFFFFFF);
-								break;
-						}
-					}
-				}
+					renderSensorData(stack);
+				else if (stack.getItem() instanceof ItemRadar)
+					renderRadar(stack);
 			}
 		}
 		color();
 		//GL11.glDisable(3042);
 		GL11.glPopMatrix();
+	}
+
+	private void renderSensorData(ItemStack stack)
+	{
+		ItemSensor item = (ItemSensor) stack.getItem();
+		NBTTagCompound nbt = stack.getTagCompound();
+		boolean enabled = nbt == null ? false : nbt.getBoolean("enabled");
+		
+		if (enabled)
+		{
+			Maths.Vec3 pos = new Maths.Vec3(mc.player.posX, mc.player.posY, mc.player.posZ);
+			BlockPos bPos = new BlockPos(mc.player.posX, mc.player.posY, mc.player.posZ);
+				
+			switch(item.getType())
+			{
+				case 1:
+					drawString(mc.fontRenderer, String.format("Temperature: %.2fï¿½F,  %.02fï¿½C", WeatherUtil.toFahrenheit(WeatherUtil.getTemperature((World) mc.world, bPos)), WeatherUtil.toCelsius(WeatherUtil.getTemperature((World) mc.world, bPos))), 0, 2, 0xFFFFFFFF);
+					break;
+				case 2:
+						drawString(mc.fontRenderer, String.format("Humidity: %.02f%%", (WeatherUtil.getHumidity((World) mc.world, bPos) * 100.0F)), 0, 2, 0xFFFFFFFF);
+					break;
+				case 3:
+					float windAngle = WindReader.getWindAngle((World) mc.world, pos);
+					float windSpeed = WindReader.getWindSpeed((World) mc.world, pos);
+					drawString(mc.fontRenderer, String.format("Wind Speed: %.2f Mph, %.2f Kph, %.2f M/s  (%.2f) (%s)", WeatherUtil.toMph(windSpeed), WeatherUtil.toKph(windSpeed), WeatherUtil.toMps(windSpeed), windAngle, (windAngle >= 315 ? "South" : windAngle >= 225 ? "East" : windAngle >= 135 ? "North" : windAngle >= 45 ? "West" : "South")), 0, 2, 0xFFFFFFFF);
+					break;
+			}
+		}
+	}
+
+	private void renderRadar(ItemStack stack)
+	{
+		
 	}
 }

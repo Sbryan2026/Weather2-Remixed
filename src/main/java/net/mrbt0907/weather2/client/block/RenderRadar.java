@@ -1,10 +1,12 @@
 package net.mrbt0907.weather2.client.block;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -28,8 +30,6 @@ import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.util.WeatherUtil;
 import net.mrbt0907.weather2.weather.WeatherManagerServer;
 import net.mrbt0907.weather2.weather.storm.StormObject;
-
-import org.lwjgl.opengl.GL11;
 
 public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 {
@@ -223,25 +223,16 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 		float var12 = 0.6F;
 		float var13 = 0.016666668F * var12;
 		GlStateManager.pushMatrix();
-		//GL11.glPushMatrix();
 		GlStateManager.translate(par3 + 0.5F, par5, par7 + 0.5F);
-		//GL11.glTranslatef((float)par3 + 0.5F, (float)par5, (float)par7 + 0.5F);
 		GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
-		//GL11.glNormal3f(0.0F, 1.0F, 0.0F);
 		GlStateManager.rotate(-angle, 0.0F, 1.0F, 0.0F);
-		//GL11.glRotatef(-angle, 0.0F, 1.0F, 0.0F);
 		GlStateManager.scale(-var13, -var13, var13);
-		//GL11.glScalef(-var13, -var13, var13);
 		GlStateManager.disableLighting();
-		//GL11.glDisable(GL11.GL_LIGHTING);
 		
-		if (par9 == 0) {
-			//GL11.glDepthMask(false);
-			//GL11.glDisable(GL11.GL_DEPTH_TEST);
+		if (par9 == 0)
+		{
 			GlStateManager.enableBlend();
-			//GL11.glEnable(GL11.GL_BLEND);
 			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			//GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			Tessellator var14 = Tessellator.getInstance();
 			BufferBuilder worldrenderer = var14.getBuffer();
 			byte var15 = 0;
@@ -275,21 +266,12 @@ public class RenderRadar extends TileEntitySpecialRenderer<TileEntity>
 			var14.draw();
 		}
 		GlStateManager.enableTexture2D();
-		//GL11.glEnable(GL11.GL_TEXTURE_2D);
-		//GL11.glEnable(GL11.GL_DEPTH_TEST);
-		//GL11.glDepthMask(true);
 		var11.drawString(par2Str, -width/2+borderSize, 0, c1);
 		GlStateManager.enableLighting();
-		//GL11.glEnable(GL11.GL_LIGHTING);
 		GlStateManager.enableBlend();
-		//GL11.glDisable(GL11.GL_BLEND);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, alpha);
-		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.popMatrix();
-		//GL11.glPopMatrix();
-
 		GlStateManager.enableCull();
-		//GL11.glEnable(GL11.GL_CULL_FACE);
 	}
 	
 	public void renderIconNew(double x, double y, double z, int width, int height, float angleX, float angleY, float angleZ, float alpha, TextureAtlasSprite parIcon) {
