@@ -26,6 +26,7 @@ public class VolumetricRenderer
 
     public static void startShader()
     {
+        if (VolumetricRenderer.shader != null && VolumetricRenderer.shader.valid) return;
         VolumetricRenderer.shader = new VolumetricsShader(VolumetricRenderer.VERTEX_SHADER_PATH, VolumetricRenderer.FRAGMENT_SHADER_PATH);
         if (!VolumetricRenderer.shader.valid)
         {
@@ -33,7 +34,7 @@ public class VolumetricRenderer
             VolumetricRenderer.mesh = null;
             return;
         }
-        VolumetricRenderer.mesh = new SimpleVolumetricMesh(20);
+        
         VolumetricRenderer.createParameterTexture();
     }
 
@@ -56,7 +57,7 @@ public class VolumetricRenderer
         if (VolumetricRenderer.shader == null || VolumetricRenderer.mesh == null) return;
         particles.removeIf(particle -> !(particle instanceof EntityRotFX));
         VolumetricRenderer.updateParameterTexture(entity, particles, partialTicks);
-
+        
         VolumetricRenderer.shader.startShader();
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, VolumetricRenderer.texture_id);
@@ -65,6 +66,7 @@ public class VolumetricRenderer
         GL20.glUniform1i(VolumetricRenderer.shader.getParameter("quality"), VolumetricRenderer.mesh.length);
         GL20.glUniform1i(VolumetricRenderer.shader.getParameter("height"), VolumetricRenderer.texture_height);
         GL20.glUniform1i(VolumetricRenderer.shader.getParameter("width"), VolumetricRenderer.texture_width);
+        VolumetricRenderer.mesh = new SimpleVolumetricMesh(100, particles.size());
         VolumetricRenderer.mesh.bindVBO();
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, VolumetricRenderer.mesh.length);
         VolumetricRenderer.mesh.unbindVBO();
@@ -96,9 +98,9 @@ public class VolumetricRenderer
         for (Particle particle : particles)
         {
             fx = (EntityRotFX) particle;
-            ix = particle.prevPosX + (particle.posX - particle.prevPosX) * partialTicks;
-            iy = particle.prevPosY + (particle.posY - particle.prevPosY) * partialTicks;
-            iz = particle.prevPosZ + (particle.posZ - particle.prevPosZ) * partialTicks;
+            ix = particle.posX;
+            iy = particle.posY;
+            iz = particle.posZ;
             buffer.put((float) (ix - entity.posX)).put((float) (iy - entity.posY)).put((float) (iz - entity.posZ));
             buffer.put(particle.height).put(particle.width);
             buffer.put(fx.particleRed).put(fx.particleGreen).put(fx.particleBlue).put(fx.particleAlpha);

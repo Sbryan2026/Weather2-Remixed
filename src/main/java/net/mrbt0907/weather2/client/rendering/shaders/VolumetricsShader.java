@@ -39,11 +39,16 @@ public class VolumetricsShader
 
         if (GL20.glGetProgrami(program_id, GL20.GL_LINK_STATUS) == GL11.GL_FALSE)
         {
-            Weather2.error("Shader program " + program_id + " failed to link successfully. Skipping shader loading...");
+            Weather2.warn("Shader program " + program_id + " failed to link successfully. Skipping shader loading...");
+            Weather2.warn(GL20.glGetProgramInfoLog(program_id, 1024));
             valid = false;
             deleteShader();
             return;
         }
+        Weather2.info("SHADER LOADED -----");
+        Weather2.info(GL20.glGetShaderInfoLog(vertex_id, 1024));
+        Weather2.info(GL20.glGetShaderInfoLog(fragment_id, 1024));
+        Weather2.info(GL20.glGetProgramInfoLog(program_id, 1024));
         valid = true;
     }
 
@@ -87,7 +92,8 @@ public class VolumetricsShader
 
         if (GL20.glGetShaderi(shader_id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
         {
-            Weather2.error("Shader " + path + " failed to compile successfully. Skipping shader loading...");
+            Weather2.warn("Shader " + path + " failed to compile successfully. Skipping shader loading...");
+            Weather2.warn(GL20.glGetShaderInfoLog(shader_id, 1024));
             GL20.glDeleteShader(shader_id);
             return -1;
         }

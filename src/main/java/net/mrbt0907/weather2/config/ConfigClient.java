@@ -14,6 +14,7 @@ import net.mrbt0907.configex.api.IConfigEX;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
+import net.mrbt0907.weather2.client.rendering.shaders.VolumetricRenderer;
 
 
 public class ConfigClient implements IConfigEX
@@ -190,6 +191,15 @@ public class ConfigClient implements IConfigEX
 	{
 		if (Phase.END.equals(phase) && FMLCommonHandler.instance().getSide() == Side.CLIENT)
     	{
+			if (ConfigClient.enable_volumetrics)
+			{
+				if (VolumetricRenderer.shader == null)
+					VolumetricRenderer.startShader();
+			}
+			else
+			{
+				VolumetricRenderer.stopShader();
+			}
     		WeatherAPI.refreshRenders(false);
     		if (ClientTickHandler.weatherManager != null)
     			ClientTickHandler.weatherManager.refreshParticleLimit();

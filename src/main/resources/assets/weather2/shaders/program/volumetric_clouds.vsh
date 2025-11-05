@@ -11,17 +11,18 @@ uniform int width;
 uniform int height;
 
 attribute vec3 position;
+attribute float vertex_id;
 varying vec4 fragment_color;
 
 void main()
 {
-    int index = int(gl_VertexID / quality);
+    int index = int(vertex_id / quality);
 
     // Gather UVs for sampling
     float u1 = 0.5F / width; // 1st Texel
     float u2 = 1.5F / width; // 2nd Texel
     float u3 = 2.5F / width; // 3rd Texel
-    float v = clamp((float(index) + 0.05F) / float(height), 0.0F, 1.0F);
+    float v = (float(index) + 0.5F) / float(height);
 
     // Sample the data for the specified particle
     vec4 tex1 = texture2D(particle_data, vec2(u1, v));
@@ -36,7 +37,7 @@ void main()
     float brightness = tex3.y;
 
     // Use the data and pass color to the fragment shader
-    vec3 world_pos = particle_pos + position * vec3(particle_width, particle_height, particle_width);
+    vec3 world_pos = particle_pos + position * vec3(particle_width, particle_width, particle_width);
     gl_Position = gl_ModelViewProjectionMatrix * vec4(world_pos, 1.0F);
     fragment_color = color;
 }
