@@ -2,6 +2,7 @@ package net.mrbt0907.weather2.command;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
@@ -26,6 +27,7 @@ import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.EZConfigParser;
 import net.mrbt0907.weather2.event.ServerTickHandler;
 import net.mrbt0907.weather2.network.packets.PacketRefresh;
+import net.mrbt0907.weather2.network.packets.PacketShader;
 import net.mrbt0907.weather2.network.packets.PacketVolcanoObject;
 import net.mrbt0907.weather2.network.packets.PacketWeatherObject;
 import net.mrbt0907.weather2.util.Maths;
@@ -73,18 +75,18 @@ public class CommandWeather2 extends CommandBase
 		switch(args.length - 1)
 		{
 			case 0:
-				return getListOfStringsMatchingLastWord(args, new String[] {"config", "create", "kill", "view", "test"});
+				return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"config", "create", "kill", "view", "test", "reloadshaders"});
 			case 1:
 				switch(args[0])
 				{
 					case "config":
-						return getListOfStringsMatchingLastWord(args, new String[] {"refresh", "grablist"});
+						return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"refresh", "grablist"});
 					case "create":
-						return getListOfStringsMatchingLastWord(args, new String[] {"random", "clouds", "rainstorm", "thunderstorm", "supercell", "tropicaldisturbance", "tropicaldepression" , "tropicalstorm", "sandstorm", "ef#", "f#", "c#"});
+						return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"random", "clouds", "rainstorm", "thunderstorm", "supercell", "tropicaldisturbance", "tropicaldepression" , "tropicalstorm", "sandstorm", "ef#", "f#", "c#"});
 					case "kill":
-						return getListOfStringsMatchingLastWord(args, new String[] {"all", "particles"});
+						return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"all", "particles"});
 					case "test":
-						return getListOfStringsMatchingLastWord(args, new String[] {"class", "volcano"});
+						return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"class", "volcano"});
 					default:
 						return Collections.emptyList();
 				}
@@ -92,9 +94,9 @@ public class CommandWeather2 extends CommandBase
 				switch(args[0])
 				{
 					case "config":
-						return getListOfStringsMatchingLastWord(args, new String[] {"all", "dimensionlist", "grablist", "replacelist", "stagelist", "windlist", "sounds", "scene"});
+						return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"all", "dimensionlist", "grablist", "replacelist", "stagelist", "windlist", "sounds", "scene"});
 					case "create":
-						return getListOfStringsMatchingLastWord(args, new String[] {"~"});
+						return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"~"});
 					default:
 						return Collections.emptyList();
 				}
@@ -105,12 +107,12 @@ public class CommandWeather2 extends CommandBase
 						switch(args[1])
 						{
 							case "grablist":
-								return getListOfStringsMatchingLastWord(args, new String[] {"addGrabEntry", "addReplaceEntry"});
+								return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"addGrabEntry", "addReplaceEntry"});
 							default:
 								return Collections.emptyList();
 						}
 					case "create":
-						return getListOfStringsMatchingLastWord(args, new String[] {"~"});
+						return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"~"});
 					default:
 						return Collections.emptyList();
 				}
@@ -118,7 +120,7 @@ public class CommandWeather2 extends CommandBase
 				switch(args[0])
 				{
 					case "create":
-						return getListOfStringsMatchingLastWord(args, new String[] {"alwaysprogress", "ishailing", "norain", "isviolent", "isnatural", "isfirenado", "neverdissipate", "dontconvert", "revives=#", "direction=<#/north/south/east/west>", "speed=#", "size=#", "name=<Word>"});
+						return CommandBase.getListOfStringsMatchingLastWord(args, new String[] {"alwaysprogress", "ishailing", "norain", "isviolent", "isnatural", "isfirenado", "neverdissipate", "dontconvert", "revives=#", "direction=<#/north/south/east/west>", "speed=#", "size=#", "name=<Word>"});
 					default:
 						return Collections.emptyList();
 				}
@@ -357,7 +359,7 @@ public class CommandWeather2 extends CommandBase
 									BlockPos temp;
 									try
 									{
-										temp = parseBlockPos2(sender, args, 2, true);
+										temp = CommandWeather2.parseBlockPos2(sender, args, 2, true);
 									}
 									catch (NumberInvalidException e)
 									{
@@ -384,7 +386,7 @@ public class CommandWeather2 extends CommandBase
 								if (size > 3)
 									try
 									{
-										BlockPos temp = parseBlockPos2(sender, args, 2, true);
+										BlockPos temp = CommandWeather2.parseBlockPos2(sender, args, 2, true);
 										pos = new Vec3d(temp.getX(), temp.getY(), temp.getZ());
 									}
 									catch (NumberInvalidException e)
@@ -673,6 +675,10 @@ public class CommandWeather2 extends CommandBase
 					else
 						say(sender, "test.usage");	
 					break;
+				case "reloadshaders":
+					if (sender instanceof EntityPlayerMP)
+						PacketShader.refreshShaders((EntityPlayerMP) sender);	
+					break;
 				default:
 					say(sender, "usage");
 			}
@@ -683,11 +689,11 @@ public class CommandWeather2 extends CommandBase
 	public static BlockPos parseBlockPos2(ICommandSender sender, String[] args, int startIndex, boolean centerBlock) throws NumberInvalidException
 	{
 		BlockPos blockpos = sender.getPosition();
-		return new BlockPos(parseDouble((double)blockpos.getX(), args[startIndex], -30000000, 30000000, centerBlock), 0.0D, parseDouble((double)blockpos.getZ(), args[startIndex + 1], -30000000, 30000000, centerBlock));
+		return new BlockPos(CommandBase.parseDouble((double)blockpos.getX(), args[startIndex], -30000000, 30000000, centerBlock), 0.0D, CommandBase.parseDouble((double)blockpos.getZ(), args[startIndex + 1], -30000000, 30000000, centerBlock));
 	}
 		
 	private void say(ICommandSender sender, String localizationID, Object... args)
 	{
-		notifyCommandListener(sender, this, "command.storm." + localizationID, args);
+		CommandBase.notifyCommandListener(sender, this, "command.storm." + localizationID, args);
 	}
 }

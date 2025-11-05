@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL20;
 
 import extendedrenderer.particle.entity.EntityRotFX;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.client.rendering.shaders.mesh.SimpleVolumetricMesh;
@@ -35,6 +36,7 @@ public class VolumetricRenderer
             return;
         }
         
+        VolumetricRenderer.mesh = new SimpleVolumetricMesh(100);
         VolumetricRenderer.createParameterTexture();
     }
 
@@ -54,24 +56,38 @@ public class VolumetricRenderer
 
     public static void render(Entity entity, List<Particle> particles, float partialTicks)
     {
-        if (VolumetricRenderer.shader == null || VolumetricRenderer.mesh == null) return;
+        if (VolumetricRenderer.shader == null) return;
+
         particles.removeIf(particle -> !(particle instanceof EntityRotFX));
         VolumetricRenderer.updateParameterTexture(entity, particles, partialTicks);
         
+        GlStateManager.pushMatrix();
         VolumetricRenderer.shader.startShader();
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, VolumetricRenderer.texture_id);
         GL20.glUniform1i(VolumetricRenderer.shader.getParameter("particle_data"), 0);
         GL20.glUniform3f(VolumetricRenderer.shader.getParameter("camera"),(float) entity.posX, (float) entity.posY, (float) entity.posZ);
-        GL20.glUniform1i(VolumetricRenderer.shader.getParameter("quality"), VolumetricRenderer.mesh.length);
+        GL20.glUniform1i(VolumetricRenderer.shader.getParameter("quality"), VolumetricRenderer.mesh.quality);
         GL20.glUniform1i(VolumetricRenderer.shader.getParameter("height"), VolumetricRenderer.texture_height);
         GL20.glUniform1i(VolumetricRenderer.shader.getParameter("width"), VolumetricRenderer.texture_width);
-        VolumetricRenderer.mesh = new SimpleVolumetricMesh(100, particles.size());
+        
         VolumetricRenderer.mesh.bindVBO();
-        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, VolumetricRenderer.mesh.length);
+        GlStateManager.disableCull();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        
+        int size = particles.size();
+        for (int i = 0; i < size; i++)
+        {
+            GL20.glUniform1i(VolumetricRenderer.shader.getParameter("particle_index"), i);
+            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, VolumetricRenderer.mesh.length);
+        }
+
         VolumetricRenderer.mesh.unbindVBO();
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         VolumetricRenderer.shader.stopShader();
+        GlStateManager.popMatrix();
     }
 
     public static void createParameterTexture()
@@ -98,13 +114,13 @@ public class VolumetricRenderer
         for (Particle particle : particles)
         {
             fx = (EntityRotFX) particle;
-            ix = particle.posX;
-            iy = particle.posY;
-            iz = particle.posZ;
-            buffer.put((float) (ix - entity.posX)).put((float) (iy - entity.posY)).put((float) (iz - entity.posZ));
+            ix = particle.posX - entity.posX;
+            iy = particle.posY - entity.posY;
+            iz = particle.posZ - entity.posZ;
+            buffer.put((float) ix).put((float) iy).put((float) iz);
             buffer.put(particle.height).put(particle.width);
             buffer.put(fx.particleRed).put(fx.particleGreen).put(fx.particleBlue).put(fx.particleAlpha);
-            buffer.put(fx.getBrightnessForRender(partialTicks)).put(0.0F).put(0.0F);
+            buffer.put(fx.getBrightnessForRender(partialTicks)).put(1.0F).put(1.0F);
         }
         buffer.flip();
 

@@ -13,11 +13,13 @@ public class SimpleVolumetricMesh
     public final int vbo_id;
     /**How many vertices this mesh contains in the buffer*/
     public final int length;
+    public final int quality;
 
-    public SimpleVolumetricMesh(int quality, int particle_count)
+    public SimpleVolumetricMesh(int quality)
     {
-        FloatBuffer buffer = SimpleVolumetricMesh.createVertices(quality, particle_count);
-        length = buffer.limit() / 4;
+        FloatBuffer buffer = SimpleVolumetricMesh.createVertices(quality);
+        length = buffer.limit() / 3;
+        this.quality = quality;
 
         // ----- VBO On ----- \\
         vbo_id = GL15.glGenBuffers();
@@ -31,15 +33,12 @@ public class SimpleVolumetricMesh
     {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo_id);
         GL20.glEnableVertexAttribArray(0);
-        GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 16 ,0);
-        GL20.glEnableVertexAttribArray(1);
-        GL20.glVertexAttribPointer(1, 1, GL11.GL_FLOAT, false, 16 ,12);
+        GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0 ,0);
     }
 
     public void unbindVBO()
     {
         GL20.glDisableVertexAttribArray(0);
-        GL20.glDisableVertexAttribArray(1);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
     }
 
@@ -49,39 +48,39 @@ public class SimpleVolumetricMesh
             GL15.glDeleteBuffers(vbo_id);
     }
 
-    protected static FloatBuffer createVertices(int quality, int particle_count)
+    protected static FloatBuffer createVertices(int quality)
     {
-        int lat_bands = quality, long_bands = quality, verteces = 0; 
-        FloatBuffer buffer = BufferUtils.createFloatBuffer(lat_bands * long_bands * 6 * 4);
+        int lat_bands = quality, long_bands = quality; 
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(lat_bands * long_bands * 6 * 3);
         double theta1, theta2, phi1, phi2, lat_pi = Math.PI / lat_bands, long_pi = (Math.PI / long_bands) * 2;
 
-        for (int p = 0; p < particle_count; p++)
-            for (int lat = 0; lat < lat_bands; lat++)
+        for (int lat = 0; lat < lat_bands; lat++)
+        {
+            theta1 = lat * lat_pi;
+            theta2 = (lat + 1) * lat_pi;
+
+            for (int lon = 0; lon < long_bands; lon++)
             {
-                theta1 = lat * lat_pi;
-                theta2 = (lat + 1) * lat_pi;
+                phi1 = lon * long_pi;
+                phi2 = (lon + 1) * long_pi;
 
-                for (int lon = 0; lon < long_bands; lon++)
-                {
-                    phi1 = lon * long_pi;
-                    phi2 = (lon + 1) * long_pi;
+                float[] vertex_1 = SimpleVolumetricMesh.sphericalToCartesian(theta1, phi1);
+                float[] vertex_2 = SimpleVolumetricMesh.sphericalToCartesian(theta2, phi1);
+                float[] vertex_3 = SimpleVolumetricMesh.sphericalToCartesian(theta2, phi2);
+                float[] vertex_4 = SimpleVolumetricMesh.sphericalToCartesian(theta1, phi2);
 
-                    float[] vertex_1 = SimpleVolumetricMesh.sphericalToCartesian(theta1, phi1);
-                    float[] vertex_2 = SimpleVolumetricMesh.sphericalToCartesian(theta2, phi1);
-                    float[] vertex_3 = SimpleVolumetricMesh.sphericalToCartesian(theta2, phi2);
-                    float[] vertex_4 = SimpleVolumetricMesh.sphericalToCartesian(theta1, phi2);
-
-                    // Triangle 1
-                    buffer.put(vertex_1).put(verteces++);
-                    buffer.put(vertex_2).put(verteces++);
-                    buffer.put(vertex_3).put(verteces++);
-                    // Triangle 2
-                    buffer.put(vertex_3).put(verteces++);
-                    buffer.put(vertex_4).put(verteces++);
-                    buffer.put(vertex_1).put(verteces++);
-                }
+                // Triangle 1
+                buffer.put(vertex_1);
+                buffer.put(vertex_2);
+                buffer.put(vertex_3);
+                // Triangle 2
+                buffer.put(vertex_3);
+                buffer.put(vertex_4);
+                buffer.put(vertex_1);
             }
-
+        }
+            
+        
         buffer.flip();
         return buffer;
     }

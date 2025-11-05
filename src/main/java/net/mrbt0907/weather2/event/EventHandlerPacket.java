@@ -1,5 +1,6 @@
 package net.mrbt0907.weather2.event;
 
+import CoroUtil.packet.PacketHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,9 +11,10 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.client.NewSceneEnhancer;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
+import net.mrbt0907.weather2.client.rendering.shaders.VolumetricRenderer;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.EZConfigParser;
 import net.mrbt0907.weather2.network.packets.PacketEZGUI;
-import CoroUtil.packet.PacketHelper;
 
 public class EventHandlerPacket {
 	
@@ -63,7 +65,12 @@ public class EventHandlerPacket {
 						NewSceneEnhancer.instance().enable();
 						break;
 					case 18:
-						
+						break;
+					case 19:
+						VolumetricRenderer.stopShader();
+						if (ConfigClient.enable_volumetrics)
+							VolumetricRenderer.startShader();
+						Weather2.info("Got it");
 						break;
 					default:
 						Weather2.error("Recieved an invalid network packet from the server");

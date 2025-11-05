@@ -45,10 +45,6 @@ public class VolumetricsShader
             deleteShader();
             return;
         }
-        Weather2.info("SHADER LOADED -----");
-        Weather2.info(GL20.glGetShaderInfoLog(vertex_id, 1024));
-        Weather2.info(GL20.glGetShaderInfoLog(fragment_id, 1024));
-        Weather2.info(GL20.glGetProgramInfoLog(program_id, 1024));
         valid = true;
     }
 
