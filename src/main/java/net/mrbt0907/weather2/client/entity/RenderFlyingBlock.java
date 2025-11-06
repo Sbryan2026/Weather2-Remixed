@@ -21,6 +21,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.mrbt0907.weather2.entity.EntityHail;
 import net.mrbt0907.weather2.entity.EntityMovingBlock;
 import net.mrbt0907.weather2.util.Maths;
 
@@ -60,6 +61,10 @@ public class RenderFlyingBlock extends Render<Entity>
 		
 		if (state == null) return;
 		
+		double size = entity.width;
+		if (entity instanceof EntityHail)
+			size = ((EntityHail)entity).size;
+
 		EnumBlockRenderType renderType = state.getRenderType();
 		World world = entity.world;
 		float yaw = (float) Math.toDegrees(Maths.fastATan2(entity.motionZ, entity.motionX)) - 90F;
@@ -92,7 +97,7 @@ public class RenderFlyingBlock extends Render<Entity>
 			
 			GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
 			GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
-			GlStateManager.scale(entity.width, entity.height, entity.width);
+			GlStateManager.scale(size, size, size);
 			
 			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 			blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(state), state, blockpos, bufferbuilder, false, MathHelper.getPositionRandom(entity.getPosition()));
@@ -127,7 +132,7 @@ public class RenderFlyingBlock extends Render<Entity>
 							GlStateManager.translate((float)(x), (float)(y), (float)(z));
 							GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
 							GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
-							GlStateManager.scale(entity.width, entity.height, entity.width);
+							GlStateManager.scale(size, size, size);
 							if (this.renderOutlines)
 							{
 								GlStateManager.enableColorMaterial();

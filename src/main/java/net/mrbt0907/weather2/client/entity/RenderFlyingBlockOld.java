@@ -1,5 +1,7 @@
 package net.mrbt0907.weather2.client.entity;
 
+import org.lwjgl.opengl.GL11;
+
 import CoroUtil.util.CoroUtilParticle;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -20,10 +22,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.mrbt0907.weather2.entity.EntityIceBall;
+import net.mrbt0907.weather2.entity.EntityHail;
 import net.mrbt0907.weather2.entity.EntityMovingBlock;
-
-import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class RenderFlyingBlockOld extends Render<Entity>
@@ -153,7 +153,7 @@ public class RenderFlyingBlockOld extends Render<Entity>
 							//catch this issue, need real fix, https://github.com/Corosauce/weather2/issues/62 - java.lang.IllegalArgumentException: Cannot get property PropertyEnum{name=variant, clazz=class biomesoplenty.common.enums.BOPTrees, values=[mangrove, palm, redwood, willow]} as it does not exist in BlockState{block=minecraft:air, properties=[]}
 						}
 
-                	} else if (entity instanceof EntityIceBall) {
+                	} else if (entity instanceof EntityHail) {
                 		for (int ii = 0; ii < Math.min(4, CoroUtilParticle.maxRainDrops); ii++) {
                 			GlStateManager.pushMatrix();
     	                    //GlStateManager.translate((float)x, (float)y, (float)z);

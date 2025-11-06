@@ -73,7 +73,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		int layerHeight = storm.getLayerHeight() + NormalStormRenderer.getAdjustedLayerHeight();
 		double maxRenderDistance = NewSceneEnhancer.instance().renderDistance + 64.0D;
 		float sizeCloudMult = Math.min(Math.max(storm.size * 0.0011F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.01F);
-		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.008F, 0.2F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.0055F);
+		float sizeFunnelMult = Math.min(Math.max(storm.funnelSize * 0.015F, 0.2F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.0025F);
 		float sizeOtherMult = Math.min(Math.max(storm.size * 0.002F, 0.45F) * (float) ConfigClient.particle_scale_mult, layerHeight * 0.03F);
 		float heightMult = layerHeight * 0.0065F;
 		if (Maths.random(0, 10) >= 5) heightMult = layerHeight * Maths.random(0.0054F, 0.0100F);
@@ -223,7 +223,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 			{
 				for (int i = 0; i < Math.round(((float) storm.stage / storm.stageMax) * 32) && shouldSpawn(2); i++)
 				{
-					double spawnRad = storm.funnelSize * 1.75D;
+					double spawnRad = storm.funnelSize * 2.0D;
 					Vec3 tryPos = new Vec3(storm.pos_funnel_base.posX + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad), storm.pos_funnel_base.posY, storm.pos_funnel_base.posZ + (rand.nextDouble()*spawnRad) - (rand.nextDouble()*spawnRad));
 					double distance = tryPos.distanceSq(playerAdjPos);
 					if (distance < maxRenderDistance && distance < 320.0D)
@@ -277,7 +277,7 @@ public class NormalStormRenderer extends AbstractWeatherRenderer
 		
 		delay = 1;
 		loopSize = 3 + (storm.funnelSize > 300.0F ? 4 : (int)(storm.funnelSize / 80.0F));
-		double spawnRad = storm.funnelSize * 0.01F;
+		double spawnRad = storm.funnelSize * 0.0005F;
 		
 		if (storm.stage >= Stage.TORNADO.getStage() + 1) 
 			spawnRad *= 48.25D;

@@ -259,7 +259,7 @@ public class EntityMovingBlock extends Entity implements IEntityAdditionalSpawnD
 							IBlockState target = world.getBlockState(target_pos);
 							Block target_block = target.getBlock();
 							String tool_type = block.getHarvestTool(state);
-							float speed_penalty = target_block.isToolEffective(tool_type != null ? tool_type : "", target) ? 0.0F : 0.3F;
+							float speed_penalty = target_block.isToolEffective(tool_type != null ? tool_type : "", target) ? 1.0F : 0.3F;
 
 							// If the flying block is fast enough: break the block and slow us down
 							if (target_block.blockHardness >= 0.0F && target_block.blockHardness < speed * speed_penalty)

@@ -33,7 +33,7 @@ import net.mrbt0907.weather2.client.gui.GuiWeather;
 import net.mrbt0907.weather2.client.rendering.manager.ParticleManagerEX;
 import net.mrbt0907.weather2.client.sound.SoundHandler;
 import net.mrbt0907.weather2.config.ConfigClient;
-import net.mrbt0907.weather2.entity.EntityIceBall;
+import net.mrbt0907.weather2.entity.EntityHail;
 import net.mrbt0907.weather2.entity.EntityLightningEX;
 import net.mrbt0907.weather2.entity.EntityMovingBlock;
 import net.mrbt0907.weather2.util.WeatherUtil;
@@ -101,7 +101,7 @@ public class ClientProxy extends CommonProxy
 
 	private void initEntities()
 	{
-		RenderingRegistry.registerEntityRenderingHandler(EntityIceBall.class, manager -> new RenderFlyingBlock(manager, Blocks.ICE));
+		RenderingRegistry.registerEntityRenderingHandler(EntityHail.class, manager -> new RenderFlyingBlock(manager, Blocks.ICE));
 		RenderingRegistry.registerEntityRenderingHandler(EntityMovingBlock.class, RenderFlyingBlock::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityLightningEX.class, RenderLightningBolt::new);
 		//RenderingRegistry.registerEntityRenderingHandler(EntityLightningBolt.class, manager -> new RenderLightningBolt(manager));

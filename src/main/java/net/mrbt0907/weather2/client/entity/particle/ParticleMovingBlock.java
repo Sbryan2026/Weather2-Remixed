@@ -1,5 +1,7 @@
 package net.mrbt0907.weather2.client.entity.particle;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -21,61 +23,73 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.mrbt0907.weather2.registry.ParticleRegistry;
+import net.mrbt0907.weather2.util.Maths;
 
 @SideOnly(Side.CLIENT)
 public class ParticleMovingBlock extends Particle
 {
+	protected static final Minecraft MC = Minecraft.getMinecraft();
 	protected final RenderManager renderManager;
 	protected TileEntity tile;
 	protected IBlockState state;
+	protected Block block;
 	
-	public ParticleMovingBlock(World world, IBlockState state, double x, double y, double z, double speedX, double speedY, double speedZ)
+	public ParticleMovingBlock(World world, IBlockState state, BlockPos pos, double speedX, double speedY, double speedZ)
 	{
-		super(world, x, y, z, speedX, speedY, speedZ);
+		super(world, pos.getX(), pos.getY(), pos.getZ(), speedX, speedY, speedZ);
 		renderManager = Minecraft.getMinecraft().getRenderManager();
 		this.state = state;
-		tile = null;
+		block = state.getBlock();
+		if (block.hasTileEntity(state))
+			tile = world.getTileEntity(pos);
 		
 		setBoundingBox(Block.FULL_BLOCK_AABB);
-		super.setParticleTexture(ParticleRegistry.cloud256);
+		setSize(1.0F, 1.0F);
 	}
 
 	@Override
-	public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
+	public void renderParticle(@Nonnull BufferBuilder buffer, @Nonnull Entity entity, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
-		
-        doRender(buffer, entityIn, 0, 0, 0, partialTicks);
-        
+        doRender(this, entity.posX, entity.posY, entity.posZ, entity.rotationYaw, partialTicks);
     }
 	
-	protected void doRender(BufferBuilder buffer, Entity entity, double x, double y, double z, float partialTicks)
+	public void doRender(ParticleMovingBlock entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
 		if (state == null) return;
 		
 		EnumBlockRenderType renderType = state.getRenderType();
-		World world = renderManager.world;
-		int age = particleAge * 5;
+		float yaw = (float) Math.toDegrees(Maths.fastATan2(entity.motionZ, entity.motionX)) - 90F;
+		float pitch = (float) -Math.toDegrees(Maths.fastATan2(entity.motionY, Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ)));
 
 		if (renderType == EnumBlockRenderType.MODEL)
 		{
-			Tessellator tessellator = Tessellator.getInstance();
-			tessellator.draw();
 			renderManager.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			GlStateManager.pushMatrix();
 			GlStateManager.disableLighting();
-			buffer.begin(7, DefaultVertexFormats.BLOCK);
-			BlockPos blockpos = new BlockPos(posX, posY, posZ);
+			Tessellator tessellator = Tessellator.getInstance();
+			BufferBuilder bufferbuilder = tessellator.getBuffer();
 
+
+			bufferbuilder.begin(7, DefaultVertexFormats.BLOCK);
+			BlockPos blockpos = new BlockPos(entity.posX, boundingBox.maxY, entity.posZ);
+				
 			GlStateManager.translate((float)(x), (float)(y), (float)(z));
-			buffer.setTranslation((double)((float)(-blockpos.getX()) - 0.5F), (double)(-blockpos.getY()), (double)((float)(-blockpos.getZ()) - 0.5F));
-			GlStateManager.rotate((float)(age * 0.1F * 180.0D / 12.566370964050293D - 0.0D), 1.0F, 0.0F, 0.0F);
-			GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 1.0F, 0.0F);
-			GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 0.0F, 1.0F);
+			bufferbuilder.setTranslation((double)((float)(-blockpos.getX()) - 0.5F), (double)(-blockpos.getY()), (double)((float)(-blockpos.getZ()) - 0.5F));
+			
+			// Rotate in the direction this block needs to be flying
+			//GlStateManager.rotate((float)(age * 0.1F * 180.0D / 12.566370964050293D - 0.0D), 1.0F, 0.0F, 0.0F);
+			//GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 1.0F, 0.0F);
+			//GlStateManager.rotate((float)(age * 0.1F * 180.0D / (Math.PI * 2D) - 0.0D), 0.0F, 0.0F, 1.0F);
+			
+			GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
+			GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
+			GlStateManager.scale(entity.width, entity.height, entity.width);
 			
 			BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-			blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(state), state, blockpos, buffer, false, MathHelper.getPositionRandom(blockpos));
-			buffer.setTranslation(0.0D, 0.0D, 0.0D);
+			blockrendererdispatcher.getBlockModelRenderer().renderModel(world, blockrendererdispatcher.getModelForState(state), state, blockpos, bufferbuilder, false, MathHelper.getPositionRandom(new BlockPos(entity.posX, entity.posY, entity.posZ)));
+			bufferbuilder.setTranslation(0.0D, 0.0D, 0.0D);
+			tessellator.draw();
+
 			GlStateManager.enableLighting();
 			GlStateManager.popMatrix();
 		}
@@ -88,18 +102,23 @@ public class ParticleMovingBlock extends Particle
 				try
 				{
 					GlStateManager.pushMatrix();
-					TileEntityRendererDispatcher.instance.render(tile, x, y, z, partialTicks);
+					GlStateManager.translate((float)(x), (float)(y), (float)(z));
+					GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
+					GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
+					GlStateManager.scale(entity.width, entity.height, entity.width);
+					TileEntityRendererDispatcher.instance.render(tile, 0, 0, 0, partialTicks);
 					GlStateManager.popMatrix();
 				}
-				catch (Exception e)
-				{e.printStackTrace();}
+				catch (Exception e) {}
 		}
     }
 	
 	@Override
 	public int getFXLayer() {return 1;}
+
 	@Override
-	public void setParticleTexture(TextureAtlasSprite texture) {}
+	public void setParticleTexture(@Nonnull TextureAtlasSprite texture) {}
+
 	@Override
 	public void setParticleTextureIndex(int particleTextureIndex) {}
 }

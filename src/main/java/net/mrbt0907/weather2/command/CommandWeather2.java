@@ -521,7 +521,7 @@ public class CommandWeather2 extends CommandBase
 								so.shouldBuildHumidity = isRaining;
 								so.rain = isRaining ? (isNatural ? 50.0F : isHailing ? 200.0F : so.stage * 50.0F) + 1.0F : 0.0F;
 								System.out.println(isRaining);
-								so.hail = isHailing ? isNatural ? 0.0F : 100.0F : 0.0F;
+								so.hail = isHailing ? isNatural ? 0.0F : 150.0F : 0.0F;
 								so.hailRate = isHailing ? Math.min((float) ConfigStorm.hail_max_buildup_rate, 1.0F) : 0.0F;
 								so.sizeRate = sizeMultiplier;
 								if (angle >= 0.0F)

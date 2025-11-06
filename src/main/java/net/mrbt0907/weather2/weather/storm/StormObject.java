@@ -34,7 +34,7 @@ import net.mrbt0907.weather2.api.weather.WeatherEnum.Stage;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.ConfigSnow;
 import net.mrbt0907.weather2.config.ConfigStorm;
-import net.mrbt0907.weather2.entity.EntityIceBall;
+import net.mrbt0907.weather2.entity.EntityHail;
 import net.mrbt0907.weather2.entity.EntityLightningEX;
 import net.mrbt0907.weather2.network.packets.PacketLightning;
 import net.mrbt0907.weather2.registry.StormNames;
@@ -373,9 +373,6 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 	public void tickWeatherEvents()
 	{
 		World world = manager.getWorld();
-		EntityPlayer player;
-		int amount = (int)Maths.clamp(ConfigStorm.hail_stones_per_tick * hail * 0.0001F, 1.0F, ConfigStorm.hail_stones_per_tick);
-		currentTopYBlock = WeatherUtilBlock.getPrecipitationHeightSafe(world, new BlockPos(MathHelper.floor(pos.posX), 0, MathHelper.floor(pos.posZ))).getY();
 		
 		if (stage > Stage.RAIN.getStage() && Maths.random(0, ConfigStorm.lightning_bolt_1_in_x - (int)(ConfigStorm.lightning_bolt_1_in_x * lightning)) == 0)
 		{
@@ -387,21 +384,24 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 				createLightning(pos.posX, getLayerHeight(), pos.posZ, false);
 		}
 		
-		for (int i = 0; i < world.playerEntities.size(); i++)
+		if (isHailing())
 		{
-			player = world.playerEntities.get(Maths.random(0, world.playerEntities.size() - 1));
-			if (pos.distance(player.posX, pos.posY, player.posZ) < size)
+			EntityPlayer player;
+			int amount = (int) Maths.clamp(ConfigStorm.hail_stones_per_tick * (hail - 100.0F) * 0.01F, 1.0F, ConfigStorm.hail_stones_per_tick);
+
+			for (int i = 0; i < world.playerEntities.size(); i++)
 			{
-				if (isHailing())
+				player = world.playerEntities.get(Maths.random(0, world.playerEntities.size() - 1));
+				if (pos.distanceSq(player.posX, pos.posY, player.posZ) < size)
 				{
 					for (int ii = 0 ; ii < amount; ii++)
 					{
 						int x = (int) (player.posX + Maths.random(-128, 128));
 						int z = (int) (player.posZ + Maths.random(-128, 128));
 							
-						if (world.isBlockLoaded(new BlockPos(x, getLayerHeight(), z)))
+						if (world.isBlockLoaded(new BlockPos(x, getLayerHeight(), z), false))
 						{
-							EntityIceBall hail = new EntityIceBall(world);
+							EntityHail hail = new EntityHail(world, Maths.random(0.01F, 0.1F));
 							hail.setPosition(x, getLayerHeight(), z);
 							world.spawnEntity(hail);
 						}
@@ -951,8 +951,8 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		Entity entity = obj instanceof Entity ? (Entity) obj : null;
 		World world = CoroUtilEntOrParticle.getWorld(obj);
 		boolean is_particle = world.isRemote && obj instanceof net.minecraft.client.particle.Particle;
-		float height_mult = getLayerHeight() * (is_particle ? 0.004F : 0.0034F);
-		float rotation_mult = height_mult * 0.5F * ((isViolent ? 3.1F : 1.55F) + Math.min((stage - 5.0F) / 3.0F, 2.0F));
+		float height_mult = getLayerHeight() * (is_particle ? 0.0075F : 0.0034F);
+		float rotation_mult = height_mult * 0.5F * ((isViolent ? 3.1F : 1.45F) + Math.min((stage - 5.0F) / 3.0F, 2.0F));
 		double radius = 10D, scale = config.tornadoWidthScale * 10D;
 		double dx = pos.posX - CoroUtilEntOrParticle.getPosX(obj);
 		double dy = pos.posY - CoroUtilEntOrParticle.getPosY(obj);
