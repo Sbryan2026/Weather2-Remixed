@@ -129,14 +129,6 @@ public class ConfigClient implements IConfigEX
 	@Comment("Particle scale multiplier that adjusts how big particles should be")
 	public static double particle_scale_mult = 1.0D;
 	@Permission(0)
-	@DoubleRange(min=0.0D)
-	@Comment("Fog multiplier that adjusts how foggy storms can be")
-	public static double fog_mult = 1.0D;
-	@Permission(0)
-	@DoubleRange(min=0.0D)
-	@Comment("Fog change rate that adjusts how fast fog changes states")
-	public static double fog_change_rate = 1.0D;
-	@Permission(0)
 	@FloatRange(min=0.0F)
 	@Comment("Camera shake multiplier that adjusts how intense camera shaking can be")
 	public static float camera_shake_mult = 1.0F;
@@ -169,6 +161,17 @@ public class ConfigClient implements IConfigEX
 	@Comment("Green/Blue multiplier for coloring clouds. 1.0 = fully red, 0.0 = fully blue")
 	@FloatRange(min=0.0F, max=1.0F)
 	public static float cloud_greenblue_mult = 0.40F;
+	@Permission(0)
+	@DoubleRange(min=0.0D)
+	@Comment("Fog multiplier that adjusts how foggy storms can be")
+	public static double fog_mult = 1.0D;
+	@Permission(0)
+	@DoubleRange(min=0.0D)
+	@Comment("Fog change rate that adjusts how fast fog changes states")
+	public static double fog_change_rate = 1.0D;
+	@Permission(0)
+	@Comment("Enable or Disable Vanilla Fog. Optifine shader users should disable vanilla fog.")
+	public static boolean enable_vanilla_fog = true;
 
     @Override
     public String getName() {

@@ -537,6 +537,9 @@ public class EZConfigParser
 					ConfigMod.configLookup.get("coroutil_general").updateField("particleShaders", ConfigCoroUtil.particleShaders);
 					ConfigMod.configLookup.get("coroutil_general").updateField("useEntityRenderHookForShaders", ConfigCoroUtil.useEntityRenderHookForShaders);
 					break;
+				case EZGuiAPI.BA_VANILLAFOG:
+					ConfigClient.enable_vanilla_fog = value == 1;
+					break;
 				case EZGuiAPI.BA_FOLIAGE:
 					ConfigCoroUtil.foliageShaders = value == 1;
 					break;

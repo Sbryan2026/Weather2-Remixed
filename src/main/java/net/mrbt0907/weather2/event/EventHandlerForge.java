@@ -26,6 +26,7 @@ import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
 import net.mrbt0907.weather2.client.rendering.April24StormRenderer;
 import net.mrbt0907.weather2.client.rendering.LegacyStormRenderer;
+import net.mrbt0907.weather2.config.ConfigClient;
 import net.mrbt0907.weather2.config.ConfigFoliage;
 import net.mrbt0907.weather2.config.ConfigMisc;
 import net.mrbt0907.weather2.config.ConfigStorm;
@@ -592,10 +593,11 @@ public class EventHandlerForge
 	@SideOnly(Side.CLIENT)
 	public void onFogRender(RenderFogEvent event)
 	{
-		if (ConfigMisc.toaster_pc_mode) return;
+		if (ConfigMisc.toaster_pc_mode || ConfigClient.enable_vanilla_fog != true) return;
 		NewSceneEnhancer scene = NewSceneEnhancer.instance();
-		GlStateManager.setFogStart(0);
-		GlStateManager.setFogEnd(scene.renderDistance - Math.min(scene.renderDistance * scene.fogMult * 3.3F, scene.renderDistance - 1.0F));
+		GlStateManager.setFog(GlStateManager.FogMode.EXP);
+		GlStateManager.setFogStart(0.0F);
+		GlStateManager.setFogEnd(scene.renderDistance);
 		GlStateManager.setFogDensity(scene.fogMult);
 	}
 

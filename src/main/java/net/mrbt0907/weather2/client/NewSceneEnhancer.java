@@ -109,7 +109,7 @@ public class NewSceneEnhancer implements Runnable
 	public float dampness;
 	/**Determines how far the sky box should be from the player*/
 	public float renderDistance;
-	
+
 	private Vec3 playerPos = new Vec3(0, 0, 0);
 	NewSceneEnhancer()
 	{
@@ -177,7 +177,7 @@ public class NewSceneEnhancer implements Runnable
 	{
 		if (cachedSystem != null)
 		{
-			float max = 0.29F;
+			float max = 0.29F * (ConfigClient.enable_vanilla_fog ? (float) ConfigClient.fog_mult : 0.0F);
 			//Weather2.info("fogdensity " + fogDensity + " Was calculated from Maths.clap (Math.max((Math.abs(" + rain + " 0.125F)) /" + " 0.69F, 0.0F) * " + max + " * " + (float) ConfigClient.fog_mult + "0.0F, " + max);
 			if (cachedSystem instanceof SandstormObject)
 			{
@@ -322,6 +322,7 @@ public class NewSceneEnhancer implements Runnable
 				tickAmbiance();
 				tickParticles();
 				tickSounds();
+				renderDistance = ConfigClient.enable_extended_render_distance ? (float) ConfigClient.extended_render_distance : MC.gameSettings.renderDistanceChunks * 4;
 				if (ConfigCoroUtil.foliageShaders && EventHandler.queryUseOfShaders())
 				{
 					if (!FoliageEnhancerShader.useThread)

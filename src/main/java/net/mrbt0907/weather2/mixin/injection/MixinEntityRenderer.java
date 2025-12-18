@@ -29,19 +29,14 @@ public abstract class MixinEntityRenderer
     private float farPlaneDistance;
 	/** Overriding this pushes the skybox further back when Extended Render Distance is enabled with Optifine installed */
     private float clipDistance;
-    
     /** Injecting into setupCameraTransform gives us the perfect spot to override farPlaneDistance and clipDistance */
 	@Inject(method = "setupCameraTransform(FI)V", at = @At("RETURN"), cancellable=true)
 	private void setupCameraTransform(float partialTicks, int pass, CallbackInfo callback)
 	{
-		EntityRenderer renderer = (EntityRenderer)(Object) this;
 		NewSceneEnhancer scene = NewSceneEnhancer.instance();
-
-		farPlaneDistance = ConfigClient.enable_extended_render_distance ? (float) ConfigClient.extended_render_distance : renderer.mc.gameSettings.renderDistanceChunks * 16;
-		scene.renderDistance = farPlaneDistance;
-		clipDistance = farPlaneDistance * 2.0f;
-        if (clipDistance < 173.0f)
-            clipDistance = 173.0f;
+		/**farPlaneDistance = Where fog begins / technically out of render distance. clipDistance = Hard cutoff for anything rendering**/
+		farPlaneDistance = scene.renderDistance * 1.25F;
+		clipDistance = scene.renderDistance * 1.5F;
 	}
 	
 	/** Injecting into orientCamera gives us the perfect spot to shake the perspective */

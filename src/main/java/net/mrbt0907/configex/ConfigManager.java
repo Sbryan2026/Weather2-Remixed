@@ -159,7 +159,7 @@ public class ConfigManager
 				return;
 			}
 			
-			instance.updateField(field, true);
+			instance.updateField(field, isRemote);
 		}
 		
 		instance.writeConfigFile(false);
