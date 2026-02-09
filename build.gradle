@@ -1,9 +1,17 @@
-plugins {
-    id 'eclipse'
-    id 'idea'
-    id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:6.0.+'
+    }
 }
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+apply plugin: 'net.minecraftforge.gradle'
 
 version = mod_version
 group = mod_group_id
@@ -40,7 +48,16 @@ minecraft {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+sourceSets {
+    main {
+        java {
+            setSrcDirs(['src/forge20/java'])
+        }
+        resources {
+            srcDir 'src/generated/resources'
+        }
+    }
+}
 
 repositories {
     mavenCentral()
@@ -51,8 +68,10 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    // Coroutil is required by Weather2. Replace the default with the exact 1.20.1 build you use.
-    implementation fg.deobf("curse.maven:coroutil-${coroutil_project_id}:${coroutil_file_id}")
+    // Coroutil is required by Weather2 for runtime integration.
+    // Drop the matching Coroutil 1.20.1 Forge jar in libs/ during migration.
+    compileOnly files("libs/CoroUtil-forge-1.20.1.jar")
+    runtimeOnly files("libs/CoroUtil-forge-1.20.1.jar")
 }
 
 tasks.withType(ProcessResources).configureEach {
