@@ -1,6 +1,6 @@
 {
-    "pack": {
-        "description": "Weather 2 resources",
-        "pack_format": 3
-    }
+  "pack": {
+    "pack_format": 15,
+    "description": "${mod_name} resources"
+  }
 }
