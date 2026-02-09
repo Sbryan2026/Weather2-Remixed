@@ -18,6 +18,8 @@ minecraft {
 
     copyIdeResources = true
 
+    accessTransformer = file('src/main/resources/META-INF/weather2_at.cfg')
+
     runs {
         configureEach {
             workingDirectory project.file('run')
