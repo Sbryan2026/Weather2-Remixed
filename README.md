@@ -1,27 +1,26 @@
-# Weather2-Remastered
-The decent update of the Weather2 mod by Corosus!
-(Totally did not accidentally overwrite all of my files, sorry for the badly written readme)
+# Weather2-Remixed
+Forge 1.20.1 migration branch for Weather2.
 
-Please visit https://github.com/Corosauce/weather2 as he is the original creator of this mod.
+## Target Stack
+- Minecraft: **1.20.1**
+- Forge: **47.x**
+- Java: **17**
 
-## Dependencies
-- Requires Coroutil
+## Current Migration Layout
+Because 1.12.2 -> 1.20.1 is a major API rewrite, the repository now compiles from the 1.20 entrypoint sources under:
 
-## Questions? Suggestions? Bugs?
-You can report any of these in the Issues tab, and/or place your questions and suggestions in the Discussions tab.
+- `src/forge20/java`
 
-## How To Get The Mod
-Head to the releases tab on the right and grab the version of the mod you want. Don't download the sources.jar file unless you want to add support to your mod. Make sure to install Coroutil to play with this mod.
+Legacy 1.12-era sources remain in `src/main/java` for iterative porting and are not part of the active compile source set.
 
-##  How To Build (Eclipse)
-- Requires MrCrayfish's Vehicle Mod
-- Requires Obfuscate
-- Requires Coroutil
-- Place these mods in the libs folder (Create the folder in your project folder if it doesn't exist)
-- run "gradlew setupDecompWorkspace eclipse"
+## Coroutil
+Weather2 depends on Coroutil at runtime. During migration, place the Forge 1.20.1 Coroutil jar at:
 
-## Supported Mods
-These mods are supported by Weather2 Remaster by default
-- MrCrayfish's Vehicle Mod - Vehicles get picked up
+- `libs/CoroUtil-forge-1.20.1.jar`
 
-*Please note that this is a fan update and I take no credit for anything Corosus has created.*
+## Build
+```bash
+JAVA_HOME=/root/.local/share/mise/installs/java/17.0.2 ./gradlew build
+```
+
+If wrapper download is blocked in your environment, use an installed Gradle with Java 17 and ensure Forge/Maven endpoints are reachable.

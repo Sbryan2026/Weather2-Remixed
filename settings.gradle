@@ -1,0 +1,13 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode = RepositoriesMode.PREFER_PROJECT
+}
+
+rootProject.name = 'Weather2-Remixed'
