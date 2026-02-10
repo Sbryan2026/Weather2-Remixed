@@ -8,9 +8,9 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.entity.EntityLightningBolt;
 import net.mrbt0907.weather2.entity.EntityLightningBoltCustom;
@@ -21,7 +21,7 @@ import net.mrbt0907.weather2.weather.storm.WeatherObject;
 import net.mrbt0907.weather2.weather.storm.SandstormObject;
 import net.mrbt0907.weather2.weather.volcano.VolcanoObject;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class WeatherSystemClient extends WeatherSystem {
 
 	//data for client, stormfronts synced from server
@@ -40,7 +40,7 @@ public class WeatherSystemClient extends WeatherSystem {
 	@Override
 	public World getWorld()
 	{
-		return FMLClientHandler.instance().getClient().world;
+		return Minecraft.getInstance().world;
 	}
 	
 	@Override

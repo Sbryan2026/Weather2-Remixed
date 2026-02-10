@@ -3,8 +3,7 @@ package net.mrbt0907.weather2.network.packets;
 import CoroUtil.packet.PacketHelper;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.mrbt0907.weather2.Weather2;
 
 public class PacketBase
@@ -19,7 +18,7 @@ public class PacketBase
 		
 		nbt.setInteger("command", command);
 		
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+		if (net.minecraftforge.fml.loading.FMLEnvironment.dist == Dist.CLIENT)
 			Weather2.event_channel.sendToServer(PacketHelper.getNBTPacket(nbt, Weather2.MODID));
 		else
 		{

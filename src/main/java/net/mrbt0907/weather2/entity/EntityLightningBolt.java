@@ -14,9 +14,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.config.ConfigStorm;
 import net.mrbt0907.weather2.config.ConfigVolume;
 import CoroUtil.util.CoroUtilBlock;
@@ -149,18 +149,18 @@ public class EntityLightningBolt extends EntityWeatherEffect
         }
     }
     
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void updateFlashEffect() {
-    	Minecraft mc = FMLClientHandler.instance().getClient();
+    	Minecraft mc = Minecraft.getInstance();
     	//only flash sky if player is within 256 blocks of lightning
     	if (mc.player != null && mc.player.getDistance(this) < ConfigStorm.max_lightning_bolt_distance) {
     		this.world.setLastLightningBolt(2);
     	}
     }
     
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void updateSoundEffect() {
-    	Minecraft mc = FMLClientHandler.instance().getClient();
+    	Minecraft mc = Minecraft.getInstance();
     	if (mc.player != null && mc.player.getDistance(this) < ConfigStorm.max_lightning_bolt_distance) {
     		this.world.playSound(this.posX, this.posY, this.posZ, SoundEvents.ENTITY_LIGHTNING_THUNDER, SoundCategory.WEATHER, 64.0F * (float)ConfigVolume.lightning, 0.8F + this.rand.nextFloat() * 0.2F, false);
             this.world.playSound(this.posX, this.posY, this.posZ, SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.WEATHER, 2.0F, 0.5F + this.rand.nextFloat() * 0.2F, false);
@@ -179,7 +179,7 @@ public class EntityLightningBolt extends EntityWeatherEffect
      */
     protected void writeEntityToNBT(NBTTagCompound par1NBTTagCompound) {}
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
 
     /**
      * Checks using a Vec3d to determine if this entity is within range of that vector to be rendered. Args: vec3D

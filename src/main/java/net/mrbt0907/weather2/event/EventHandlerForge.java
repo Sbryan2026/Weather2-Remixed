@@ -14,10 +14,10 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent.Save;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.ClientProxy;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WeatherAPI;
@@ -275,7 +275,7 @@ public class EventHandlerForge
 	}
 	
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     public void worldRender(RenderWorldLastEvent event)
     {
 
@@ -289,7 +289,7 @@ public class EventHandlerForge
     }
 	
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void registerIcons(TextureStitchEvent.Pre event) {
 		
 		//optifine breaks (removes) forge added method setTextureEntry, dont use it
@@ -305,7 +305,7 @@ public class EventHandlerForge
 	}
 	
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     public void onFogDensity(FogDensity event) {
 
 		if (ConfigMisc.toaster_pc_mode) return;
@@ -352,7 +352,7 @@ public class EventHandlerForge
     }
 	
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     public void onFogColors(FogColors event) {
 
 		if (ConfigMisc.toaster_pc_mode) return;
@@ -371,7 +371,7 @@ public class EventHandlerForge
 	}
 	
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void onFogRender(RenderFogEvent event) {
 
 		if (ConfigMisc.toaster_pc_mode) return;
@@ -396,7 +396,7 @@ public class EventHandlerForge
 	}
 
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void onRenderTick(TickEvent.RenderTickEvent event) {
 		SceneEnhancer.renderTick(event);
 	}
@@ -415,13 +415,13 @@ public class EventHandlerForge
 	}
 
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void registerIcons(TextureStitchEvent.Post event) {
 		FoliageEnhancerShader.setupReplacers();
 	}
 
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void modelBake(ModelBakeEvent event) {
 		FoliageEnhancerShader.modelBakeEvent(event);
 	}

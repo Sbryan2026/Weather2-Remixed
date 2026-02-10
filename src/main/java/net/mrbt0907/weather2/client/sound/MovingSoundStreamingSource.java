@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraft.client.Minecraft;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 import CoroUtil.util.Vec3;
 
@@ -58,7 +58,7 @@ public class MovingSoundStreamingSource extends MovingSound {
 
     public void update()
     {
-    	EntityPlayer entP = FMLClientHandler.instance().getClient().player;
+    	EntityPlayer entP = Minecraft.getInstance().player;
     	
     	if (entP != null) {
     		this.xPosF = (float) entP.posX;

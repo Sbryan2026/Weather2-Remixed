@@ -16,9 +16,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.util.WeatherUtil;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
@@ -38,9 +37,9 @@ public class VolcanoObject
 	public UUID ID;
 	public WeatherSystem manager;
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public List<EntityRotFX> listParticlesSmoke = new ArrayList<EntityRotFX>();
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public ParticleBehaviors particleBehaviors;
 	
 	public int sizeMaxParticles = 300;
@@ -198,8 +197,8 @@ public class VolcanoObject
 		//isGrowing = true;
 		processRateDelay = 10;
 		
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		if (side == Side.CLIENT) {
+		Dist side = net.minecraftforge.fml.loading.FMLEnvironment.dist;
+		if (side == Dist.CLIENT) {
 			if (!WeatherUtil.isPaused()) {
 				tickClient();
 			}
@@ -447,7 +446,7 @@ public class VolcanoObject
 		
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void tickClient() {
 		
 		//Weather.dbg("ticking client volcano " + ID + " - " + state);
@@ -566,7 +565,7 @@ public class VolcanoObject
 		//System.out.println("size: " + listParticlesCloud.size());
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     public EntityRotFX spawnSmokeParticle(double x, double y, double z) {
     	double speed = 0D;
 		Random rand = new Random();

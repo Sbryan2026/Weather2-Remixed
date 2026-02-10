@@ -3,9 +3,8 @@ package net.mrbt0907.weather2.weather.storm;
 import java.util.UUID;
 
 import CoroUtil.util.Vec3;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.util.CachedNBTTagCompound;
 import net.mrbt0907.weather2.weather.WeatherSystem;
 
@@ -51,7 +50,7 @@ public class WeatherObject
 			ticks = 0;
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void tickRender(float partialTick) {}
 	
 	public void setDead()
@@ -59,7 +58,7 @@ public class WeatherObject
 		isDead = true;
 		
 		//cleanup memory
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) 
+		if (net.minecraftforge.fml.loading.FMLEnvironment.dist == Dist.CLIENT) 
 			cleanupClient();
 		
 		cleanup();
@@ -68,7 +67,7 @@ public class WeatherObject
 	public void reset() {setDead();}
 	public void cleanup() {manager = null;}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void cleanupClient() {}
 	
 	public void readFromNBT() {}

@@ -15,13 +15,13 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.client.gui.elements.GuiButtonBoolean;
 import net.mrbt0907.weather2.client.gui.elements.GuiButtonCycle;
 import net.mrbt0907.weather2.network.packets.PacketEZGUI;
 import net.mrbt0907.weather2.util.EXMap;
 import net.mrbt0907.weather2.util.WeatherUtilConfig;
+import net.mrbt0907.weather2.util.ForgeLegacyBridge;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.lwjgl.opengl.GL11;
@@ -152,7 +152,7 @@ public class GuiEZConfig extends GuiScreen
 	{
 		super();
 		
-		op = FMLCommonHandler.instance().getMinecraftServerInstance() != null && FMLCommonHandler.instance().getMinecraftServerInstance().isSinglePlayer();
+		op = ForgeLegacyBridge.getCurrentServer() != null && ForgeLegacyBridge.getCurrentServer().isSinglePlayer();
 		//only sync request on initial gui open
 		PacketEZGUI.sync();
 		

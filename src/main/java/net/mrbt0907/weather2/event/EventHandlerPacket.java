@@ -4,16 +4,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
 import net.mrbt0907.weather2.network.packets.PacketEZGUI;
 import net.mrbt0907.weather2.server.event.ServerTickHandler;
 import net.mrbt0907.weather2.util.WeatherUtilConfig;
+import net.mrbt0907.weather2.util.ForgeLegacyBridge;
 
 import CoroUtil.packet.PacketHelper;
 import CoroUtil.util.CoroUtilEntity;
@@ -83,14 +83,14 @@ public class EventHandlerPacket {
 						NBTTagCompound sendNBT = WeatherUtilConfig.nbtServerData;
 						sendNBT.setInteger("command", 9);
 						sendNBT.setInteger("server", 1);
-						sendNBT.setBoolean("op", FMLCommonHandler.instance().getMinecraftServerInstance().isSinglePlayer() || FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().canSendCommands(entP.getGameProfile()));
+						sendNBT.setBoolean("op", ForgeLegacyBridge.canSendServerCommands(ForgeLegacyBridge.getCurrentServer(), entP.getGameProfile()));
 						PacketEZGUI.syncResponse(sendNBT);
 						break;
 					case 11:
 						ServerTickHandler.playerClientRequestsFullSync(entP);
 						break;
 					case 10:
-						if (FMLCommonHandler.instance().getMinecraftServerInstance().isSinglePlayer() || FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().canSendCommands(entP.getGameProfile()))
+						if (ForgeLegacyBridge.canSendServerCommands(ForgeLegacyBridge.getCurrentServer(), entP.getGameProfile()))
 							WeatherUtilConfig.nbtReceiveServer(nbt);
 						break;
 				}
@@ -103,7 +103,7 @@ public class EventHandlerPacket {
 		}
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public String getSelfUsername() {
 		return CoroUtilEntity.getName(Minecraft.getMinecraft().player);
 	}

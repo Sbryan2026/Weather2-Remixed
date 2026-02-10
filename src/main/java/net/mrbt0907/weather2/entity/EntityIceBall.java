@@ -12,8 +12,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import CoroUtil.api.weather.IWindHandler;
 import CoroUtil.entity.EntityThrowableUsefull;
 import CoroUtil.util.Vec3;
@@ -22,7 +22,7 @@ public class EntityIceBall extends EntityThrowableUsefull implements IWindHandle
 {
 	public int ticksInAir;
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean hasDeathTicked;
 
 	public EntityIceBall(World world)
@@ -158,12 +158,12 @@ public class EntityIceBall extends EntityThrowableUsefull implements IWindHandle
 		super.setDead();
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void tickAnimate() {
 		
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void tickDeath() {
 		if (!hasDeathTicked) {
 			//System.out.println("client: " + posX);

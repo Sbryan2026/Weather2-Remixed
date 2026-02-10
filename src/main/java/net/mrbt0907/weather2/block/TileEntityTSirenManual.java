@@ -10,8 +10,8 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.entity.AI.EntityAIMoveIndoorsStorm;
 import net.mrbt0907.weather2.registry.BlockRegistry;
 import net.mrbt0907.weather2.util.WeatherUtilSound;
@@ -32,10 +32,10 @@ public class TileEntityTSirenManual extends TileEntity implements ITickable
             	tickAlert();
     }
     
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void tickClient() {
     	
-    	//Minecraft mc = FMLClientHandler.instance().getClient();
+    	//Minecraft mc = Minecraft.getInstance();
     	
     	if (this.lastPlayTime < System.currentTimeMillis())
         {

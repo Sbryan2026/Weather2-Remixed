@@ -26,12 +26,12 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Weather2.MODID, name=Weather2.MOD, version=Weather2.VERSION, dependencies="required-after:coroutil@[1.12.1-1.2.12,)")
+@Mod(modid = Weather2.MODID, name=Weather2.MOD, version=Weather2.VERSION, dependencies="required-after:coroutil@[1.20.1,)")
 public class Weather2
 {
 	public static final String MOD = "Weather 2 - Remastered";
 	public static final String MODID = "weather2";
-	public static final String VERSION = "2.7.7-alpha";
+	public static final String VERSION = "2.9.0-alpha";
 	public static final FMLEventChannel event_channel = NetworkRegistry.INSTANCE.newEventDrivenChannel(MODID);
 	public static final CreativeTabs TAB = new CreativeTabs(MODID) {@Override public ItemStack getTabIconItem() {return new ItemStack(BlockRegistry.tornado_sensor);}};
 	@Mod.Instance( value = Weather2.MODID )
@@ -151,7 +151,7 @@ public class Weather2
 	 * @param event
 	 */
 	@Mod.EventHandler
-	public void handleIMCMessages(FMLInterModComms.IMCEvent event) {}
+	public void handleIMCMessages(Object event) {}
 	
 	public static void info(Object message)
 	{
