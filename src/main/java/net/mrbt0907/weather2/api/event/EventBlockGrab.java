@@ -1,8 +1,8 @@
 package net.mrbt0907.weather2.api.event;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 @Cancelable
 public class EventBlockGrab extends Event

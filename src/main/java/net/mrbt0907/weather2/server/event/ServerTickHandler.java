@@ -1,6 +1,5 @@
 package net.mrbt0907.weather2.server.event;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.config.ClientConfigData;
 import net.mrbt0907.weather2.config.ConfigMisc;
@@ -28,6 +24,7 @@ import net.mrbt0907.weather2.network.packets.PacketLightning;
 import net.mrbt0907.weather2.registry.BlockRegistry;
 import net.mrbt0907.weather2.server.weather.WeatherSystemServer;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
+import net.mrbt0907.weather2.util.ForgeLegacyBridge;
 import net.mrbt0907.weather2.util.WeatherUtilConfig;
 
 public class ServerTickHandler
@@ -41,12 +38,12 @@ public class ServerTickHandler
 	public static void onTickInGame()
 	{
 		
-		if (FMLCommonHandler.instance() == null || FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+		if (ForgeLegacyBridge.getCurrentServer() == null)
 		{
 			return;
 		}
 
-		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
+		World world = ForgeLegacyBridge.getCurrentServer().getWorld(0);
 		
 		if (world != null && lastWorld != world) {
 			lastWorld = world;
@@ -100,20 +97,19 @@ public class ServerTickHandler
 		boolean testRainRequest = false;
 		if (testRainRequest) {
 			
-			List<IMCMessage> listMsgs = new ArrayList<IMCMessage>();
-			listMsgs = FMLInterModComms.fetchRuntimeMessages(Weather2.MODID);
+			List<Object> listMsgs = ForgeLegacyBridge.fetchRuntimeMessages(Weather2.MODID);
 			for (int i = 0; i < listMsgs.size(); i++) {
 				
 				//System.out.println("Weather2 side: " + listMsgs.get(i).key + " - modID: " + listMsgs.get(i).getSender() + " - source: " + listMsgs.get(i).toString() + " - " + listMsgs.get(i).getNBTValue());
 				
-				if (listMsgs.get(i).key.equals("weather.raining")) {
+				if ("weather.raining".equals(getImcKey(listMsgs.get(i)))) {
 
-					NBTTagCompound nbt = listMsgs.get(i).getNBTValue();
+					NBTTagCompound nbt = getImcNbt(listMsgs.get(i));
 					
 					String replyMod = nbt.getString("replymod");
 					nbt.setBoolean("isRaining", true);
 					
-					FMLInterModComms.sendRuntimeMessage(replyMod, replyMod, "weather.raining", nbt);
+					ForgeLegacyBridge.sendRuntimeMessage(replyMod, replyMod, "weather.raining", nbt);
 					
 				}
 			}
@@ -124,8 +120,7 @@ public class ServerTickHandler
 		boolean debugIMC = false;
 		if (debugIMC) {
 			try {
-				List<IMCMessage> listMsgs = new ArrayList<IMCMessage>();
-				listMsgs = FMLInterModComms.fetchRuntimeMessages(Weather2.MODID);
+				List<Object> listMsgs = ForgeLegacyBridge.fetchRuntimeMessages(Weather2.MODID);
 				for (int i = 0; i < listMsgs.size(); i++) {
 					
 					//System.out.println(listMsgs.get(i).key + " - modID: " + listMsgs.get(i).getSender() + " - source: " + listMsgs.get(i).toString() + " - " + listMsgs.get(i).getNBTValue());
@@ -228,5 +223,23 @@ public class ServerTickHandler
 		NBTTagCompound data = new NBTTagCompound();
 		ClientConfigData.writeNBT(data);
 		PacketEZGUI.apply(data, player);
+	}
+
+	private static String getImcKey(Object msg) {
+		try {
+			Object val = msg.getClass().getField("key").get(msg);
+			return val == null ? "" : val.toString();
+		} catch (Throwable ignored) {
+			return "";
+		}
+	}
+
+	private static NBTTagCompound getImcNbt(Object msg) {
+		try {
+			Object val = msg.getClass().getMethod("getNBTValue").invoke(msg);
+			if (val instanceof NBTTagCompound) return (NBTTagCompound) val;
+		} catch (Throwable ignored) {
+		}
+		return new NBTTagCompound();
 	}
 }

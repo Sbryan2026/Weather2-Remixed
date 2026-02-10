@@ -7,11 +7,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraft.client.Minecraft;
 
 public class WeatherUtil {
 
-	public static boolean isPaused() {return FMLClientHandler.instance().getClient().isGamePaused();}
+	public static boolean isPaused() {return Minecraft.getInstance().isGamePaused();}
 	
 	public static boolean isPausedSideSafe(World world) {return world.isRemote ? isPaused() : false;}
 	

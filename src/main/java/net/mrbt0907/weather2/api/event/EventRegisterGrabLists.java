@@ -1,7 +1,7 @@
 package net.mrbt0907.weather2.api.event;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.mrbt0907.weather2.util.WeatherUtilList;
 
 @Cancelable

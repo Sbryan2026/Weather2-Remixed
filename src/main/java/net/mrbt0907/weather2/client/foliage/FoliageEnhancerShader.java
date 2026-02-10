@@ -34,9 +34,9 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.AnimationItemOverrideList;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.ProgressManager;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.config.ConfigFoliage;
 import net.mrbt0907.weather2.config.ConfigMisc;
@@ -135,7 +135,7 @@ public class FoliageEnhancerShader implements Runnable {
             CULog.log(str);
             ProgressManager.ProgressBar prog = ProgressManager.push(str, modelRegistry.getKeys().size(), true);
 
-            Map<ModelResourceLocation, IModel> stateModels = ReflectionHelper.getPrivateValue(ModelLoader.class, modelLoader, "stateModels");
+            Map<ModelResourceLocation, IModel> stateModels = ObfuscationReflectionHelper.getPrivateValue(ModelLoader.class, modelLoader, "stateModels");
             IBakedModel blank = modelRegistry.getObject(new ModelResourceLocation("coroutil:blank", "normal"));
 
             //shortcut to getting the data loaded into bakedModelStore, is empty on first minecraft run otherwise
@@ -186,9 +186,9 @@ public class FoliageEnhancerShader implements Runnable {
                                                 if (textureFix) {
                                                     if (blank.getOverrides() instanceof AnimationItemOverrideList) {
                                                         AnimationItemOverrideList obj1 = (AnimationItemOverrideList) blank.getOverrides();
-                                                        IModel model1 = ReflectionHelper.getPrivateValue(AnimationItemOverrideList.class, obj1, "model");
+                                                        IModel model1 = ObfuscationReflectionHelper.getPrivateValue(AnimationItemOverrideList.class, obj1, "model");
                                                         if (vanillaModelWrapperClass.isAssignableFrom(model1.getClass())) {
-                                                            ModelBlock model2 = (ModelBlock) ReflectionHelper.getPrivateValue(vanillaModelWrapperClass, model1, "model");
+                                                            ModelBlock model2 = (ModelBlock) ObfuscationReflectionHelper.getPrivateValue(vanillaModelWrapperClass, model1, "model");
                                                             String tex = res2.toString().split(":")[1];
                                                             model2.textures.put("particle", tex);
                                                         }
@@ -229,7 +229,7 @@ public class FoliageEnhancerShader implements Runnable {
 
 
 
-            Map<ModelResourceLocation, IModel> stateModels = ReflectionHelper.getPrivateValue(ModelLoader.class, modelLoader, "stateModels");
+            Map<ModelResourceLocation, IModel> stateModels = ObfuscationReflectionHelper.getPrivateValue(ModelLoader.class, modelLoader, "stateModels");
 
             for (ModelResourceLocation res : modelRegistry.getKeys()) {
                 IModel model = stateModels.get(res);
@@ -601,7 +601,7 @@ public class FoliageEnhancerShader implements Runnable {
      * @return
      */
     public static boolean tickClientCloseToPlayer() {
-        Minecraft mc = FMLClientHandler.instance().getClient();
+        Minecraft mc = Minecraft.getInstance();
 
         if (mc.world != null && mc.player != null && WeatherUtilConfig.isEffectsEnabled(mc.world.provider.getDimension())) {
             return tickFoliage(5, false);
@@ -612,7 +612,7 @@ public class FoliageEnhancerShader implements Runnable {
 
     //run from our newly created thread
     public static boolean tickClientThreaded() {
-        Minecraft mc = FMLClientHandler.instance().getClient();
+        Minecraft mc = Minecraft.getInstance();
 
         if (mc.world != null && mc.player != null && WeatherUtilConfig.isEffectsEnabled(mc.world.provider.getDimension())) {
             return tickFoliage(ConfigFoliage.shader_range, true);

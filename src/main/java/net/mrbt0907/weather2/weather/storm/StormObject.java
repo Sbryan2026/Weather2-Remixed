@@ -23,9 +23,8 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.IWeatherLayered;
 import net.mrbt0907.weather2.api.IWeatherRain;
@@ -55,19 +54,19 @@ import extendedrenderer.particle.entity.EntityRotFX;
 public class StormObject extends WeatherObject implements IWeatherRain, IWeatherStages, IWeatherLayered
 {
 	//Rendering
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public HashMap<Integer, EntityRotFX> lookupParticlesCloud;
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public HashMap<Integer, EntityRotFX> lookupParticlesCloudLower;
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public HashMap<Integer, EntityRotFX> lookupParticlesFunnel;
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public List<EntityRotFX> listParticlesCloud;
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public List<EntityRotFX> listParticlesGround;
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public List<EntityRotFX> listParticlesFunnel;
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public ParticleBehaviorFog particleBehaviorFog;
 	public int sizeMaxFunnelParticles = 600;
 	
@@ -384,7 +383,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		nbt.setBoolean("weatherMachineControlled", isMachineControlled);
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void tickRender(float partialTick) {
 		super.tickRender(partialTick);
 		//TODO: consider only putting funnel in this method since its the fast part, the rest might be slow enough to only need to do per gametick
@@ -470,8 +469,8 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		posGround = new Vec3(pos.xCoord, pos.yCoord, pos.zCoord);
 		posGround.yCoord = currentTopYBlock;
 		
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		if (side == Side.CLIENT)
+		Dist side = net.minecraftforge.fml.loading.FMLEnvironment.dist;
+		if (side == Dist.CLIENT)
 		{
 			manager.getWorld().profiler.startSection("clientTick");
 			if (!WeatherUtil.isPaused())
@@ -1372,7 +1371,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		isDead = true;
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void tickClient() {
 
 		if (isCloudless) return;
@@ -2168,12 +2167,12 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public EntityRotFX spawnFogParticle(double x, double y, double z, int parRenderOrder) {
 		return spawnFogParticle(x, y, z, parRenderOrder, ParticleRegistry.cloud256);
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public EntityRotFX spawnFogParticle(double x, double y, double z, int parRenderOrder, TextureAtlasSprite tex) {
 		double speed = 0D;
 		Random rand = new Random();
@@ -2241,7 +2240,7 @@ public class StormObject extends WeatherObject implements IWeatherRain, IWeather
 		tornadoHelper = null;
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@Override
 	public void cleanupClient() {
 		super.cleanupClient();

@@ -13,7 +13,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraft.client.Minecraft;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.client.SceneEnhancer;
 import net.mrbt0907.weather2.client.foliage.FoliageEnhancerShader;
@@ -65,7 +65,7 @@ public class ClientTickHandler
 
     public void onRenderScreenTick()
     {
-    	Minecraft mc = FMLClientHandler.instance().getClient();
+    	Minecraft mc = Minecraft.getInstance();
     	if (mc.currentScreen instanceof GuiIngameMenu) {
     		ScaledResolution scaledresolution = new ScaledResolution(mc);
             int i = scaledresolution.getScaledWidth();
@@ -93,7 +93,7 @@ public class ClientTickHandler
 
 		if (ConfigMisc.toaster_pc_mode) return;
 		
-        Minecraft mc = FMLClientHandler.instance().getClient();
+        Minecraft mc = Minecraft.getInstance();
         World world = mc.world;
         mc.mcProfiler.startSection("Weather2ClientTick");
         if (ConfigMisc.proxy_render_override) {
@@ -217,7 +217,7 @@ public class ClientTickHandler
     public static void checkClientWeather() {
 
     	try {
-			World world = FMLClientHandler.instance().getClient().world;
+			World world = Minecraft.getInstance().world;
     		if (weatherManager == null || world != lastWorld) {
     			init(world);
         	}

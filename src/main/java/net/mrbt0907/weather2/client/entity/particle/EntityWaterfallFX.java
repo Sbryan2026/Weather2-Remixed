@@ -12,12 +12,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import CoroUtil.api.weather.IWindHandler;
 import extendedrenderer.particle.entity.EntityRotFX;
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class EntityWaterfallFX extends EntityRotFX implements IWindHandler
 {
     public int age;
@@ -87,7 +87,7 @@ public class EntityWaterfallFX extends EntityRotFX implements IWindHandler
         float var14 = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)var2 - interpPosY);
         float var15 = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)var2 - interpPosZ);
         float var16 = this.getBrightnessForRender(var2) * this.brightness;
-        var16 = (1F + FMLClientHandler.instance().getClient().gameSettings.gammaSetting) - (this.world.calculateSkylightSubtracted(var2) * 0.13F);
+        var16 = (1F + Minecraft.getInstance().gameSettings.gammaSetting) - (this.world.calculateSkylightSubtracted(var2) * 0.13F);
         
         
         

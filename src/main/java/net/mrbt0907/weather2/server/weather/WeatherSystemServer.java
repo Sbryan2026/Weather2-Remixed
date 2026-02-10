@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.IWeatherRain;
 import net.mrbt0907.weather2.api.IWeatherStages;
@@ -35,6 +34,7 @@ import net.mrbt0907.weather2.util.Maths;
 import net.mrbt0907.weather2.util.WeatherUtilBlock;
 import net.mrbt0907.weather2.util.WeatherUtilConfig;
 import net.mrbt0907.weather2.util.WeatherUtilEntity;
+import net.mrbt0907.weather2.util.ForgeLegacyBridge;
 import net.mrbt0907.weather2.weather.WeatherSystem;
 import net.mrbt0907.weather2.weather.storm.StormObject;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
@@ -504,6 +504,6 @@ public class WeatherSystemServer extends WeatherSystem {
 			}
 		
 		if (!nbt.hasNoTags())
-			FMLInterModComms.sendRuntimeMessage(Weather2.instance, Weather2.MODID, "weather.storms", nbt);
+			ForgeLegacyBridge.sendRuntimeMessage(Weather2.instance, Weather2.MODID, "weather.storms", nbt);
 	}
 }

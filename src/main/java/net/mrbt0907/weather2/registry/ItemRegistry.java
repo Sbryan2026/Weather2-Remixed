@@ -9,8 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.oredict.OreDictionary;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.item.ItemPocketSand;
@@ -68,7 +67,7 @@ public class ItemRegistry
 			item.setCreativeTab(Weather2.TAB);
 			registry.getRegistry().register(item);
 			
-			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			if (net.minecraftforge.fml.loading.FMLEnvironment.dist == Dist.CLIENT)
 				ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
 			
 			Weather2.debug("Registered item " + item.getRegistryName().getResourceDomain() +  ":" + item.getRegistryName().getResourcePath());

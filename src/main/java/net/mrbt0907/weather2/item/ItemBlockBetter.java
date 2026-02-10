@@ -19,8 +19,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemBlockBetter extends Item
 {
@@ -120,7 +120,7 @@ public class ItemBlockBetter extends Item
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side, EntityPlayer player, ItemStack stack)
     {
         Block block = worldIn.getBlockState(pos).getBlock();
@@ -157,7 +157,7 @@ public class ItemBlockBetter extends Item
     /**
      * gets the CreativeTab this item is displayed on
      */
-    /*@SideOnly(Side.CLIENT)
+    /*@OnlyIn(Dist.CLIENT)
     public CreativeTabs getCreativeTab()
     {
         return this.block.getCreativeTabToDisplayOn();
@@ -166,7 +166,7 @@ public class ItemBlockBetter extends Item
     /**
      * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
      */
-    /*@SideOnly(Side.CLIENT)
+    /*@OnlyIn(Dist.CLIENT)
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
     {
@@ -203,7 +203,7 @@ public class ItemBlockBetter extends Item
     /**
      * allows items to add custom lines of information to the mouseover description
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn)
     {

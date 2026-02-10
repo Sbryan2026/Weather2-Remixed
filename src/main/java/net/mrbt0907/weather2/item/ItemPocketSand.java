@@ -17,8 +17,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.client.SceneEnhancer;
 import net.mrbt0907.weather2.client.entity.particle.ParticleSandstorm;
@@ -30,7 +30,7 @@ import java.util.Random;
 
 public class ItemPocketSand extends Item
 {
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     public static ParticleBehaviorSandstorm particleBehavior;
 
     @Override
@@ -64,7 +64,7 @@ public class ItemPocketSand extends Item
      * @param world
      * @param player The sand item using source
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static void particulate(World world, EntityLivingBase player) {
 
         if (particleBehavior == null) {
@@ -153,7 +153,7 @@ public class ItemPocketSand extends Item
         super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void tickClient(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (particleBehavior == null) {
             particleBehavior = new ParticleBehaviorSandstorm(new Vec3(entityIn.getPosition()));
@@ -170,7 +170,7 @@ public class ItemPocketSand extends Item
                 new NetworkRegistry.TargetPoint(world.provider.getDimension(), player.posX, player.posY, player.posZ, 50));
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static void particulateFromServer(String username) {
         World world = Minecraft.getMinecraft().world;
         EntityPlayer player = world.getPlayerEntityByName(username);

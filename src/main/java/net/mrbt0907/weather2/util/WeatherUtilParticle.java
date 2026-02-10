@@ -6,9 +6,9 @@ import java.util.Random;
 
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import extendedrenderer.particle.entity.EntityRotFX;
 import extendedrenderer.particle.entity.ParticleTexFX;
 
@@ -42,7 +42,7 @@ public class WeatherUtilParticle {
     }
 
     @SuppressWarnings("unchecked")
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     public static void getFXLayers()
     {
         //fxLayers
@@ -52,7 +52,7 @@ public class WeatherUtilParticle {
         {
             field = (ParticleManager.class).getDeclaredField("field_78876_b");//ObfuscationReflectionHelper.remapFieldNames("net.minecraft.client.particle.EffectRenderer", new String[] { "fxLayers" })[0]);
             field.setAccessible(true);
-            fxLayers = (ArrayDeque<Particle>[][])field.get(FMLClientHandler.instance().getClient().effectRenderer);
+            fxLayers = (ArrayDeque<Particle>[][])field.get(Minecraft.getInstance().effectRenderer);
         }
         catch (Exception ex)
         {
@@ -62,7 +62,7 @@ public class WeatherUtilParticle {
             {
                 field = (ParticleManager.class).getDeclaredField("fxLayers");
                 field.setAccessible(true);
-                fxLayers = (ArrayDeque<Particle>[][])field.get(FMLClientHandler.instance().getClient().effectRenderer);
+                fxLayers = (ArrayDeque<Particle>[][])field.get(Minecraft.getInstance().effectRenderer);
             }
             catch (Exception ex2)
             {
@@ -71,7 +71,7 @@ public class WeatherUtilParticle {
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static float getParticleWeight(EntityRotFX entity1)
     {
     	//commented out for weather2 copy
@@ -99,7 +99,7 @@ public class WeatherUtilParticle {
         return -1;
     }
     
-    /*@SideOnly(Side.CLIENT)
+    /*@OnlyIn(Dist.CLIENT)
     public static void shakeTrees(int range)
     {
         int size = range;

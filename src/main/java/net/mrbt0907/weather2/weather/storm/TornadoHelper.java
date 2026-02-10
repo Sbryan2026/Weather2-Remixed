@@ -21,10 +21,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.Weather2;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.client.event.ClientTickHandler;
@@ -289,14 +289,14 @@ public class TornadoHelper
 				return ConfigGrab.grab_mobs;
 			if (ent instanceof EntityAnimal)
 				return ConfigGrab.grab_animals;
-			if (Loader.isModLoaded("vehicle") && ent instanceof EntityVehicle)
+			if (ModList.get().isLoaded("vehicle") && ent instanceof EntityVehicle)
 				return true;
 				
 		//for moving blocks, other non livings
 		return true;
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean canGrabEntityClient(Entity ent)
 	{
 		ClientConfigData clientConfig = ClientTickHandler.clientConfigData;
@@ -310,7 +310,7 @@ public class TornadoHelper
 			return clientConfig.Storm_Tornado_grabMobs;
 		if (ent instanceof EntityAnimal)
 			return clientConfig.Storm_Tornado_grabAnimals;
-		if (Loader.isModLoaded("vehicle") && ent instanceof EntityVehicle)
+		if (ModList.get().isLoaded("vehicle") && ent instanceof EntityVehicle)
 			return true;
 		//for moving blocks, other non livings
 		return true;
@@ -362,11 +362,11 @@ public class TornadoHelper
 		return (double)MathHelper.sqrt(var7 * var7/* + var9 * var9*/ + var11 * var11);
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void soundUpdates(boolean playFarSound, boolean playNearSound)
 	{
 		
-		Minecraft mc = FMLClientHandler.instance().getClient();
+		Minecraft mc = Minecraft.getInstance();
 		
 		if (mc.player == null)
 		{

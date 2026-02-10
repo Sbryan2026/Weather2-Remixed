@@ -5,9 +5,9 @@ import java.util.Random;
 
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.mrbt0907.weather2.client.sound.MovingSoundStreamingSource;
 import net.mrbt0907.weather2.registry.SoundRegistry;
 import net.mrbt0907.weather2.weather.storm.StormObject;
@@ -80,7 +80,7 @@ public class WeatherUtilSound {
         soundToLength.put("siren_sandstorm_5_extra", 1282);
     }
     
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static void playNonMovingSound(Vec3 parPos, String var1, float var5, float var6, float parCutOffRange)
     {
     	//String prefix = "streaming.";
@@ -88,10 +88,10 @@ public class WeatherUtilSound {
     	//ResourceLocation res = new ResourceLocation(var1);
     	SoundEvent event = SoundRegistry.get(var1);
     	MovingSoundStreamingSource sound = new MovingSoundStreamingSource(parPos, event, SoundCategory.WEATHER, var5, var6, parCutOffRange);
-    	FMLClientHandler.instance().getClient().getSoundHandler().playSound(sound);
+    	Minecraft.getInstance().getSoundHandler().playSound(sound);
     }
     
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static void playMovingSound(StormObject parStorm, String var1, float var5, float var6, float parCutOffRange)
     {
     	//String prefix = "streaming.";
@@ -102,16 +102,16 @@ public class WeatherUtilSound {
     	
     	MovingSoundStreamingSource sound = new MovingSoundStreamingSource(parStorm, event, SoundCategory.WEATHER, var5, var6, parCutOffRange);
     	
-    	FMLClientHandler.instance().getClient().getSoundHandler().playSound(sound);
+    	Minecraft.getInstance().getSoundHandler().playSound(sound);
 
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static void playPlayerLockedSound(Vec3 parPos, String var1, float var5, float var6)
     {
         SoundEvent event = SoundRegistry.get(var1);
         MovingSoundStreamingSource sound = new MovingSoundStreamingSource(parPos, event, SoundCategory.WEATHER, var5, var6, true);
-        FMLClientHandler.instance().getClient().getSoundHandler().playSound(sound);
+        Minecraft.getInstance().getSoundHandler().playSound(sound);
     }
 	
     
