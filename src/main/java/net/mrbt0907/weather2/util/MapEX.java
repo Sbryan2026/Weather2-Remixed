@@ -1,7 +1,7 @@
 package net.mrbt0907.weather2.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -9,19 +9,19 @@ import java.util.function.BiConsumer;
 public class MapEX<A, B>
 {
 	private int index;
-	private List<A> keys;
-	private Map<A, B> map;
+	private final List<A> keys;
+	private final Map<A, B> map;
 	
 	public MapEX()
 	{
 		keys = new ArrayList<A>();
-		map = new HashMap<A, B>(); 
+		map = new LinkedHashMap<A, B>(); 
 	}
 	
-	public MapEX(Map<A, B> map)
+	public MapEX(Map<A, B> input)
 	{
+		map = new LinkedHashMap<A, B>(input);
 		keys = new ArrayList<A>(map.keySet());
-		map = new HashMap<A, B>(map);
 	}
 	
 	public B get(A key)
@@ -83,14 +83,20 @@ public class MapEX<A, B>
 	
 	public void put(A key, B value)
 	{
-		keys.add(key);
+		if (!map.containsKey(key))
+			keys.add(key);
 		map.put(key, value);
 	}
 	
 	public void remove(A key)
 	{
-		keys.remove(keys.indexOf(key));
-		map.remove(key);
+		if (map.containsKey(key))
+		{
+			map.remove(key);
+			keys.remove(key);
+			if (index >= keys.size())
+				index = Math.max(0, keys.size() - 1);
+		}
 	}
 	
 	public int size()
@@ -100,7 +106,7 @@ public class MapEX<A, B>
 	
 	public List<A> keys()
 	{
-		return keys;
+		return new ArrayList<A>(keys);
 	}
 	
 	public List<B> values()
@@ -116,7 +122,7 @@ public class MapEX<A, B>
 	
 	public boolean containsKey(A key)
 	{
-		return keys.contains(key);
+		return map.containsKey(key);
 	}
 	
 	public void forEach(BiConsumer <? super A, ? super B> action)
