@@ -61,17 +61,7 @@ public class WeatherManagerClient extends WeatherManager
 	{
 		super.tick();
 		
-		Particle particle;
-		for (int i = 0; i < weatherParticles.size(); i++)
-		{
-			particle = weatherParticles.get(i);
-			
-			if (!particle.isAlive())
-			{
-				weatherParticles.remove(i);
-				i--;
-			}
-		}
+		weatherParticles.removeIf(particle -> !particle.isAlive());
 	}
 	
 	public void tickRender(float partialTick)
@@ -201,10 +191,11 @@ public class WeatherManagerClient extends WeatherManager
 				}
 				else
 				{
-					int x = mainNBT.getInteger("posX"), y = mainNBT.getInteger("posY"), z = mainNBT.getInteger("posZ");
-					double distance = Maths.distanceSq(MC.player.posX, MC.player.posY, MC.player.posZ, x, y, z);
-					if (MC.player != null)
+					EntityPlayerSP player = MC.player;
+					if (player != null)
 					{
+						int x = mainNBT.getInteger("posX"), y = mainNBT.getInteger("posY"), z = mainNBT.getInteger("posZ");
+						double distance = Maths.distanceSq(player.posX, player.posY, player.posZ, x, y, z);
 						if (distance < ConfigStorm.max_lightning_bolt_distance)
 						{
 							if (ConfigClient.enable_sky_lightning)
@@ -212,7 +203,9 @@ public class WeatherManagerClient extends WeatherManager
 							world.playSound(x, y, z, SoundRegistry.thunderNear, SoundCategory.WEATHER, 10000.0F * (float)ConfigVolume.lightning, Maths.random(0.65F, 0.75F), true);
 						}
 						else if (distance < ConfigStorm.max_lightning_bolt_distance * 1.5D)
+						{
 							world.playSound(x, y, z, SoundRegistry.thunderFar, SoundCategory.WEATHER, 10000.0F * (float)ConfigVolume.lightning, Maths.random(0.65F, 0.75F), false);
+						}
 					}
 				}
 				break;
