@@ -963,6 +963,6 @@ public class WeatherUtilBlock
 		if (world.isRemote)
 			return world.getChunk(x >> 4, z >> 4);
 		else
-			return ((ChunkProviderServer) world.getChunkProvider()).loadChunk(x>>4, z>>4);
+			return ((ChunkProviderServer) world.getChunkProvider()).getLoadedChunk(x>>4, z>>4);
 	}
 }
