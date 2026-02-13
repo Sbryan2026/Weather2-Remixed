@@ -19,6 +19,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -112,9 +113,11 @@ public class NewTornadoHelper
 		int baseX = MathHelper.floor(storm.pos_funnel_base.posX);
 		int baseZ = MathHelper.floor(storm.pos_funnel_base.posZ);
 		int intRadius = Math.max(1, MathHelper.ceil(radius));
+		int maxFlyingBlocks = ConfigGrab.max_flying_blocks < 0 ? Integer.MAX_VALUE : ConfigGrab.max_flying_blocks;
 		ConfigList grabList = ConfigGrab.enable_grab_list ? WeatherAPI.getGrabList() : null;
 		ConfigList replaceList = ConfigGrab.enable_replace_list ? WeatherAPI.getReplaceList() : null;
 		Set<Long> sampledColumns = new HashSet<Long>(Math.min(maxAttempts, 128));
+		MutableBlockPos samplePos = new MutableBlockPos();
 
 		while (attempts++ < maxAttempts && (grabbed < maxGrabbed || replaced < maxReplaced))
 		{
@@ -124,7 +127,7 @@ public class NewTornadoHelper
 			if (!sampledColumns.add(key))
 				continue;
 
-			BlockPos samplePos = new BlockPos(x, maxHeight, z);
+			samplePos.setPos(x, maxHeight, z);
 			if (!world.isBlockLoaded(samplePos))
 				continue;
 
@@ -132,7 +135,7 @@ public class NewTornadoHelper
 			if (blockPos.getY() < 0)
 				continue;
 
-			if (grabbed < maxGrabbed && grabBlock(storm, world, blockPos, grabList))
+			if (grabbed < maxGrabbed && grabBlock(storm, world, blockPos, grabList, maxFlyingBlocks))
 			{
 				grabbed++;
 				continue;
@@ -160,12 +163,12 @@ public class NewTornadoHelper
 	public static boolean grabBlock(StormObject storm, World world, BlockPos pos)
 	{
 		ConfigList grabList = ConfigGrab.enable_grab_list ? WeatherAPI.getGrabList() : null;
-		return grabBlock(storm, world, pos, grabList);
+		return grabBlock(storm, world, pos, grabList, ConfigGrab.max_flying_blocks < 0 ? Integer.MAX_VALUE : ConfigGrab.max_flying_blocks);
 	}
 
-	private static boolean grabBlock(StormObject storm, World world, BlockPos pos, ConfigList grabList)
+	private static boolean grabBlock(StormObject storm, World world, BlockPos pos, ConfigList grabList, int maxFlyingBlocks)
 	{
-		if (storm.flyingBlocks >= (ConfigGrab.max_flying_blocks < 0 ? Integer.MAX_VALUE : ConfigGrab.max_flying_blocks) || ConfigGrab.enable_list_sharing && Maths.chance(50))
+		if (storm.flyingBlocks >= maxFlyingBlocks || ConfigGrab.enable_list_sharing && Maths.chance(50))
 			return false;
 		
 		IBlockState state = world.getBlockState(pos);
