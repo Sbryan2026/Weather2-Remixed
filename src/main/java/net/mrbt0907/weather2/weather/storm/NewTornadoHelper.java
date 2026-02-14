@@ -1,6 +1,9 @@
 package net.mrbt0907.weather2.weather.storm;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Random;
 
 import CoroUtil.block.TileEntityRepairingBlock;
 import CoroUtil.util.CoroUtilBlock;
@@ -17,6 +20,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -37,6 +41,22 @@ public class NewTornadoHelper
 {
 	private static final IBlockState AIR = Blocks.AIR.getDefaultState();
 	private static final IBlockState FIRE = Blocks.FIRE.getDefaultState();
+
+	private static final class PickupTarget
+	{
+		private final BlockPos pos;
+		private final IBlockState state;
+		private final String id;
+		private final String metaID;
+
+		private PickupTarget(BlockPos pos, IBlockState state, String id, String metaID)
+		{
+			this.pos = pos;
+			this.state = state;
+			this.id = id;
+			this.metaID = metaID;
+		}
+	}
 	
 	public static void tick(StormObject storm, World world)
 	{
@@ -47,32 +67,9 @@ public class NewTornadoHelper
 		
 		if (!world.isRemote)
 		{
-			// Grab and Replace block queue
 			if (ConfigGrab.grab_blocks && world.getTotalWorldTime() % ConfigGrab.grab_process_delay == 0L)
 			{
-				//BlockPos funnelPosA = new BlockPos(storm.pos_funnel_base.posX + radius, storm.pos_funnel_base.posY, storm.pos_funnel_base.posZ + radius);
-				//BlockPos funnelPosB = new BlockPos(storm.pos_funnel_base.posX - radius, storm.pos_funnel_base.posY, storm.pos_funnel_base.posZ - radius);
-				//ChunkCache cache = new ChunkCache(world, funnelPosA, funnelPosB, 0);
-				int maxHeight = Math.min(world.getActualHeight(), (int) storm.pos.posY);
-				int loopAmount = ConfigGrab.max_replaced_blocks + ConfigGrab.max_grabbed_blocks;
-				int x, z, grabbed = 0, replaced = 0;
-				BlockPos blockPos;
-				
-				for (int i = 0; i < loopAmount; i++)
-				{
-					x = (int) (storm.pos_funnel_base.posX + Maths.random(-radius, radius));
-					z = (int) (storm.pos_funnel_base.posZ + Maths.random(-radius, radius));
-					
-					
-					blockPos = new BlockPos(x, maxHeight, z);
-					blockPos = WeatherUtilBlock.getHeightSafe(world, blockPos).down();
-					
-					if (grabbed <= ConfigGrab.max_grabbed_blocks && NewTornadoHelper.grabBlock(storm, world, blockPos))
-						grabbed++;
-					else if (replaced <= ConfigGrab.max_replaced_blocks && NewTornadoHelper.replaceBlock(storm, world, blockPos))
-						replaced++;
-					
-				}
+				processBlockPickupQueue(storm, world, radius);
 			}
 			
 			//Firenado
@@ -116,62 +113,130 @@ public class NewTornadoHelper
 			}
 		}
 	}
+
+	private static void processBlockPickupQueue(StormObject storm, World world, float radius)
+	{
+		int maxGrabbed = Math.max(0, ConfigGrab.max_grabbed_blocks);
+		int maxReplaced = Math.max(0, ConfigGrab.max_replaced_blocks);
+		int loopAmount = maxGrabbed + maxReplaced;
+		if (loopAmount <= 0)
+			return;
+
+		int maxHeight = Math.min(world.getActualHeight(), (int) storm.pos.posY);
+		int grabbed = 0;
+		int replaced = 0;
+		int attempts = 0;
+		int maxAttempts = Math.max(loopAmount * 3, 8);
+		int baseX = MathHelper.floor(storm.pos_funnel_base.posX);
+		int baseZ = MathHelper.floor(storm.pos_funnel_base.posZ);
+		int intRadius = Math.max(1, MathHelper.ceil(radius));
+		int maxFlyingBlocks = ConfigGrab.max_flying_blocks < 0 ? Integer.MAX_VALUE : ConfigGrab.max_flying_blocks;
+		boolean enableGrabList = ConfigGrab.enable_grab_list;
+		boolean enableReplaceList = ConfigGrab.enable_replace_list;
+		boolean grabStrengthMatch = ConfigGrab.grab_list_strength_match;
+		boolean replaceStrengthMatch = ConfigGrab.replace_list_strength_match;
+		boolean enableRepairMode = ConfigGrab.enable_repair_block_mode;
+		boolean enableListSharing = ConfigGrab.enable_list_sharing;
+		ConfigList grabList = enableGrabList ? WeatherAPI.getGrabList() : null;
+		ConfigList replaceList = enableReplaceList ? WeatherAPI.getReplaceList() : null;
+		Random rand = world.rand;
+		Set<Long> sampledColumns = new HashSet<Long>((maxAttempts * 4 / 3) + 1);
+		MutableBlockPos samplePos = new MutableBlockPos();
+
+		while (attempts++ < maxAttempts && (grabbed < maxGrabbed || replaced < maxReplaced))
+		{
+			int x = baseX + rand.nextInt(intRadius * 2 + 1) - intRadius;
+			int z = baseZ + rand.nextInt(intRadius * 2 + 1) - intRadius;
+			long key = (((long) x) << 32) ^ (z & 0xFFFFFFFFL);
+			if (!sampledColumns.add(key))
+				continue;
+
+			samplePos.setPos(x, maxHeight, z);
+			if (!world.isBlockLoaded(samplePos))
+				continue;
+
+			BlockPos blockPos = WeatherUtilBlock.getHeightSafe(world, samplePos).down();
+			if (blockPos.getY() < 0)
+				continue;
+
+			PickupTarget target = resolvePickupTarget(storm, world, blockPos);
+			if (target == null)
+				continue;
+
+			if (grabbed < maxGrabbed && grabBlock(storm, world, target, grabList, maxFlyingBlocks, enableGrabList, enableReplaceList, grabStrengthMatch, enableRepairMode, enableListSharing, rand))
+			{
+				grabbed++;
+				continue;
+			}
+
+			if (replaced < maxReplaced && replaceBlock(storm, world, target, replaceList, enableReplaceList, replaceStrengthMatch))
+				replaced++;
+		}
+	}
 	
 	public static void forceRotate(StormObject storm, World world, float size)
 	{
-		new ArrayList<Entity>(world.loadedEntityList).forEach(entity -> {
+		List<Entity> entities = world.loadedEntityList;
+		for (int i = 0; i < entities.size(); i++)
+		{
+			Entity entity = entities.get(i);
 			if (NewTornadoHelper.canGrabEntity(entity) && Maths.distanceSq(storm.pos_funnel_base.posX, storm.pos_funnel_base.posZ, entity.posX, entity.posZ) < size)
 			{
 				if (entity instanceof EntityMovingBlock && !((EntityMovingBlock)entity).collideFalling || WeatherUtilEntity.isEntityOutside(entity, !(entity instanceof EntityPlayer)))
 					storm.spinEntity(entity);
 			}
-		});
+		}
 	}
 	
 	public static boolean grabBlock(StormObject storm, World world, BlockPos pos)
 	{
-		if (storm.flyingBlocks >= (ConfigGrab.max_flying_blocks < 0 ? Integer.MAX_VALUE : ConfigGrab.max_flying_blocks) || ConfigGrab.enable_list_sharing && Maths.chance(50))
+		ConfigList grabList = ConfigGrab.enable_grab_list ? WeatherAPI.getGrabList() : null;
+		PickupTarget target = resolvePickupTarget(storm, world, pos);
+		if (target == null)
 			return false;
-		
-		IBlockState state = world.getBlockState(pos);
-		Block block = state.getBlock();
-		if (!WeatherUtilBlock.canGrabBlock(storm, pos, state))
-			return false;
-		
-		String id = block.getRegistryName().toString();
-		String metaID = id + "#" + state.getBlock().getMetaFromState(state);
-		
-		if (ConfigGrab.enable_grab_list ? (WeatherAPI.getGrabList().exists(metaID) || WeatherAPI.getGrabList().exists(id)) : !ConfigGrab.enable_replace_list)
-		{
-			if (ConfigGrab.grab_list_strength_match ? !(WeatherUtilBlock.checkResistance(storm, metaID) || WeatherUtilBlock.checkResistance(storm, id)) : false)
-				return false;
-			
-			if (ConfigGrab.enable_repair_block_mode)
-			{
-				if (state != NewTornadoHelper.AIR && UtilMining.canConvertToRepairingBlockNew(world, pos, false))
-				{
-					TileEntityRepairingBlock.replaceBlockAndBackup(world, pos, ConfigGrab.Storm_Tornado_TicksToRepairBlock);
-					return true;
-				}
-			}
-			else
-			{
-				EntityMovingBlock entity = new EntityMovingBlock(world, pos.getX(), pos.getY(), pos.getZ(), state, storm);
-				entity.motionX += (world.rand.nextDouble() - world.rand.nextDouble()) * 1.0D;
-				entity.motionZ += (world.rand.nextDouble() - world.rand.nextDouble()) * 1.0D;
-				entity.motionY = 1.0D;
-				if (state.getBlock().hasTileEntity(state))
-				{
-					TileEntity tile = world.getTileEntity(pos);
-					if (tile != null && tile instanceof IInventory)
-						((IInventory)tile).clear();
-				}
+		return grabBlock(storm, world, target, grabList, ConfigGrab.max_flying_blocks < 0 ? Integer.MAX_VALUE : ConfigGrab.max_flying_blocks, ConfigGrab.enable_grab_list, ConfigGrab.enable_replace_list, ConfigGrab.grab_list_strength_match, ConfigGrab.enable_repair_block_mode, ConfigGrab.enable_list_sharing, world.rand);
+	}
 
-				ChunkUtils.setBlockState(world, pos, NewTornadoHelper.AIR);
-				world.spawnEntity(entity);
-				storm.flyingBlocks++;
+	private static boolean grabBlock(StormObject storm, World world, PickupTarget target, ConfigList grabList, int maxFlyingBlocks, boolean enableGrabList, boolean enableReplaceList, boolean grabStrengthMatch, boolean enableRepairMode, boolean enableListSharing, Random rand)
+	{
+		if (storm.flyingBlocks >= maxFlyingBlocks || enableListSharing && rand.nextBoolean())
+			return false;
+		
+		boolean canGrab = enableGrabList
+			? matchesConfiguredList(grabList, target.id, target.metaID)
+			: !enableReplaceList;
+
+		if (!canGrab)
+			return false;
+
+		if (grabStrengthMatch && !matchesStormResistance(storm, target.id, target.metaID))
+			return false;
+		
+		if (enableRepairMode)
+		{
+			if (target.state != NewTornadoHelper.AIR && UtilMining.canConvertToRepairingBlockNew(world, target.pos, false))
+			{
+				TileEntityRepairingBlock.replaceBlockAndBackup(world, target.pos, ConfigGrab.Storm_Tornado_TicksToRepairBlock);
 				return true;
 			}
+		}
+		else
+		{
+			EntityMovingBlock entity = new EntityMovingBlock(world, target.pos.getX(), target.pos.getY(), target.pos.getZ(), target.state, storm);
+			entity.motionX += (rand.nextDouble() - rand.nextDouble()) * 1.0D;
+			entity.motionZ += (rand.nextDouble() - rand.nextDouble()) * 1.0D;
+			entity.motionY = 1.0D;
+			if (target.state.getBlock().hasTileEntity(target.state))
+			{
+				TileEntity tile = world.getTileEntity(target.pos);
+				if (tile instanceof IInventory)
+					((IInventory) tile).clear();
+			}
+
+			ChunkUtils.setBlockState(world, target.pos, NewTornadoHelper.AIR);
+			world.spawnEntity(entity);
+			storm.flyingBlocks++;
+			return true;
 		}
 		
 		return false;
@@ -180,42 +245,90 @@ public class NewTornadoHelper
 	@SuppressWarnings("deprecation")
 	public static boolean replaceBlock(StormObject storm, World world, BlockPos pos)
 	{
-		
-		IBlockState state = world.getBlockState(pos);
-		if (!WeatherUtilBlock.canGrabBlock(storm, pos, state))
+		ConfigList replaceList = ConfigGrab.enable_replace_list ? WeatherAPI.getReplaceList() : null;
+		PickupTarget target = resolvePickupTarget(storm, world, pos);
+		if (target == null)
 			return false;
-			
-		String id = state.getBlock().getRegistryName().toString();
-		String metaID = id + "#" + state.getBlock().getMetaFromState(state);
-		ConfigList replaceList = WeatherAPI.getReplaceList();
+		return replaceBlock(storm, world, target, replaceList, ConfigGrab.enable_replace_list, ConfigGrab.replace_list_strength_match);
+	}
 
-		if (ConfigGrab.enable_replace_list ? (replaceList.exists(metaID) || replaceList.exists(id)) : false)
-		{
-			if (ConfigGrab.replace_list_strength_match ? !(WeatherUtilBlock.checkResistance(storm, metaID) || WeatherUtilBlock.checkResistance(storm, id)) : false)
-				return false;
+	@SuppressWarnings("deprecation")
+	private static boolean replaceBlock(StormObject storm, World world, PickupTarget target, ConfigList replaceList, boolean enableReplaceList, boolean replaceStrengthMatch)
+	{
+		if (!enableReplaceList || replaceList == null)
+			return false;
 
-			Object[] replacements = replaceList.getValues(id);
-			if (replacements == null)
-				replacements = replaceList.getValues(metaID);
-			
-			if (replacements != null && replacements.length > 0)
-			{
-				String replacement = (String) replacements[Maths.random(0, replacements.length - 1)];
-				int metadata = 0;
-				if (replacement.contains("#"))
-				{
-					try {metadata = Integer.parseInt(replacement.replaceAll(".*\\#", ""));}
-        			catch (Exception e) {metadata = 0;}
-					replacement = replacement.replaceAll("\\#.*", "");
-				}
-				ChunkUtils.setBlockState(world, pos, Block.getBlockFromName(replacement).getStateFromMeta(metadata));
-				return true;
-			}
-		}
+		if (!matchesConfiguredList(replaceList, target.id, target.metaID))
+			return false;
+
+		if (replaceStrengthMatch && !matchesStormResistance(storm, target.id, target.metaID))
+			return false;
+
+		Object[] replacements = replaceList.getValues(target.id);
+		if (replacements == null)
+			replacements = replaceList.getValues(target.metaID);
 		
-		return false;
+		if (replacements == null || replacements.length == 0)
+			return false;
+
+		String replacement = (String) replacements[Maths.random(0, replacements.length - 1)];
+		int metadata = 0;
+		int metadataIndex = replacement.indexOf('#');
+		if (metadataIndex >= 0)
+		{
+			metadata = parseMetaOrZero(replacement, metadataIndex + 1);
+			replacement = replacement.substring(0, metadataIndex);
+		}
+
+		Block replacementBlock = Block.getBlockFromName(replacement);
+		if (replacementBlock == null)
+			return false;
+
+		ChunkUtils.setBlockState(world, target.pos, replacementBlock.getStateFromMeta(metadata));
+		return true;
 	}
 	
+	private static PickupTarget resolvePickupTarget(StormObject storm, World world, BlockPos pos)
+	{
+		IBlockState state = world.getBlockState(pos);
+		if (!WeatherUtilBlock.canGrabBlock(storm, pos, state))
+			return null;
+
+		Block block = state.getBlock();
+		if (block.getRegistryName() == null)
+			return null;
+
+		String id = block.getRegistryName().toString();
+		String metaID = id + "#" + block.getMetaFromState(state);
+		return new PickupTarget(pos, state, id, metaID);
+	}
+
+	private static boolean matchesConfiguredList(ConfigList list, String id, String metaID)
+	{
+		return list != null && (list.exists(metaID) || list.exists(id));
+	}
+
+	private static boolean matchesStormResistance(StormObject storm, String id, String metaID)
+	{
+		return WeatherUtilBlock.checkResistance(storm, metaID) || WeatherUtilBlock.checkResistance(storm, id);
+	}
+
+	private static int parseMetaOrZero(String value, int fromIndex)
+	{
+		if (fromIndex >= value.length())
+			return 0;
+
+		int result = 0;
+		for (int i = fromIndex; i < value.length(); i++)
+		{
+			char c = value.charAt(i);
+			if (c < '0' || c > '9')
+				return 0;
+			result = result * 10 + (c - '0');
+		}
+		return result;
+	}
+
 	public static boolean canGrabEntity(Entity entity)
 	{
 		if (entity == null) return false;	
