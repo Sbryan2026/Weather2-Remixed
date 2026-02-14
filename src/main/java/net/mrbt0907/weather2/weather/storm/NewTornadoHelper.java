@@ -3,6 +3,7 @@ package net.mrbt0907.weather2.weather.storm;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Random;
 
 import CoroUtil.block.TileEntityRepairingBlock;
 import CoroUtil.util.CoroUtilBlock;
@@ -130,15 +131,22 @@ public class NewTornadoHelper
 		int baseZ = MathHelper.floor(storm.pos_funnel_base.posZ);
 		int intRadius = Math.max(1, MathHelper.ceil(radius));
 		int maxFlyingBlocks = ConfigGrab.max_flying_blocks < 0 ? Integer.MAX_VALUE : ConfigGrab.max_flying_blocks;
-		ConfigList grabList = ConfigGrab.enable_grab_list ? WeatherAPI.getGrabList() : null;
-		ConfigList replaceList = ConfigGrab.enable_replace_list ? WeatherAPI.getReplaceList() : null;
-		Set<Long> sampledColumns = new HashSet<Long>(Math.min(maxAttempts, 128));
+		boolean enableGrabList = ConfigGrab.enable_grab_list;
+		boolean enableReplaceList = ConfigGrab.enable_replace_list;
+		boolean grabStrengthMatch = ConfigGrab.grab_list_strength_match;
+		boolean replaceStrengthMatch = ConfigGrab.replace_list_strength_match;
+		boolean enableRepairMode = ConfigGrab.enable_repair_block_mode;
+		boolean enableListSharing = ConfigGrab.enable_list_sharing;
+		ConfigList grabList = enableGrabList ? WeatherAPI.getGrabList() : null;
+		ConfigList replaceList = enableReplaceList ? WeatherAPI.getReplaceList() : null;
+		Random rand = world.rand;
+		Set<Long> sampledColumns = new HashSet<Long>((maxAttempts * 4 / 3) + 1);
 		MutableBlockPos samplePos = new MutableBlockPos();
 
 		while (attempts++ < maxAttempts && (grabbed < maxGrabbed || replaced < maxReplaced))
 		{
-			int x = baseX + world.rand.nextInt(intRadius * 2 + 1) - intRadius;
-			int z = baseZ + world.rand.nextInt(intRadius * 2 + 1) - intRadius;
+			int x = baseX + rand.nextInt(intRadius * 2 + 1) - intRadius;
+			int z = baseZ + rand.nextInt(intRadius * 2 + 1) - intRadius;
 			long key = (((long) x) << 32) ^ (z & 0xFFFFFFFFL);
 			if (!sampledColumns.add(key))
 				continue;
@@ -155,13 +163,13 @@ public class NewTornadoHelper
 			if (target == null)
 				continue;
 
-			if (grabbed < maxGrabbed && grabBlock(storm, world, target, grabList, maxFlyingBlocks))
+			if (grabbed < maxGrabbed && grabBlock(storm, world, target, grabList, maxFlyingBlocks, enableGrabList, enableReplaceList, grabStrengthMatch, enableRepairMode, enableListSharing, rand))
 			{
 				grabbed++;
 				continue;
 			}
 
-			if (replaced < maxReplaced && replaceBlock(storm, world, target, replaceList))
+			if (replaced < maxReplaced && replaceBlock(storm, world, target, replaceList, enableReplaceList, replaceStrengthMatch))
 				replaced++;
 		}
 	}
@@ -186,25 +194,25 @@ public class NewTornadoHelper
 		PickupTarget target = resolvePickupTarget(storm, world, pos);
 		if (target == null)
 			return false;
-		return grabBlock(storm, world, target, grabList, ConfigGrab.max_flying_blocks < 0 ? Integer.MAX_VALUE : ConfigGrab.max_flying_blocks);
+		return grabBlock(storm, world, target, grabList, ConfigGrab.max_flying_blocks < 0 ? Integer.MAX_VALUE : ConfigGrab.max_flying_blocks, ConfigGrab.enable_grab_list, ConfigGrab.enable_replace_list, ConfigGrab.grab_list_strength_match, ConfigGrab.enable_repair_block_mode, ConfigGrab.enable_list_sharing, world.rand);
 	}
 
-	private static boolean grabBlock(StormObject storm, World world, PickupTarget target, ConfigList grabList, int maxFlyingBlocks)
+	private static boolean grabBlock(StormObject storm, World world, PickupTarget target, ConfigList grabList, int maxFlyingBlocks, boolean enableGrabList, boolean enableReplaceList, boolean grabStrengthMatch, boolean enableRepairMode, boolean enableListSharing, Random rand)
 	{
-		if (storm.flyingBlocks >= maxFlyingBlocks || ConfigGrab.enable_list_sharing && Maths.chance(50))
+		if (storm.flyingBlocks >= maxFlyingBlocks || enableListSharing && rand.nextBoolean())
 			return false;
 		
-		boolean canGrab = ConfigGrab.enable_grab_list
-			? (grabList.exists(target.metaID) || grabList.exists(target.id))
-			: !ConfigGrab.enable_replace_list;
+		boolean canGrab = enableGrabList
+			? matchesConfiguredList(grabList, target.id, target.metaID)
+			: !enableReplaceList;
 
 		if (!canGrab)
 			return false;
 
-		if (ConfigGrab.grab_list_strength_match && !(WeatherUtilBlock.checkResistance(storm, target.metaID) || WeatherUtilBlock.checkResistance(storm, target.id)))
+		if (grabStrengthMatch && !matchesStormResistance(storm, target.id, target.metaID))
 			return false;
 		
-		if (ConfigGrab.enable_repair_block_mode)
+		if (enableRepairMode)
 		{
 			if (target.state != NewTornadoHelper.AIR && UtilMining.canConvertToRepairingBlockNew(world, target.pos, false))
 			{
@@ -215,8 +223,8 @@ public class NewTornadoHelper
 		else
 		{
 			EntityMovingBlock entity = new EntityMovingBlock(world, target.pos.getX(), target.pos.getY(), target.pos.getZ(), target.state, storm);
-			entity.motionX += (world.rand.nextDouble() - world.rand.nextDouble()) * 1.0D;
-			entity.motionZ += (world.rand.nextDouble() - world.rand.nextDouble()) * 1.0D;
+			entity.motionX += (rand.nextDouble() - rand.nextDouble()) * 1.0D;
+			entity.motionZ += (rand.nextDouble() - rand.nextDouble()) * 1.0D;
 			entity.motionY = 1.0D;
 			if (target.state.getBlock().hasTileEntity(target.state))
 			{
@@ -241,19 +249,19 @@ public class NewTornadoHelper
 		PickupTarget target = resolvePickupTarget(storm, world, pos);
 		if (target == null)
 			return false;
-		return replaceBlock(storm, world, target, replaceList);
+		return replaceBlock(storm, world, target, replaceList, ConfigGrab.enable_replace_list, ConfigGrab.replace_list_strength_match);
 	}
 
 	@SuppressWarnings("deprecation")
-	private static boolean replaceBlock(StormObject storm, World world, PickupTarget target, ConfigList replaceList)
+	private static boolean replaceBlock(StormObject storm, World world, PickupTarget target, ConfigList replaceList, boolean enableReplaceList, boolean replaceStrengthMatch)
 	{
-		if (!ConfigGrab.enable_replace_list || replaceList == null)
+		if (!enableReplaceList || replaceList == null)
 			return false;
 
-		if (!(replaceList.exists(target.metaID) || replaceList.exists(target.id)))
+		if (!matchesConfiguredList(replaceList, target.id, target.metaID))
 			return false;
 
-		if (ConfigGrab.replace_list_strength_match && !(WeatherUtilBlock.checkResistance(storm, target.metaID) || WeatherUtilBlock.checkResistance(storm, target.id)))
+		if (replaceStrengthMatch && !matchesStormResistance(storm, target.id, target.metaID))
 			return false;
 
 		Object[] replacements = replaceList.getValues(target.id);
@@ -268,14 +276,7 @@ public class NewTornadoHelper
 		int metadataIndex = replacement.indexOf('#');
 		if (metadataIndex >= 0)
 		{
-			try
-			{
-				metadata = Integer.parseInt(replacement.substring(metadataIndex + 1));
-			}
-			catch (Exception e)
-			{
-				metadata = 0;
-			}
+			metadata = parseMetaOrZero(replacement, metadataIndex + 1);
 			replacement = replacement.substring(0, metadataIndex);
 		}
 
@@ -300,6 +301,32 @@ public class NewTornadoHelper
 		String id = block.getRegistryName().toString();
 		String metaID = id + "#" + block.getMetaFromState(state);
 		return new PickupTarget(pos, state, id, metaID);
+	}
+
+	private static boolean matchesConfiguredList(ConfigList list, String id, String metaID)
+	{
+		return list != null && (list.exists(metaID) || list.exists(id));
+	}
+
+	private static boolean matchesStormResistance(StormObject storm, String id, String metaID)
+	{
+		return WeatherUtilBlock.checkResistance(storm, metaID) || WeatherUtilBlock.checkResistance(storm, id);
+	}
+
+	private static int parseMetaOrZero(String value, int fromIndex)
+	{
+		if (fromIndex >= value.length())
+			return 0;
+
+		int result = 0;
+		for (int i = fromIndex; i < value.length(); i++)
+		{
+			char c = value.charAt(i);
+			if (c < '0' || c > '9')
+				return 0;
+			result = result * 10 + (c - '0');
+		}
+		return result;
 	}
 
 	public static boolean canGrabEntity(Entity entity)
